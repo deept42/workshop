@@ -116,18 +116,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         folderContainer.addEventListener('mouseup', () => {
             if (!isDown) return;
+            const wasDragging = isDragging; // Salva o estado de arrasto
             isDown = false;
+            isDragging = false; // Reseta o estado de arrasto
             folderContainer.classList.remove('active-drag');
+            // Se não estava arrastando, permite que o evento de clique prossiga.
+            // Se estava, o clique já foi prevenido no 'mousemove'.
         });
 
         folderContainer.addEventListener('mousemove', (e) => {
             if (!isDown) return;
+            // Previne o comportamento padrão (como seleção de texto) apenas se o arrasto começar.
             const x = e.pageX - folderContainer.offsetLeft;
             const walk = x - startX;
 
             // Só começa a arrastar se o mouse se mover por mais de 5 pixels
             if (Math.abs(walk) > 5) {
-                e.preventDefault(); // Previne o clique apenas se estiver arrastando
+                e.preventDefault(); // CORRETO: Previne o padrão apenas quando o arrasto é confirmado.
                 isDragging = true;
                 folderContainer.scrollLeft = scrollLeft - walk * 2; // O multiplicador *2 aumenta a sensibilidade
             }
