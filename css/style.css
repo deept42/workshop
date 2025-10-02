@@ -121,17 +121,40 @@ html, body {
 }
 
 /* --- Estilos para a Contagem Regressiva --- */
-#countdown-timer {
+.countdown-wrapper {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-radius: 12px;
-    padding: 0.5rem 1.5rem;
+    padding: 0.75rem 1.5rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.18);
+    animation: pulse-glow 4s infinite ease-in-out;
+}
+
+.countdown-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #E63946;
+    margin-bottom: 0.5rem;
+}
+
+.countdown-subtitle {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    opacity: 0.8;
+    margin-top: 0.5rem;
+}
+
+#countdown-timer {
     display: flex;
     gap: 1.5rem;
     align-items: center;
+    justify-content: center;
 }
 
 .countdown-item {
@@ -154,6 +177,12 @@ html, body {
     letter-spacing: 0.05em;
 }
 
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), 0 0 10px rgba(230, 57, 70, 0); }
+    50% { box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3), 0 0 20px rgba(230, 57, 70, 0.4); }
+}
+
+
 /* --- Estilos para o Menu Mobile --- */
 #mobile-menu {
     display: none; /* Escondido por padrão */
@@ -174,7 +203,7 @@ html, body {
 
 /* Ajusta o contador para telas pequenas */
 @media (max-width: 480px) {
-    #countdown-timer { gap: 1rem; padding: 0.5rem 1rem; }
+    #countdown-timer { gap: 1rem; }
     .countdown-number { font-size: 1.5rem; }
     .countdown-label { font-size: 0.6rem; }
 }

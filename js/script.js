@@ -255,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 clearInterval(interval);
                 const container = document.getElementById('countdown-container');
                 if (container) {
-                    container.innerHTML = `<div class="glass-nav px-6 py-3 text-white font-bold text-lg">O evento começou!</div>`;
+                    container.innerHTML = `<div class="countdown-wrapper px-6 py-3 text-white font-bold text-lg">É HOJE! O EVENTO COMEÇOU!</div>`;
                 }
             }
         }, 1000);
