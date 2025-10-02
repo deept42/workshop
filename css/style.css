@@ -1,0 +1,208 @@
+/* Reset e configuração base para a experiência de tela cheia */
+html, body {
+    --total-panels: 5; /* Variável para controlar o número de painéis */
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* A MÁGICA ACONTECE AQUI: Esconde a barra de rolagem vertical */
+    font-family: 'Inter', sans-serif;
+    
+    /* Fundo gradiente para o efeito glassmorphism */
+    background: linear-gradient(135deg, #062E51, #0a477d);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+}
+
+/* Container principal que segura todos os painéis */
+#folder-container {
+    display: flex; /* Alinha os painéis lado a lado */
+    width: calc(100vw * var(--total-panels)); /* Largura calculada dinamicamente */
+    height: 100vh;
+    
+    /* Habilita a rolagem horizontal e desabilita a vertical */
+    overflow-x: scroll;
+    overflow-y: hidden;
+
+    /* Faz a rolagem "grudar" nos painéis (efeito de snapping) */
+    scroll-snap-type: x mandatory;
+    
+    /* Melhora a suavidade da rolagem via links. Essencial para o JS funcionar bem. */
+    scroll-behavior: smooth;
+}
+
+/* Estilo para cada painel/seção do folder */
+.folder-panel {
+    background-color: transparent; /* Garante que o fundo do body seja visível */
+    width: 100vw; /* Cada painel ocupa a largura inteira da tela */
+    height: 100vh; /* Cada painel ocupa a altura inteira da tela */
+    flex-shrink: 0; /* Impede que os painéis encolham */
+    
+    /* Centraliza o conteúdo dentro do painel */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* CORRIGIDO: typo 'align' para 'align-items' */
+
+    /* Define o ponto de "snap" da rolagem */
+    scroll-snap-align: start;
+
+    /* Permite rolagem vertical DENTRO do painel se o conteúdo for muito grande (em telas pequenas) */
+    overflow-y: auto;
+}
+
+/* Wrapper de conteúdo dentro de cada painel */
+.panel-content {
+    width: 100%;
+    max-width: 1024px; /* Padrão para desktop (lg) */
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;  /* Espaçamento para mobile */
+    padding-right: 1rem;
+}
+
+/* Estilo para a imagem de fundo do primeiro painel */
+.hero-bg {
+    background-image: linear-gradient(rgba(0, 20, 50, 0.8), rgba(0, 20, 50, 0.6)), url('https://placehold.co/1200x800/003366/FFFFFF?text=Litoral+do+Paran%C3%A1');
+    background-size: cover;
+    background-position: center;
+}
+
+/* Esconde a barra de rolagem do container para um visual mais limpo */
+#folder-container::-webkit-scrollbar {
+    display: none;
+}
+#folder-container {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Estilo para o cursor durante o arrasto do mouse */
+#folder-container.active-drag {
+    cursor: grabbing;
+    scroll-snap-type: none; /* Desativa o snap durante o arrasto para ser mais fluido */
+}
+
+/* --- Estilos de Glassmorphism --- */
+
+/* Estilo para a barra de navegação flutuante */
+.glass-nav {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px); /* Suporte para Safari */
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Animação para o fundo gradiente */
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+
+/* Estilo para o link de navegação ativo */
+.nav-links a.active-link {
+    color: #ffffff; /* Cor branca para o link ativo */
+    font-weight: 700; /* Deixa o texto em negrito */
+    position: relative; /* Necessário para o pseudo-elemento ::after */
+}
+
+/* Adiciona uma linha abaixo do link ativo */
+.nav-links a.active-link::after {
+    content: '•'; /* Usa um ponto como indicador */
+    position: absolute;
+    bottom: -12px; /* Posição do ponto abaixo do texto */
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.5rem;
+    color: #E63946; /* Vermelho para combinar com o botão */
+}
+
+/* --- Estilos para a Contagem Regressiva --- */
+#countdown-timer {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 0.5rem 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.countdown-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 40px; /* Garante espaçamento mínimo */
+}
+
+.countdown-number {
+    font-size: 2rem; /* 32px */
+    font-weight: 700;
+    line-height: 1;
+}
+
+.countdown-label {
+    font-size: 0.75rem; /* 12px */
+    text-transform: uppercase;
+    opacity: 0.8;
+    letter-spacing: 0.05em;
+}
+
+/* --- Estilos para o Menu Mobile --- */
+#mobile-menu {
+    display: none; /* Escondido por padrão */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+#mobile-menu.open {
+    display: flex; /* Mostra o menu */
+}
+
+/* --- Media Queries para Responsividade --- */
+
+/* Tablets e Desktops (md e acima) */
+@media (min-width: 768px) {
+    .panel-content { padding-left: 1.5rem; padding-right: 1.5rem; }
+}
+
+/* Ajusta o contador para telas pequenas */
+@media (max-width: 480px) {
+    #countdown-timer { gap: 1rem; padding: 0.5rem 1rem; }
+    .countdown-number { font-size: 1.5rem; }
+    .countdown-label { font-size: 0.6rem; }
+}
+
+/* --- Estilos para os logotipos de apoio --- */
+.logo-apoio {
+    height: 4.5rem; /* 72px */
+    max-width: 150px; /* Evita que logos muito largos ocupem espaço demais */
+    object-fit: contain; /* Garante que o logo não seja distorcido */
+}
+
+/* Telas Grandes (xl e acima) */
+@media (min-width: 1280px) {
+    .panel-content { max-width: 1280px; /* Aumenta a largura do conteúdo */ }
+}
+
+/* --- Estilos para Animação na Rolagem --- */
+
+/* Prepara os elementos para a animação (invisíveis por padrão) */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    transition-delay: var(--animation-delay, 0s); /* Usa a variável de delay ou 0s como padrão */
+}
+
+/* Classe que ativa a animação quando o elemento está visível */
+.animate-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
