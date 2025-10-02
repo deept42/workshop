@@ -235,6 +235,51 @@ html, body {
     display: flex; /* Mostra o menu */
 }
 
+/* --- Otimização para Mobile (até 767px) --- */
+@media (max-width: 767px) {
+    /* Remove a rolagem vertical e ajusta o padding */
+    .folder-panel {
+        overflow-y: hidden;
+    }
+    .panel-content {
+        padding-top: 4.5rem; /* Espaço para o contador não sobrepor */
+        padding-bottom: 4.5rem; /* Espaço para o menu não sobrepor */
+    }
+
+    /* Reduz drasticamente o tamanho dos títulos */
+    #inicio h1 {
+        font-size: clamp(1.5rem, 5vw, 2.25rem); /* Reduz o tamanho mínimo e máximo */
+        margin-bottom: 0.5rem;
+    }
+    .section-title {
+        font-size: clamp(1.4rem, 5vw, 2rem);
+        margin-bottom: 1rem;
+    }
+    #inicio p {
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Compacta o botão e a seção de logos */
+    .hero-content .animate-on-scroll[style*="--animation-delay: 0.2s;"] { /* Botão */
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+    .hero-content .animate-on-scroll[style*="--animation-delay: 0.3s;"] { /* Seção de logos */
+        margin-top: 1.5rem;
+    }
+    .logo-apoio {
+        height: 2.5rem; /* Reduz a altura dos logos */
+    }
+    .hero-logos {
+        gap-x: 1rem;
+        gap-y: 0.75rem;
+    }
+    #inicio .mt-16 {
+        display: none; /* Esconde a dica "Role para o lado" para ganhar espaço */
+    }
+}
+
 /* --- Media Queries para Responsividade --- */
 
 /* Tablets e Desktops (md e acima) */
@@ -249,9 +294,10 @@ html, body {
 
 /* Ajusta o contador para telas MUITO pequenas */
 @media (max-width: 375px) {
-    .countdown-wrapper { padding: 0.5rem 1rem; }
+    .countdown-wrapper { padding: 0.5rem 0.75rem; }
     #countdown-timer { gap: 0.75rem; }
     .countdown-number { font-size: 1.25rem; }
+    .countdown-title { font-size: 0.65rem; }
 }
 
 /* Ajusta o contador para telas pequenas */
