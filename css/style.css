@@ -161,39 +161,31 @@ html, body {
     transform: rotate(180deg); /* Gira o texto para ler de baixo para cima */
 }
 
-/* --- Estilos para a Contagem Regressiva --- */
-.countdown-wrapper {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 12px;
-    padding: 0.75rem 1.5rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    animation: pulse-glow 4s infinite ease-in-out;
+/* --- Estilos para a Barra de Topo Fixa --- */
+#top-bar {
+    background-color: #E63946; /* Vermelho para criar urgência */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    padding: 0.25rem 1rem;
 }
 
-.countdown-title {
-    font-size: 0.8rem;
+.top-bar-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.top-bar-title, .top-bar-subtitle {
+    font-size: 0.9rem;
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #E63946;
-    margin-bottom: 0.5rem;
-}
-
-.countdown-subtitle {
-    font-size: 0.7rem;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    opacity: 0.8;
-    margin-top: 0.5rem;
+    display: none; /* Escondido por padrão, aparece em telas maiores */
 }
 
 #countdown-timer {
     display: flex;
-    gap: 1.5rem;
+    gap: 1rem;
     align-items: center;
     justify-content: center;
 }
@@ -202,7 +194,7 @@ html, body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-width: 40px; /* Garante espaçamento mínimo */
+    min-width: 35px;
 }
 
 .countdown-number {
@@ -212,15 +204,9 @@ html, body {
 }
 
 .countdown-label {
-    font-size: 0.75rem; /* 12px */
+    font-size: 0.6rem; /* 10px */
     text-transform: uppercase;
     opacity: 0.8;
-    letter-spacing: 0.05em;
-}
-
-@keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), 0 0 10px rgba(230, 57, 70, 0); }
-    50% { box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3), 0 0 20px rgba(230, 57, 70, 0.4); }
 }
 
 
@@ -242,8 +228,8 @@ html, body {
         overflow-y: hidden;
     }
     .panel-content {
-        padding-top: 4.5rem; /* Espaço para o contador não sobrepor */
-        padding-bottom: 4.5rem; /* Espaço para o menu não sobrepor */
+        padding-top: 3.5rem; /* Espaço para a barra de topo não sobrepor */
+        padding-bottom: 5rem; /* Espaço para o menu não sobrepor */
     }
 
     /* Reduz drasticamente o tamanho dos títulos */
@@ -286,25 +272,16 @@ html, body {
 @media (min-width: 768px) {
     .panel-content { padding-left: 1.5rem; padding-right: 1.5rem; }
 }
+
+/* Mostra os textos da barra de topo em telas maiores */
+@media (min-width: 1024px) {
+    .top-bar-title, .top-bar-subtitle { display: block; }
+    .side-nav-btn { display: flex; }
+}
+
 /* Esconde os botões laterais em telas de tablet e mobile */
 @media (max-width: 1024px) {
     .side-nav-btn { display: none; }
-}
-
-
-/* Ajusta o contador para telas MUITO pequenas */
-@media (max-width: 375px) {
-    .countdown-wrapper { padding: 0.5rem 0.75rem; }
-    #countdown-timer { gap: 0.75rem; }
-    .countdown-number { font-size: 1.25rem; }
-    .countdown-title { font-size: 0.65rem; }
-}
-
-/* Ajusta o contador para telas pequenas */
-@media (max-width: 480px) {
-    #countdown-timer { gap: 1rem; }
-    .countdown-number { font-size: 1.5rem; }
-    .countdown-label { font-size: 0.6rem; }
 }
 
 /* --- Estilos para os logotipos de apoio --- */

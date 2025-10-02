@@ -13,12 +13,12 @@
 </head>
 <body>
 
-    <!-- Contagem Regressiva Flutuante -->
-    <div id="countdown-container" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-md">
-        <div class="countdown-wrapper text-white text-center">
-            <h2 class="countdown-title">EVENTO IMPERDÍVEL</h2>
+    <!-- Barra de Topo Fixa com Contagem Regressiva -->
+    <div id="top-bar" class="fixed top-0 left-0 w-full z-50">
+        <div class="top-bar-content text-white text-center">
+            <h2 class="top-bar-title">EVENTO IMPERDÍVEL</h2>
             <div id="countdown-timer"></div>
-            <p class="countdown-subtitle">Vagas se esgotando!</p>
+            <p class="top-bar-subtitle">Vagas se esgotando!</p>
         </div>
     </div>
 
@@ -141,7 +141,7 @@
             <!-- Logo visível apenas em telas maiores (corrigido para branco) -->
             <div class="hidden md:block text-lg xl:text-xl font-bold text-white">Cidades Resilientes PR</div>
             <!-- Links de navegação para Desktop -->
-            <div class="hidden md:flex flex-grow justify-center items-center space-x-4 sm:space-x-6 nav-links">
+            <div class="hidden md:flex justify-center items-center space-x-4 sm:space-x-6 nav-links">
                 <a href="#inicio" class="text-gray-200 hover:text-white transition duration-300">Início</a>
                 <a href="#sobre" class="text-gray-200 hover:text-white transition duration-300">Sobre</a>
                 <a href="#programacao" class="text-gray-200 hover:text-white transition duration-300">Programação</a>
@@ -149,8 +149,9 @@
             </div>
             <!-- Botão Hambúrguer para Mobile -->
             <div class="md:hidden flex-grow">
-                <button id="hamburger-btn" class="text-white focus:outline-none">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                <button id="hamburger-btn" class="text-white focus:outline-none flex items-center gap-2">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    <span class="font-semibold text-sm uppercase tracking-wider">Menu</span>
                 </button>
             </div>
             <!-- Botão de Inscrição -->
