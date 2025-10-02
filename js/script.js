@@ -93,118 +93,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 5. FUNÇÃO PARA ROLAGEM COM ARRASTO DO MOUSE ---
-    // Simula o comportamento de "arrastar para rolar" de telas de toque.
-    function setupDragToScroll() {
-        let isDown = false;
-        let startX;
-        let scrollLeft;
+    // --- 5. FUNÇÃO PARA OS BOTÕES DE NAVEGAÇÃO LATERAL ---
+    function setupSideNavButtons() {
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
 
-        folderContainer.addEventListener('mousedown', (e) => {
-            isDown = true;
-            isDragging = false; // Reseta o estado de arrasto a cada clique
-            folderContainer.classList.add('active-drag'); // Adiciona classe para feedback visual (cursor)
-            startX = e.pageX - folderContainer.offsetLeft;
-            scrollLeft = folderContainer.scrollLeft;
+        if (!prevBtn || !nextBtn) return;
+
+        prevBtn.addEventListener('click', () => {
+            folderContainer.scrollBy({ left: -window.innerWidth, behavior: 'smooth' });
         });
 
-        folderContainer.addEventListener('mouseleave', () => {
-            if (!isDown) return;
-            isDown = false;
-            folderContainer.classList.remove('active-drag');
-        });
-
-        folderContainer.addEventListener('mouseup', () => {
-            if (!isDown) return;
-            const wasDragging = isDragging; // Salva o estado de arrasto
-            isDown = false;
-            isDragging = false; // Reseta o estado de arrasto
-            folderContainer.classList.remove('active-drag');
-            // Se não estava arrastando, permite que o evento de clique prossiga.
-            // Se estava, o clique já foi prevenido no 'mousemove'.
-        });
-
-        folderContainer.addEventListener('mousemove', (e) => {
-            if (!isDown) return;
-            // Previne o comportamento padrão (como seleção de texto) apenas se o arrasto começar.
-            const x = e.pageX - folderContainer.offsetLeft;
-            const walk = x - startX;
-
-            // Só começa a arrastar se o mouse se mover por mais de 5 pixels
-            if (Math.abs(walk) > 5) {
-                e.preventDefault(); // CORRETO: Previne o padrão apenas quando o arrasto é confirmado.
-                isDragging = true;
-                folderContainer.scrollLeft = scrollLeft - walk * 2; // O multiplicador *2 aumenta a sensibilidade
-            }
+        nextBtn.addEventListener('click', () => {
+            folderContainer.scrollBy({ left: window.innerWidth, behavior: 'smooth' });
         });
     }
 
-    // --- 6. FUNÇÃO PARA NAVEGAÇÃO POR CLIQUE NAS LATERAIS ---
-    // Permite clicar nos lados da tela para navegar entre os painéis.
-    function setupSideClickNavigation() {
-        folderContainer.addEventListener('click', (event) => {
-            // Ignora o clique se o usuário estava arrastando ou clicou em um elemento interativo.
-            if (isDragging || event.target.closest('a, button, input, select, form')) {
-                return;
-            }
-
-            const screenWidth = window.innerWidth;
-            const clickX = event.clientX;
-            
-            // CORREÇÃO: Define as áreas de clique para 20% em cada lado, igual ao cursor.
-            const leftClickArea = screenWidth * 0.20;
-            const rightClickArea = screenWidth * 0.80;
-
-            const panelWidth = window.innerWidth;
-
-            if (clickX < leftClickArea) {
-                // Clicou na área esquerda
-                folderContainer.scrollBy({ left: -panelWidth, behavior: 'smooth' });
-            } else if (clickX > rightClickArea) {
-                // Clicou na área direita
-                folderContainer.scrollBy({ left: panelWidth, behavior: 'smooth' });
-            }
-        });
-    }
-
-    // --- 7. FUNÇÃO PARA CURSOR DINÂMICO NAS LATERAIS ---
-    // Muda o cursor para uma seta apenas nas bordas da tela.
-    function setupDynamicCursor() {
-        // SVGs para as setas (preta e branca)
-        const arrowRightBlack = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>') 16 16, auto`; // 4.
-        const arrowLeftBlack = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>') 16 16, auto`; // 5.
-        const arrowRightWhite = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>') 16 16, auto`; // 6.
-        const arrowLeftWhite = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>') 16 16, auto`; // 7.
-
-        folderContainer.addEventListener('mousemove', (event) => {
-            // Se o mouse estiver sobre um elemento interativo, usa o cursor padrão dele.
-            if (event.target.closest('a, button, input, select, form')) {
-                folderContainer.style.cursor = 'auto';
-                return;
-            }
-
-            const screenWidth = window.innerWidth;
-            const mouseX = event.clientX;
-
-            // Define as áreas de ativação do cursor (20% em cada lado)
-            const leftZone = screenWidth * 0.20;
-            const rightZone = screenWidth * 0.80;
-
-            // Verifica se o painel atual tem fundo escuro (pela classe .hero-bg)
-            const isDarkBg = event.target.closest('.hero-bg');
-
-            if (mouseX < leftZone) {
-                folderContainer.style.cursor = isDarkBg ? arrowLeftWhite : arrowLeftBlack;
-            } else if (mouseX > rightZone) {
-                folderContainer.style.cursor = isDarkBg ? arrowRightWhite : arrowRightBlack;
-            } else {
-                // No meio da tela, o cursor volta ao normal
-                folderContainer.style.cursor = 'auto';
-            }
-        });
-    }
-
-    // --- 8. FUNÇÃO PARA O MENU HAMBÚRGUER ---
+    // --- 6. FUNÇÃO PARA O MENU HAMBÚRGUER ---
     // Controla a abertura e fechamento do menu em telas pequenas.
     function setupMobileMenu() {
         const hamburgerBtn = document.getElementById('hamburger-btn');
@@ -228,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 9. FUNÇÃO PARA CONTAGEM REGRESSIVA ---
+    // --- 7. FUNÇÃO PARA CONTAGEM REGRESSIVA ---
     // Mostra um contador até a data do evento.
     function setupCountdown() {
         const countdownElement = document.getElementById('countdown-timer');
@@ -273,9 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setupSmoothScrolling();
         updateActiveNavLink();
         setupKeyboardNavigation();
-        setupDragToScroll();
-        setupSideClickNavigation();
-        setupDynamicCursor();
+        setupSideNavButtons();
         setupMobileMenu();
         setupCountdown();
     }

@@ -9,7 +9,7 @@ html, body {
     font-family: 'Inter', sans-serif;
     
     /* Fundo gradiente para o efeito glassmorphism */
-    background: linear-gradient(135deg, #062E51, #0a477d);
+    background: radial-gradient(ellipse at center, #062E51 0%, #001B3E 100%);
     background-size: 400% 400%;
     animation: gradientBG 15s ease infinite;
 }
@@ -56,8 +56,7 @@ html, body {
     max-width: 1024px; /* Padrão para desktop (lg) */
     margin-left: auto;
     margin-right: auto;
-    padding-left: 1rem;  /* Espaçamento para mobile */
-    padding-right: 1rem;
+    padding: 2rem 1rem; /* Adiciona espaçamento vertical e horizontal */
 }
 
 /* Estilo para a imagem de fundo do primeiro painel */
@@ -67,6 +66,20 @@ html, body {
     background-position: center;
 }
 
+/* --- Tipografia Fluida --- */
+
+/* Título principal no painel Hero */
+#inicio h1 {
+    /* Escala de 36px em 375px de tela até 60px em 1536px */
+    font-size: clamp(2.25rem, 1.5rem + 3.2vw, 3.75rem);
+}
+
+/* Títulos das outras seções */
+.section-title {
+    /* Escala de 30px em 375px de tela até 48px em 1536px */
+    font-size: clamp(1.875rem, 1.3rem + 2.56vw, 3rem);
+}
+
 /* Esconde a barra de rolagem do container para um visual mais limpo */
 #folder-container::-webkit-scrollbar {
     display: none;
@@ -74,12 +87,6 @@ html, body {
 #folder-container {
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
-
-/* Estilo para o cursor durante o arrasto do mouse */
-#folder-container.active-drag {
-    cursor: grabbing;
-    scroll-snap-type: none; /* Desativa o snap durante o arrasto para ser mais fluido */
 }
 
 /* --- Estilos de Glassmorphism --- */
@@ -118,6 +125,40 @@ html, body {
     transform: translateX(-50%);
     font-size: 1.5rem;
     color: #E63946; /* Vermelho para combinar com o botão */
+}
+
+/* --- Estilos para os Botões de Navegação Lateral --- */
+.side-nav-btn {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 60px; /* Largura da área de hover */
+    z-index: 40; /* Abaixo dos menus e countdown */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(6, 46, 81, 0.7); /* Azul escuro semi-transparente */
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+}
+
+.side-nav-btn:hover {
+    opacity: 1;
+}
+
+.side-nav-btn.left-0 { left: 0; }
+.side-nav-btn.right-0 { right: 0; }
+
+.vertical-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg); /* Gira o texto para ler de baixo para cima */
 }
 
 /* --- Estilos para a Contagem Regressiva --- */
@@ -200,6 +241,18 @@ html, body {
 @media (min-width: 768px) {
     .panel-content { padding-left: 1.5rem; padding-right: 1.5rem; }
 }
+/* Esconde os botões laterais em telas de tablet e mobile */
+@media (max-width: 1024px) {
+    .side-nav-btn { display: none; }
+}
+
+
+/* Ajusta o contador para telas MUITO pequenas */
+@media (max-width: 375px) {
+    .countdown-wrapper { padding: 0.5rem 1rem; }
+    #countdown-timer { gap: 0.75rem; }
+    .countdown-number { font-size: 1.25rem; }
+}
 
 /* Ajusta o contador para telas pequenas */
 @media (max-width: 480px) {
@@ -213,11 +266,24 @@ html, body {
     height: 4.5rem; /* 72px */
     max-width: 150px; /* Evita que logos muito largos ocupem espaço demais */
     object-fit: contain; /* Garante que o logo não seja distorcido */
+    justify-self: center; /* Centraliza o logo em sua célula do grid */
+}
+
+/* Filtro para deixar os logos brancos no painel inicial */
+.hero-logos .logo-apoio {
+    filter: brightness(0) invert(1);
+    opacity: 0.8;
 }
 
 /* Telas Grandes (xl e acima) */
 @media (min-width: 1280px) {
     .panel-content { max-width: 1280px; /* Aumenta a largura do conteúdo */ }
+}
+/* Telas Ultra-Largas (2xl e acima) */
+@media (min-width: 1536px) {
+    .panel-content { max-width: 1440px; }
+    #inicio h1 { font-size: 4.25rem; } /* Trava o tamanho máximo em 4k */
+    .section-title { font-size: 3.5rem; }
 }
 
 /* --- Estilos para Animação na Rolagem --- */
