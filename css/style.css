@@ -1,34 +1,26 @@
 /* Reset e configuração base para a experiência de tela cheia */
-html, body {
-    --total-panels: 5; /* Variável para controlar o número de painéis */
+html {
+    scroll-behavior: auto; /* 'smooth' pode interferir com o snap instantâneo */
+}
+body {
     margin: 0;
     padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden; /* A MÁGICA ACONTECE AQUI: Esconde a barra de rolagem vertical */
+    overflow-x: hidden; /* Esconde a rolagem horizontal */
     font-family: 'Inter', sans-serif;
     
     /* Fundo gradiente para o efeito glassmorphism */
-    background: radial-gradient(ellipse at center, #062E51 0%, #001B3E 100%);
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
+    background-color: #000000; /* Fundo base preto */    
 }
 
 /* Container principal que segura todos os painéis */
 #folder-container {
-    display: flex; /* Alinha os painéis lado a lado */
-    width: calc(100vw * var(--total-panels)); /* Largura calculada dinamicamente */
-    height: 100vh;
-    
-    /* Habilita a rolagem horizontal e desabilita a vertical */
-    overflow-x: scroll;
-    overflow-y: hidden;
+    display: block; /* Painéis um abaixo do outro */
+    width: 100%;
+    height: auto;
 
     /* Faz a rolagem "grudar" nos painéis (efeito de snapping) */
-    scroll-snap-type: x mandatory;
-    
-    /* Melhora a suavidade da rolagem via links. Essencial para o JS funcionar bem. */
-    scroll-behavior: smooth;
+    scroll-snap-type: y mandatory;
+    overflow-y: scroll;
 }
 
 /* Estilo para cada painel/seção do folder */
@@ -41,13 +33,14 @@ html, body {
     /* Centraliza o conteúdo dentro do painel */
     display: flex;
     justify-content: center;
-    align-items: center; /* CORRIGIDO: typo 'align' para 'align-items' */
+    align-items: center;
 
     /* Define o ponto de "snap" da rolagem */
     scroll-snap-align: start;
 
     /* Permite rolagem vertical DENTRO do painel se o conteúdo for muito grande (em telas pequenas) */
     overflow-y: auto;
+    position: relative; /* Necessário para posicionar os indicadores de rolagem */
 }
 
 /* Wrapper de conteúdo dentro de cada painel */
@@ -59,11 +52,49 @@ html, body {
     padding: 2rem 1rem; /* Adiciona espaçamento vertical e horizontal */
 }
 
-/* Estilo para a imagem de fundo do primeiro painel */
-.hero-bg {
-    background-image: linear-gradient(rgba(0, 20, 50, 0.8), rgba(0, 20, 50, 0.6)), url('https://placehold.co/1200x800/003366/FFFFFF?text=Litoral+do+Paran%C3%A1');
+/* --- Estilos de Fundo por Seção --- */
+
+/* Painel 1: Vídeo de Fundo */
+.video-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+}
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 20, 50, 0.7);
+    z-index: 1;
+}
+.video-background video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Fundos para as outras seções com sobreposição para legibilidade */
+.folder-panel {
     background-size: cover;
     background-position: center;
+}
+#sobre {
+    background-image: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('https://images.pexels.com/photos/220724/pexels-photo-220724.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+}
+#programacao {
+    background-image: linear-gradient(rgba(230, 240, 255, 0.95), rgba(230, 240, 255, 0.95)), url('https://images.pexels.com/photos/7988086/pexels-photo-7988086.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+}
+#palestrantes {
+    background-image: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+}
+#inscricao {
+    background-image: linear-gradient(rgba(240, 242, 245, 0.95), rgba(240, 242, 245, 0.95)), url('https://images.pexels.com/photos/1595385/pexels-photo-1595385.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
 }
 
 /* --- Tipografia Fluida --- */
@@ -80,15 +111,6 @@ html, body {
     font-size: clamp(1.875rem, 1.3rem + 2.56vw, 3rem);
 }
 
-/* Esconde a barra de rolagem do container para um visual mais limpo */
-#folder-container::-webkit-scrollbar {
-    display: none;
-}
-#folder-container {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
 /* --- Estilos de Glassmorphism --- */
 
 /* Estilo para a barra de navegação flutuante */
@@ -101,59 +123,65 @@ html, body {
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
 }
 
-/* Animação para o fundo gradiente */
-@keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+/* --- Estilos para a Navegação Lateral (Timeline) --- */
+.nav-links {
+    position: relative;
 }
-
 
 /* Estilo para o link de navegação ativo */
 .nav-links a.active-link {
     color: #ffffff; /* Cor branca para o link ativo */
-    font-weight: 700; /* Deixa o texto em negrito */
-    position: relative; /* Necessário para o pseudo-elemento ::after */
+    font-weight: 700;
 }
 
-/* Adiciona uma linha abaixo do link ativo */
-.nav-links a.active-link::after {
-    content: '•'; /* Usa um ponto como indicador */
+/* Efeito de "botão aceso" para o link ativo */
+.nav-links a.active-link::before {
+    background-color: #E63946; /* Fundo vermelho sólido */
+    border-color: #E63946;
+    border-bottom: none; /* Remove a borda inferior para fundir com o próximo item */
+}
+
+/* Os "pontos" da timeline */
+.nav-links a {
+    position: relative;
+    padding: 0.6rem 1.5rem; /* Ajusta o padding para um visual mais compacto */
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.nav-links a::before {
+    content: '';
     position: absolute;
-    bottom: -12px; /* Posição do ponto abaixo do texto */
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1.5rem;
-    color: #E63946; /* Vermelho para combinar com o botão */
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Linha separadora */
+    transition: all 0.3s ease;
+    z-index: -1;
+}
+
+/* Arredonda os cantos do primeiro e último item para criar um bloco único */
+.nav-links a:first-child::before {
+    border-radius: 8px 8px 0 0;
+}
+
+.nav-links a:last-child::before {
+    border-radius: 0 0 8px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Garante que o último item tenha borda */
+}
+
+.nav-links a:hover::before {
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 /* --- Estilos para os Botões de Navegação Lateral --- */
 .side-nav-btn {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    width: 60px; /* Largura da área de hover */
-    z-index: 40; /* Abaixo dos menus e countdown */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(6, 46, 81, 0.7); /* Azul escuro semi-transparente */
-    border: none;
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-    color: white;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
+    display: none; /* Botões laterais não são necessários no scroll vertical */
 }
-
-.side-nav-btn:hover {
-    opacity: 1;
-}
-
-.side-nav-btn.left-0 { left: 0; }
-.side-nav-btn.right-0 { right: 0; }
 
 .vertical-text {
     writing-mode: vertical-rl;
@@ -166,6 +194,20 @@ html, body {
     background-color: #E63946; /* Vermelho para criar urgência */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     padding: 0.25rem 1rem;
+}
+
+/* --- Estilos para a Barra de Progresso --- */
+#progress-bar-container {
+    width: 100%;
+    height: 4px; /* Altura da barra */
+    background-color: rgba(255, 255, 255, 0.2); /* Fundo da barra */
+}
+
+#progress-bar {
+    height: 100%;
+    width: 0; /* Começa com 0, será atualizado via JS */
+    background-color: currentColor; /* Herda a cor do pai (#top-bar) para consistência */
+    transition: width 0.1s linear; /* Transição suave */
 }
 
 .top-bar-content {
@@ -225,10 +267,10 @@ html, body {
 @media (max-width: 767px) {
     /* Remove a rolagem vertical e ajusta o padding */
     .folder-panel {
-        overflow-y: hidden;
+        overflow-y: auto; /* PERMITE a rolagem vertical novamente */
     }
     .panel-content {
-        padding-top: 3.5rem; /* Espaço para a barra de topo não sobrepor */
+        padding-top: 5rem; /* Espaço para a barra de topo não sobrepor */
         padding-bottom: 5rem; /* Espaço para o menu não sobrepor */
     }
 
@@ -247,11 +289,11 @@ html, body {
     }
 
     /* Compacta o botão e a seção de logos */
-    .hero-content .animate-on-scroll[style*="--animation-delay: 0.2s;"] { /* Botão */
+    .hero-button {
         padding: 0.75rem 1.5rem;
         font-size: 1rem;
     }
-    .hero-content .animate-on-scroll[style*="--animation-delay: 0.3s;"] { /* Seção de logos */
+    .hero-logos-container {
         margin-top: 1.5rem;
     }
     .logo-apoio {
@@ -263,6 +305,31 @@ html, body {
     }
     #inicio .mt-16 {
         display: none; /* Esconde a dica "Role para o lado" para ganhar espaço */
+    }
+
+    /* Ajusta o painel "Sobre" */
+    #sobre .panel-content {
+        gap: 1rem; /* Reduz o espaço entre a imagem e o texto */
+    }
+
+    /* Ajusta o painel "Programação" */
+    #programacao .grid {
+        gap: 1rem; /* Reduz o espaço entre os cards */
+    }
+    #programacao .section-title {
+        margin-bottom: 1.5rem; /* Reduz a margem abaixo do título */
+    }
+
+    /* Ajusta o painel "Palestrantes" */
+    #palestrantes .grid {
+        gap: 2rem; /* Reduz o espaço entre os palestrantes */
+    }
+    #palestrantes .section-title {
+        margin-bottom: 2rem; /* Reduz a margem abaixo do título */
+    }
+    #palestrantes img {
+        width: 7rem; /* 112px - Reduz o tamanho da foto */
+        height: 7rem; /* 112px */
     }
 }
 
@@ -276,20 +343,89 @@ html, body {
 /* Mostra os textos da barra de topo em telas maiores */
 @media (min-width: 1024px) {
     .top-bar-title, .top-bar-subtitle { display: block; }
-    .side-nav-btn { display: flex; }
 }
 
-/* Esconde os botões laterais em telas de tablet e mobile */
-@media (max-width: 1024px) {
-    .side-nav-btn { display: none; }
+/* --- Estilos para Indicadores de Rolagem --- */
+.scroll-indicator-container {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    z-index: 10;
+}
+
+.scroll-indicator {
+    color: white;
+    background-color: rgba(6, 46, 81, 0.5);
+    border-radius: 50px; /* Formato de pílula */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1.25rem; /* Espaçamento interno */
+    gap: 0.5rem; /* Espaço entre o ícone e o texto */
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+}
+
+.indicator-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.scroll-indicator:hover {
+    background-color: #E63946;
+    transform: scale(1.1);
+    animation-play-state: paused;
+}
+
+/* Esconde a seta para cima no primeiro painel e para baixo no último */
+.folder-panel:first-of-type .scroll-indicator.up { display: none; }
+.folder-panel:last-of-type .scroll-indicator.down { display: none; }
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.7;
+    }
+}
+
+@media (max-width: 1023px) {
+    .scroll-indicator-container { display: none; }
+}
+
+/* --- Estilo para o botão Voltar ao Topo --- */
+.back-to-top-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    background-color: #062E51;
+    color: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.back-to-top-icon:hover {
+    background-color: #001B3E;
+    transform: translateY(-4px);
 }
 
 /* --- Estilos para os logotipos de apoio --- */
 .logo-apoio {
-    height: 4.5rem; /* 72px */
+    max-height: 3rem; /* 48px - Reduz a altura para melhorar a qualidade percebida */
     max-width: 150px; /* Evita que logos muito largos ocupem espaço demais */
     object-fit: contain; /* Garante que o logo não seja distorcido */
     justify-self: center; /* Centraliza o logo em sua célula do grid */
+    mix-blend-mode: multiply; /* Remove o fundo branco das imagens de logo */
 }
 
 /* Filtro para deixar os logos brancos no painel inicial */
@@ -323,4 +459,60 @@ html, body {
 .animate-on-scroll.is-visible {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* --- Estilos para o Formulário --- */
+.form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #D1D5DB; /* cinza-300 do Tailwind */
+    border-radius: 0.5rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-input:focus {
+    outline: none;
+    border-color: #062E51;
+    box-shadow: 0 0 0 3px rgba(6, 46, 81, 0.2);
+}
+
+/* --- Estilos para o Autocomplete do Formulário --- */
+.autocomplete-suggestions {
+    position: absolute;
+    border: 1px solid #D1D5DB;
+    border-top: none;
+    border-radius: 0 0 0.5rem 0.5rem;
+    background-color: white;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.suggestion-item {
+    padding: 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.suggestion-item:hover {
+    background-color: #F3F4F6; /* cinza-100 do Tailwind */
+}
+
+.suggestion-item.highlighted {
+    background-color: #E5E7EB; /* cinza-200 do Tailwind */
+}
+
+/* --- Esconde a Barra de Rolagem Principal --- */
+/* Mantém a funcionalidade de rolagem, mas esconde a barra visualmente */
+
+/* Para navegadores WebKit (Chrome, Safari, Edge, etc.) */
+#folder-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Para Firefox e navegadores modernos */
+#folder-container {
+  -ms-overflow-style: none;  /* IE e Edge */
+  scrollbar-width: none;  /* Firefox */
 }

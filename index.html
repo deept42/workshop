@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workshop: Cidades Mais Resilientes em Desastres - Litoral do Paraná</title>
+    <title>Workshop: Cidades Resilientes - Litoral do Paraná</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,43 +20,45 @@
             <div id="countdown-timer"></div>
             <p class="top-bar-subtitle">Vagas se esgotando!</p>
         </div>
+        <!-- Barra de Progresso de Rolagem -->
+        <div id="progress-bar-container">
+            <div id="progress-bar"></div>
+        </div>
     </div>
-
-    <!-- Botões de Navegação Lateral -->
-    <button id="prev-btn" class="side-nav-btn left-0">
-        <span class="vertical-text">ANTERIOR</span>
-    </button>
-    <button id="next-btn" class="side-nav-btn right-0">
-        <span class="vertical-text">PRÓXIMO</span>
-    </button>
 
 
     <!-- Container do Folder com Rolagem Horizontal -->
     <main id="folder-container">
 
         <!-- Painel 1: Início (Hero) -->
-        <section id="inicio" class="folder-panel hero-bg text-white">
+        <section id="inicio" class="folder-panel text-white">
+            <div class="video-background">
+                <div class="video-overlay"></div>
+                <video src="https://videos.pexels.com/video-files/2750378/2750378-hd_1280_720_24fps.mp4" autoplay loop muted playsinline></video>
+            </div>
             <div class="panel-content text-center">
-                <div class="hero-content">
+                <div class="hero-content relative">
                     <h1 class="animate-on-scroll font-extrabold leading-tight mb-4" style="--animation-delay: 0s;">Workshop: Cidades Mais Resilientes em Desastres</h1>
-                <p class="animate-on-scroll text-lg md:text-xl font-light mb-8 max-w-3xl mx-auto" style="--animation-delay: 0.1s;">Capacitando gestores e comunidades do Litoral do Paraná para um futuro mais seguro.</p>
-                <a href="#inscricao" class="animate-on-scroll bg-[#E63946] hover:bg-[#c9323d] text-white font-bold py-4 px-8 rounded-lg text-lg transition duration-300" style="--animation-delay: 0.2s;">Garanta sua Vaga</a>
+                <p class="animate-on-scroll text-lg md:text-xl font-light mb-8 max-w-3xl mx-auto" style="--animation-delay: 0.1s;">Capacitando gestores e comunidades do Litoral do Paraná para um futuro mais seguro.</p> 
+                <a href="#inscricao" class="hero-button animate-on-scroll bg-[#E63946] hover:bg-[#c9323d] text-white font-bold py-4 px-8 rounded-lg text-lg transition duration-300" style="--animation-delay: 0.2s;">Garanta sua Vaga</a>
                 
-                <div class="animate-on-scroll mt-12" style="--animation-delay: 0.3s;">
+                <div class="hero-logos-container animate-on-scroll mt-12" style="--animation-delay: 0.3s;">
                     <p class="text-sm uppercase tracking-widest mb-4 opacity-70">Realização e Apoio</p>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-8 gap-y-6 items-center hero-logos">
-                        <img src="https://www.defesacivil.pr.gov.br/sites/defesa-civil/arquivos_restritos/files/imagem/2022-08/logo-gov-cepdec.png" alt="Logo Defesa Civil Paraná" class="logo-apoio">
-                        <img src="https://www.bombeiros.pr.gov.br/sites/bombeiros/arquivos_restritos/files/imagem/2022-04/CBM_PR_-_Bras%C3%A3o_Colorido.png" alt="Logo Corpo de Bombeiros Militar Paraná" class="logo-apoio">
-                        <img src="https://www.portosdoparana.pr.gov.br/sites/portos-do-parana/themes/background/img/logo-portos-do-parana.png" alt="Logo Portos do Paraná" class="logo-apoio">
-                        <img src="https://pamlitoral.com.br/wp-content/uploads/2022/03/logo-pam-litoral.png" alt="Logo PAM Plano de Ajuda Mútua" class="logo-apoio">
-                        <img src="https://www.portosdoparana.pr.gov.br/sites/portos-do-parana/themes/background/img/logo-portos-do-parana.png" alt="Logo Maximizados" class="logo-apoio">
+                    <div class="grid grid-cols-3 md:grid-cols-5 gap-x-8 gap-y-6 items-center hero-logos">
+                        <img src="https://www.defesacivil.pr.gov.br/sites/defesa-civil/arquivos_restritos/files/imagem/2019-05/1769_Defesa_Civil__PR.PNG" alt="Logo Defesa Civil Paraná" class="logo-apoio">
+                        <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo Corpo de Bombeiros Militar Paraná" class="logo-apoio">
+                        <img src="https://web.celepar.pr.gov.br/drupal/images/seil/portos/logo_portos_300x86.png" alt="Logo Portos do Paraná" class="logo-apoio">
+                        <img src="https://portal.isulpar.edu.br/wp-content/uploads/2024/10/logo-texto-1024x378.png" alt="Logo ISULPAR" class="logo-apoio">
+                        <img src="https://maximizados.com.br/_next/image?url=%2Fimages%2FLogo.png&w=128&q=75" alt="Logo Maximizados" class="logo-apoio">
                     </div>
                 </div>
                 </div>
-
-                <div class="mt-16 animate-bounce text-sm font-bold">
-                    Role para o lado para explorar
-                    <svg class="w-6 h-6 inline-block ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                <!-- Indicador de Rolagem para Baixo -->
+                <div class="scroll-indicator-container">
+                    <a href="#sobre" class="scroll-indicator down" aria-label="Rolar para a próxima seção">
+                        <span class="indicator-label">Sobre</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+                    </a>
                 </div>
             </div>
         </section>
@@ -70,11 +72,22 @@
                     <p class="text-gray-700 mb-4">O Litoral do Paraná enfrenta riscos crescentes de desastres. Este workshop é uma iniciativa crucial para fortalecer a capacidade de nossos municípios em prevenir, mitigar e responder a esses eventos.</p>
                     <p class="text-gray-700 font-medium">Vamos unir forças para transformar planejamento em ações práticas que salvam vidas e protegem nosso patrimônio.</p>
                 </div>
+                <!-- Indicadores de Rolagem -->
+                <div class="scroll-indicator-container">
+                    <a href="#inicio" class="scroll-indicator up" aria-label="Rolar para a seção anterior">
+                        <span class="indicator-label">Início</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+                    </a>
+                    <a href="#programacao" class="scroll-indicator down" aria-label="Rolar para a próxima seção">
+                        <span class="indicator-label">Programação</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+                    </a>
+                </div>
             </div>
         </section>
 
         <!-- Painel 3: Programação -->
-        <section id="programacao" class="folder-panel bg-blue-50">
+        <section id="programacao" class="folder-panel">
             <div class="panel-content text-center text-[#062E51]">
                  <h2 class="animate-on-scroll section-title font-bold mb-10" style="--animation-delay: 0s;">Programação do Evento</h2>
                  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -85,6 +98,17 @@
                     <div class="animate-on-scroll bg-white p-6 rounded-lg shadow-lg text-left" style="--animation-delay: 0.5s;"><h3 class="text-xl font-bold mb-2">Adaptação Climática</h3><p class="text-gray-600">Infraestrutura e planejamento para novos cenários.</p></div>
                     <div class="animate-on-scroll bg-white p-6 rounded-lg shadow-lg text-left" style="--animation-delay: 0.6s;"><h3 class="text-xl font-bold mb-2">Captação de Recursos</h3><p class="text-gray-600">Fontes de financiamento para projetos de resiliência.</p></div>
                  </div>
+                 <!-- Indicadores de Rolagem -->
+                <div class="scroll-indicator-container">
+                    <a href="#sobre" class="scroll-indicator up" aria-label="Rolar para a seção anterior">
+                        <span class="indicator-label">Sobre</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+                    </a>
+                    <a href="#palestrantes" class="scroll-indicator down" aria-label="Rolar para a próxima seção">
+                        <span class="indicator-label">Palestrantes</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+                    </a>
+                </div>
             </div>
         </section>
 
@@ -97,20 +121,43 @@
                     <div class="animate-on-scroll text-center" style="--animation-delay: 0.2s;"><img src="https://placehold.co/200x200/F97316/FFFFFF?text=Cap.+Ana" alt="Foto da Capitã Ana Souza" class="w-40 h-40 mx-auto rounded-full shadow-lg mb-4"><h3 class="text-xl font-bold text-[#062E51]">Capitã Ana Souza</h3><p class="text-gray-500">Defesa Civil Estadual</p></div>
                     <div class="animate-on-scroll text-center" style="--animation-delay: 0.3s;"><img src="https://placehold.co/200x200/3B82F6/FFFFFF?text=Dra.+Lima" alt="Foto da Dra. Mariana Lima" class="w-40 h-40 mx-auto rounded-full shadow-lg mb-4"><h3 class="text-xl font-bold text-[#062E51]">Dra. Mariana Lima</h3><p class="text-gray-500">Urbanista Regional</p></div>
                 </div>
+                <!-- Indicadores de Rolagem -->
+                <div class="scroll-indicator-container">
+                    <a href="#programacao" class="scroll-indicator up" aria-label="Rolar para a seção anterior">
+                        <span class="indicator-label">Programação</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+                    </a>
+                    <a href="#inscricao" class="scroll-indicator down" aria-label="Rolar para a próxima seção">
+                        <span class="indicator-label">Inscrição</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+                    </a>
+                </div>
             </div>
         </section>
 
         <!-- Painel 5: Inscrição, Local e Apoio -->
-        <section id="inscricao" class="folder-panel bg-gray-100">
+        <section id="inscricao" class="folder-panel">
             <div class="panel-content flex flex-col lg:flex-row items-center justify-center gap-10">
                 <!-- Coluna do Formulário -->
                 <div class="animate-on-scroll w-full lg:w-1/2 bg-white p-8 rounded-lg shadow-lg" style="--animation-delay: 0s;">
                     <h2 class="text-3xl font-bold text-[#062E51] mb-6 text-center">Faça sua Inscrição</h2>
-                    <form>
-                        <input type="text" class="w-full p-3 mb-4 border border-gray-300 rounded-lg" placeholder="Nome Completo" required>
-                        <input type="email" class="w-full p-3 mb-4 border border-gray-300 rounded-lg" placeholder="Seu melhor e-mail" required>
-                        <select class="w-full p-3 mb-4 border border-gray-300 rounded-lg"><option>Selecione seu Município</option><option>Paranaguá</option><option>Matinhos</option><option>Guaratuba</option></select>
-                        <button type="submit" class="w-full bg-[#E63946] hover:bg-[#c9323d] text-white font-bold py-3 rounded-lg text-lg">Confirmar Inscrição</button>
+                    <form class="space-y-4">
+                        <div>
+                            <label for="nome" class="sr-only">Nome Completo</label>
+                            <input type="text" id="nome" name="nome" class="form-input" placeholder="Nome Completo" required>
+                        </div>
+                        <div>
+                            <label for="email" class="sr-only">Seu melhor e-mail</label>
+                            <input type="email" id="email" name="email" class="form-input" placeholder="Seu melhor e-mail" required>
+                        </div>
+                        <div>
+                            <label for="municipio-input" class="sr-only">Digite seu Município</label>
+                            <div class="autocomplete-container relative">
+                                <input type="text" id="municipio-input" name="municipio" class="form-input" placeholder="Digite seu Município" required autocomplete="off">
+                                <div id="municipio-suggestions" class="autocomplete-suggestions hidden"></div>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-[#E63946] hover:bg-[#c9323d] text-white font-bold py-3 rounded-lg text-lg transition-colors duration-300">Confirmar Inscrição</button>
                     </form>
                 </div>
                 <!-- Coluna de Informações e Apoio -->
@@ -122,38 +169,51 @@
                     
                     <h3 class="text-2xl font-bold mt-8 mb-4">Realização e Apoio</h3>
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-x-8 gap-y-6 items-center">
-                        <img src="https://www.defesacivil.pr.gov.br/sites/defesa-civil/arquivos_restritos/files/imagem/2022-08/logo-gov-cepdec.png" alt="Logo Defesa Civil Paraná" class="logo-apoio">
-                        <img src="https://www.bombeiros.pr.gov.br/sites/bombeiros/arquivos_restritos/files/imagem/2022-04/CBM_PR_-_Bras%C3%A3o_Colorido.png" alt="Logo Corpo de Bombeiros Militar Paraná" class="logo-apoio">
-                        <img src="https://www.portosdoparana.pr.gov.br/sites/portos-do-parana/themes/background/img/logo-portos-do-parana.png" alt="Logo Portos do Paraná" class="logo-apoio">
-                        <img src="https://pamlitoral.com.br/wp-content/uploads/2022/03/logo-pam-litoral.png" alt="Logo PAM Plano de Ajuda Mútua" class="logo-apoio">
-                        <img src="https://www.portosdoparana.pr.gov.br/sites/portos-do-parana/themes/background/img/logo-portos-do-parana.png" alt="Logo Maximizados" class="logo-apoio">
+                        <img src="https://www.defesacivil.pr.gov.br/sites/defesa-civil/arquivos_restritos/files/imagem/2019-05/1769_Defesa_Civil__PR.PNG" alt="Logo Defesa Civil Paraná" class="logo-apoio">
+                        <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo Corpo de Bombeiros Militar Paraná" class="logo-apoio">
+                        <img src="https://web.celepar.pr.gov.br/drupal/images/seil/portos/logo_portos_300x86.png" alt="Logo Portos do Paraná" class="logo-apoio">
+                        <img src="https://portal.isulpar.edu.br/wp-content/uploads/2024/10/logo-texto-1024x378.png" alt="Logo ISULPAR" class="logo-apoio">
+                        <img src="https://maximizados.com.br/_next/image?url=%2Fimages%2FLogo.png&w=128&q=75" alt="Logo Maximizados" class="logo-apoio">
                     </div>
-                    <p class="text-xs text-gray-500 mt-10">&copy; 2025 - Todos os direitos reservados.</p>
+                    <div class="mt-10 flex flex-col items-center lg:items-start">
+                        <p class="text-xs text-gray-500 mt-4">&copy; 2025 - Todos os direitos reservados.</p>
+                    </div>
                 </div>
+            </div>
+            <!-- Indicador de Rolagem para Cima -->
+            <div class="scroll-indicator-container">
+                <a href="#palestrantes" class="scroll-indicator up" aria-label="Rolar para a seção anterior">
+                    <span class="indicator-label">Palestrantes</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+                </a>
+                <a href="#inicio" class="scroll-indicator up" aria-label="Voltar ao início">
+                    <span class="indicator-label">Voltar ao Início</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+                </a>
             </div>
         </section>
 
     </main>
     
-    <!-- Footer Flutuante com Navegação -->
-    <footer id="main-footer" class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-md md:max-w-3xl xl:max-w-5xl 2xl:max-w-7xl z-50">
-        <nav class="glass-nav flex justify-between items-center px-4 py-3 md:px-6 ">
-            <!-- Logo visível apenas em telas maiores (corrigido para branco) -->
-            <div class="hidden md:block text-lg xl:text-xl font-bold text-white">Cidades Resilientes PR</div>
-            <!-- Links de navegação para Desktop -->
-            <div class="hidden md:flex justify-center items-center space-x-4 sm:space-x-6 nav-links">
-                <a href="#inicio" class="text-gray-200 hover:text-white transition duration-300">Início</a>
-                <a href="#sobre" class="text-gray-200 hover:text-white transition duration-300">Sobre</a>
-                <a href="#programacao" class="text-gray-200 hover:text-white transition duration-300">Programação</a>
-                <a href="#palestrantes" class="text-gray-200 hover:text-white transition duration-300">Palestrantes</a>
-            </div>
-            <!-- Botão Hambúrguer para Mobile -->
-            <div class="md:hidden flex-grow">
-                <button id="hamburger-btn" class="text-white focus:outline-none flex items-center gap-2">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-                    <span class="font-semibold text-sm uppercase tracking-wider">Menu</span>
-                </button>
-            </div>
+    <!-- Navegação Lateral em formato Timeline (Desktop) -->
+    <nav id="side-nav" class="fixed left-0 top-1/2 -translate-y-1/2 z-50 p-6 hidden lg:flex flex-col items-center">
+        <div class="side-nav-header flex flex-col items-center text-white mb-6 opacity-70">
+            <svg class="w-7 h-7 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            <h3 class="font-bold text-sm uppercase tracking-wider">Menu</h3>
+        </div>
+        <div class="nav-links flex flex-col items-stretch">
+            <a href="#inicio" class="text-gray-300 hover:text-white">Início</a>
+            <a href="#sobre" class="text-gray-300 hover:text-white">Sobre</a>
+            <a href="#programacao" class="text-gray-300 hover:text-white">Programação</a>
+            <a href="#palestrantes" class="text-gray-300 hover:text-white">Palestrantes</a>
+            <a href="#inscricao" class="text-gray-300 hover:text-white">Inscrição</a>
+        </div>
+    </nav>
+
+    <!-- Footer Flutuante com Navegação para Mobile -->
+    <footer id="main-footer" class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-md z-50 lg:hidden ">
+        <nav class="glass-nav flex justify-between items-center px-4 py-3">
+            <button id="hamburger-btn" class="text-white focus:outline-none flex items-center gap-2"><svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg><span class="font-semibold text-sm uppercase tracking-wider">Menu</span></button>
             <!-- Botão de Inscrição -->
             <a href="#inscricao" class="bg-[#E63946] hover:bg-[#c9323d] text-white font-bold py-2 px-4 rounded-lg transition duration-300 text-sm sm:text-base xl:text-lg">Inscreva-se</a>
         </nav>
@@ -165,6 +225,7 @@
         <a href="#sobre" class="mobile-link text-white">Sobre</a>
         <a href="#programacao" class="mobile-link text-white">Programação</a>
         <a href="#palestrantes" class="mobile-link text-white">Palestrantes</a>
+        <a href="#inscricao" class="mobile-link text-white">Inscrição</a>
     </div>
 
     <!-- Caminho para o arquivo JavaScript dentro da pasta 'js' -->
