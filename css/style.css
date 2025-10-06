@@ -96,6 +96,14 @@ body {
     height: 100%;
 }
 
+/* Estilo para o container do vídeo na seção "Sobre" */
+#planning-video-player {
+    aspect-ratio: 16 / 9; /* Garante a proporção correta do vídeo */
+    overflow: hidden;
+    border-radius: 0.5rem; /* 8px */
+    position: relative; /* Necessário para o iframe absoluto */
+}
+
 /* Fundos para as outras seções com sobreposição para legibilidade */
 .folder-panel {
     background-size: cover;
@@ -208,7 +216,7 @@ body {
 
 /* --- Estilos para a Barra de Topo Fixa --- */
 #top-bar {
-    background-color: #E63946; /* Vermelho para criar urgência */
+    background: linear-gradient(to right, #a12831, #E63946, #a12831); /* Gradiente para efeito de faixa */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     padding: 0.25rem 1rem;
 }

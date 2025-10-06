@@ -382,27 +382,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Sets up the YouTube video background for the hero section.
+     * Sets up YouTube video players.
      */
     function setupYouTubeBackground() {
-        // This function will be called by the YouTube API script once it's loaded
-        window.onYouTubeIframeAPIReady = function() {
-            new YT.Player('youtube-player', {
-                videoId: '9lJSGvqRjUc', // YouTube video ID
+        // Função para criar um player. Pode ser reutilizada.
+        const createPlayer = (elementId, videoId, start, end) => {
+            if (!document.getElementById(elementId)) return;
+
+            return new YT.Player(elementId, {
+                videoId: videoId,
                 playerVars: {
-                    autoplay: 1,        // Autoplay the video
-                    controls: 0,        // Hide player controls
-                    showinfo: 0,        // Hide video title
-                    modestbranding: 1,  // Hide YouTube logo
-                    loop: 1,            // Loop the video
-                    fs: 0,              // Hide fullscreen button
-                    cc_load_policy: 0,  // Hide closed captions
-                    iv_load_policy: 3,  // Hide annotations
-                    autohide: 0,        // Hide video controls automatically
-                    mute: 1,            // Mute the video (required for autoplay)
-                    start: 10,          // Start at 10 seconds
-                    end: 112,           // End at 112 seconds (total 122s - 10s)
-                    playlist: '9lJSGvqRjUc' // Required for the loop to work
+                    autoplay: 1,
+                    controls: 0,
+                    showinfo: 0,
+                    modestbranding: 1,
+                    loop: 1,
+                    fs: 0,
+                    cc_load_policy: 0,
+                    iv_load_policy: 3,
+                    autohide: 0,
+                    mute: 1,
+                    start: start,
+                    end: end,
+                    playlist: videoId // Required for the loop to work
                 },
                 events: {
                     onReady: function(event) {
@@ -410,6 +412,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             });
+        };
+
+        // This function will be called by the YouTube API script once it's loaded
+        window.onYouTubeIframeAPIReady = function() {
+            // Player para a seção de início (fundo)
+            createPlayer('youtube-player', '9lJSGvqRjUc', 10, 112);
+
+            // Player para a seção "Sobre" (planejamento)
+            // O vídeo tem 1:07 (67s). Vamos usar o vídeo inteiro.
+            createPlayer('planning-video-player', '67Gecu5r2IE', 0, 67);
         };
     }
 
