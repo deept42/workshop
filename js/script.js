@@ -1,5 +1,5 @@
 /**
- * @file script.js
+ * @file Manages all client-side interactivity for the workshop single-page website.
  * @description Controla a interatividade da página de formato "folder".
  */
 
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentVisiblePanel = null; // Variável para rastrear o painel visível
     
     /**
-     * Configura a navegação por links âncora, fazendo a página rolar instantaneamente
+     * Configures anchor link navigation to scroll instantly to the target section on click.
      * para a seção correspondente ao clicar em um link.
      */
     function setupSmoothScrolling() {
@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const targetPanel = document.querySelector(targetId);
                 
                 if (targetPanel) {
-                    // Usando scrollIntoView para uma rolagem mais robusta e garantida.
                     // O comportamento 'auto' (ou a ausência de 'behavior') garante o "snap" instantâneo.
                     targetPanel.scrollIntoView({ inline: 'start' });
                 }
@@ -31,9 +30,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Utiliza IntersectionObserver para:
-     * 1. Rastrear o painel visível e atualizar o link ativo no menu de navegação.
-     * 2. Disparar animações de entrada para os elementos dentro do painel visível.
+     * Uses IntersectionObserver to track visible panels.
+     * 1. Updates the active link in the navigation menu.
+     * 2. Triggers scroll-based animations for elements.
      */
     function updateActiveNavLink() {
         let lastActiveLinks = [];
@@ -69,12 +68,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }, observerOptions);
 
+        // Use a single observer for all panels for better performance
         panels.forEach(panel => observer.observe(panel));
     }
 
     /**
-     * Controla a funcionalidade do menu hambúrguer para dispositivos móveis,
-     * incluindo a abertura, fechamento e o clique nos links.
+     * Manages the mobile hamburger menu functionality.
+     * Toggles visibility and closes the menu when a link is clicked.
      */
     function setupMobileMenu() {
         const hamburgerBtn = document.getElementById('hamburger-btn');
@@ -84,23 +84,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!hamburgerBtn || !mobileMenu) return;
 
         hamburgerBtn.addEventListener('click', () => {
-            const isOpen = mobileMenu.classList.toggle('open');
-            // Controla a transição de opacidade
-            mobileMenu.style.opacity = isOpen ? '1' : '0';
+            mobileMenu.classList.toggle('open'); // Apenas alterna a classe. O CSS faz o resto.
         });
 
         // Fecha o menu ao clicar em um link
         mobileLinks.forEach(link => {
             link.addEventListener('click', () => {
                 mobileMenu.classList.remove('open');
-                mobileMenu.style.opacity = '0';
             });
         });
     }
 
     /**
-     * Configura e exibe um contador regressivo até a data do evento.
-     * Otimizado para atualizar apenas os valores que mudam a cada segundo.
+     * Sets up and displays a countdown timer until the event date.
+     * Optimized to only update DOM elements when their values change.
      */
     function setupCountdown() {
         const countdownElement = document.getElementById('countdown-timer');
@@ -116,6 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const hoursEl = document.getElementById('cd-hours');
         const minutesEl = document.getElementById('cd-minutes');
         const secondsEl = document.getElementById('cd-seconds');
+
+        if (!daysEl || !hoursEl || !minutesEl || !secondsEl) return;
 
         let lastValues = {};
         
@@ -145,17 +144,24 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 // Se a contagem terminar, para o intervalo e exibe a mensagem
                 clearInterval(interval);
-                const container = document.querySelector('.top-bar-content');
-                if (container) {
-                    container.innerHTML = `<p class="font-bold text-lg">É HOJE! O EVENTO COMEÇOU!</p>`;
+                const topBarContent = countdownElement.parentNode;
+                if (topBarContent && countdownElement) {
+                    // Non-destructive update: hide timer and show message
+                    countdownElement.style.display = 'none';
+                    const message = document.createElement('p');
+                    message.className = 'font-bold text-lg';
+                    message.textContent = 'É HOJE! O EVENTO COMEÇOU!';
+                    // Insert message where the timer was to better maintain layout
+                    topBarContent.insertBefore(message, countdownElement.nextSibling);
                 }
             }
         }, 1000);
     }
 
     /**
-     * Implementa a funcionalidade de autocompletar para o campo de municípios.
-     * Limita as sugestões para melhorar a performance e a usabilidade.
+     * Implements autocomplete functionality for the city input field.
+     * This function filters a list of cities and displays a limited number of suggestions
+     * to improve performance and user experience.
      */
     function setupAutocomplete() {
         const input = document.getElementById('municipio-input');
@@ -201,6 +207,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "Uraí", "Ventania", "Vera Cruz do Oeste", "Verê", "Virmond", "Vitorino", "Wenceslau Braz", "Xambrê"
         ];
 
+        // Optimization: Create a normalized list once for faster filtering
+        const normalizedCidades = cidadesParana.map(city => ({ original: city, lower: city.toLowerCase() }));
+
         input.addEventListener('input', () => {
             const value = input.value.toLowerCase();
             suggestionsContainer.innerHTML = '';
@@ -211,14 +220,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const filteredCities = cidadesParana.filter(city => city.toLowerCase().startsWith(value));
+            const filteredCities = normalizedCidades.filter(city => city.lower.startsWith(value));
 
             filteredCities.slice(0, 5).forEach(city => {
                 const suggestionItem = document.createElement('div');
                 suggestionItem.classList.add('suggestion-item');
-                suggestionItem.textContent = city;
+                suggestionItem.textContent = city.original;
                 suggestionItem.addEventListener('click', () => {
-                    input.value = city;
+                    input.value = city.original;
                     suggestionsContainer.classList.add('hidden');
                 });
                 suggestionsContainer.appendChild(suggestionItem);
@@ -229,6 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // Close the suggestions list if the user clicks outside of it
         document.addEventListener('click', (event) => {
             if (!event.target.closest('.autocomplete-container')) {
                 suggestionsContainer.classList.add('hidden');
@@ -237,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Adiciona um atalho de navegação com o botão do meio do mouse.
+     * Adds a navigation shortcut to scroll to the next section via middle mouse button click.
      */
     function setupMiddleMouseNavigation() {
         document.addEventListener('mousedown', (event) => {
@@ -254,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Controla a barra de progresso no topo da página.
+     * Controls the width of the scroll progress bar based on the container's scroll position.
      */
     function setupScrollProgressBar() {
         const progressBar = document.getElementById('progress-bar');
@@ -271,7 +281,139 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- INICIALIZAÇÃO ---
+    /**
+     * Sets up real-time validation for the lead generation form.
+     */
+    function setupFormValidation() {
+        const form = document.getElementById('lead-form');
+        const formMessages = document.getElementById('form-messages');
+        if (!form || !formMessages) return;
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            formMessages.innerHTML = ''; // Limpa mensagens anteriores
+
+            const nome = form.elements['nome'].value.trim();
+            const empresa = form.elements['empresa'].value.trim();
+            const email = form.elements['email'].value.trim();
+            const telefone = form.elements['telefone'].value.trim();
+            const municipio = form.elements['municipio'].value.trim();
+            const consent = form.elements['consent'].checked;
+
+            // Validação dos campos
+            if (!nome || !empresa || !email || !municipio) {
+                displayMessage('Por favor, preencha todos os campos obrigatórios.', 'error');
+                return;
+            }
+
+            if (!validateEmail(email)) {
+                displayMessage('Por favor, insira um endereço de e-mail válido.', 'error');
+                return;
+            }
+
+            if (telefone && !validateTelefone(telefone)) {
+                displayMessage('Por favor, insira um telefone válido (10 ou 11 dígitos).', 'error');
+                return;
+            }
+
+            if (!consent) {
+                displayMessage('Você precisa concordar com os termos para se inscrever.', 'error');
+                return;
+            }
+
+            // Se tudo estiver OK
+            displayMessage('Inscrição realizada com sucesso! Aguarde nosso contato.', 'success');
+            form.reset(); // Limpa o formulário
+
+            // Aqui você enviaria os dados para o seu backend/serviço de e-mail
+            // Ex: sendDataToBackend({ nome, empresa, email, municipio });
+        });
+
+        function displayMessage(message, type) {
+            const messageElement = document.createElement('p');
+            messageElement.textContent = message;
+            messageElement.className = type === 'error' ? 'form-message-error' : 'form-message-success';
+            formMessages.appendChild(messageElement);
+        }
+
+        function validateEmail(email) {
+            // Expressão regular simples para validação de e-mail
+            const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(String(email).toLowerCase());
+        }
+
+        function validateTelefone(telefone) {
+            // Remove todos os caracteres não numéricos
+            const digitsOnly = telefone.replace(/\D/g, '');
+            // Verifica se o número de dígitos está entre 10 e 11
+            return /^\d{10,11}$/.test(digitsOnly);
+        }
+    }
+
+    /**
+     * Applies a real-time input mask to the phone number field (e.g., (XX) XXXXX-XXXX).
+     */
+    function setupPhoneMask() {
+        const phoneInput = document.getElementById('telefone');
+        if (!phoneInput) return;
+
+        phoneInput.addEventListener('input', (event) => {
+            const input = event.target;
+            let value = input.value.replace(/\D/g, ''); // Keep only digits
+
+            if (value.length > 11) {
+                value = value.slice(0, 11);
+            }
+
+            let formattedValue = '';
+            if (value.length > 0) {
+                formattedValue = `(${value.slice(0, 2)}`;
+            }
+            if (value.length > 2) {
+                const part2Length = value.length > 10 ? 5 : 4; // 5 digits for mobile, 4 for landline
+                formattedValue += `) ${value.slice(2, 2 + part2Length)}`;
+            }
+            if (value.length > 6) {
+                const part2Length = value.length > 10 ? 5 : 4;
+                formattedValue += `-${value.slice(2 + part2Length)}`;
+            }
+            input.value = formattedValue;
+        });
+    }
+
+    /**
+     * Sets up the YouTube video background for the hero section.
+     */
+    function setupYouTubeBackground() {
+        // This function will be called by the YouTube API script once it's loaded
+        window.onYouTubeIframeAPIReady = function() {
+            new YT.Player('youtube-player', {
+                videoId: '9lJSGvqRjUc', // YouTube video ID
+                playerVars: {
+                    autoplay: 1,        // Autoplay the video
+                    controls: 0,        // Hide player controls
+                    showinfo: 0,        // Hide video title
+                    modestbranding: 1,  // Hide YouTube logo
+                    loop: 1,            // Loop the video
+                    fs: 0,              // Hide fullscreen button
+                    cc_load_policy: 0,  // Hide closed captions
+                    iv_load_policy: 3,  // Hide annotations
+                    autohide: 0,        // Hide video controls automatically
+                    mute: 1,            // Mute the video (required for autoplay)
+                    start: 10,          // Start at 10 seconds
+                    end: 112,           // End at 112 seconds (total 122s - 10s)
+                    playlist: '9lJSGvqRjUc' // Required for the loop to work
+                },
+                events: {
+                    onReady: function(event) {
+                        event.target.playVideo();
+                    }
+                }
+            });
+        };
+    }
+
+    // --- INITIALIZATION ---
     if (folderContainer) {
         setupSmoothScrolling();
         updateActiveNavLink();
@@ -280,5 +422,8 @@ document.addEventListener('DOMContentLoaded', () => {
         setupAutocomplete();
         setupMiddleMouseNavigation();
         setupScrollProgressBar();
+        setupFormValidation();
+        setupPhoneMask();
+        setupYouTubeBackground();
     }
 });

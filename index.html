@@ -34,17 +34,19 @@
         <section id="inicio" class="folder-panel text-white">
             <div class="video-background">
                 <div class="video-overlay"></div>
-                <video src="https://videos.pexels.com/video-files/2750378/2750378-hd_1280_720_24fps.mp4" autoplay loop muted playsinline></video>
+                <div id="youtube-player"></div>
             </div>
             <div class="panel-content text-center">
                 <div class="hero-content relative">
                     <h1 class="animate-on-scroll font-extrabold leading-tight mb-4" style="--animation-delay: 0s;">Workshop: Cidades Mais Resilientes em Desastres</h1>
-                <p class="animate-on-scroll text-lg md:text-xl font-light mb-8 max-w-3xl mx-auto" style="--animation-delay: 0.1s;">Capacitando gestores e comunidades do Litoral do Paraná para um futuro mais seguro.</p> 
-                <a href="#inscricao" class="hero-button animate-on-scroll bg-[#E63946] hover:bg-[#c9323d] text-white font-bold py-4 px-8 rounded-lg text-lg transition duration-300" style="--animation-delay: 0.2s;">Garanta sua Vaga</a>
+                <p class="animate-on-scroll text-lg md:text-xl font-light mb-8 max-w-3xl mx-auto" style="--animation-delay: 0.1s;">Capacitando gestores e comunidades do Litoral do Paraná para um futuro mais seguro.</p>
+                <div class="mb-8">
+                    <a href="#inscricao" class="hero-button animate-on-scroll bg-[#E63946] hover:bg-[#c9323d] text-white font-bold py-4 px-8 rounded-lg text-lg transition duration-300" style="--animation-delay: 0.2s;">Garanta sua Vaga</a>
+                </div>
                 
                 <div class="hero-logos-container animate-on-scroll mt-12" style="--animation-delay: 0.3s;">
                     <p class="text-sm uppercase tracking-widest mb-4 opacity-70">Realização e Apoio</p>
-                    <div class="grid grid-cols-3 md:grid-cols-5 gap-x-8 gap-y-6 items-center hero-logos">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-8 gap-y-6 items-center hero-logos">
                         <img src="https://www.defesacivil.pr.gov.br/sites/defesa-civil/arquivos_restritos/files/imagem/2019-05/1769_Defesa_Civil__PR.PNG" alt="Logo Defesa Civil Paraná" class="logo-apoio">
                         <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo Corpo de Bombeiros Militar Paraná" class="logo-apoio">
                         <img src="https://web.celepar.pr.gov.br/drupal/images/seil/portos/logo_portos_300x86.png" alt="Logo Portos do Paraná" class="logo-apoio">
@@ -140,15 +142,24 @@
             <div class="panel-content flex flex-col lg:flex-row items-center justify-center gap-10">
                 <!-- Coluna do Formulário -->
                 <div class="animate-on-scroll w-full lg:w-1/2 bg-white p-8 rounded-lg shadow-lg" style="--animation-delay: 0s;">
-                    <h2 class="text-3xl font-bold text-[#062E51] mb-6 text-center">Faça sua Inscrição</h2>
-                    <form class="space-y-4">
+                    <h2 class="text-3xl font-bold text-[#062E51] mb-2 text-center">Garanta sua Vaga no Workshop</h2>
+                    <p class="text-center text-gray-600 mb-6">Preencha o formulário abaixo para confirmar sua participação.</p>
+                    <form id="lead-form" class="space-y-4" novalidate>
                         <div>
                             <label for="nome" class="sr-only">Nome Completo</label>
                             <input type="text" id="nome" name="nome" class="form-input" placeholder="Nome Completo" required>
                         </div>
                         <div>
+                            <label for="empresa" class="sr-only">Empresa / Instituição</label>
+                            <input type="text" id="empresa" name="empresa" class="form-input" placeholder="Empresa / Instituição" required>
+                        </div>
+                        <div>
                             <label for="email" class="sr-only">Seu melhor e-mail</label>
                             <input type="email" id="email" name="email" class="form-input" placeholder="Seu melhor e-mail" required>
+                        </div>
+                        <div>
+                            <label for="telefone" class="sr-only">Telefone com WhatsApp</label>
+                            <input type="tel" id="telefone" name="telefone" class="form-input" placeholder="Telefone com WhatsApp">
                         </div>
                         <div>
                             <label for="municipio-input" class="sr-only">Digite seu Município</label>
@@ -157,7 +168,12 @@
                                 <div id="municipio-suggestions" class="autocomplete-suggestions hidden"></div>
                             </div>
                         </div>
-                        <button type="submit" class="w-full bg-[#E63946] hover:bg-[#c9323d] text-white font-bold py-3 rounded-lg text-lg transition-colors duration-300">Confirmar Inscrição</button>
+                        <div class="consent-checkbox">
+                            <input type="checkbox" id="consent" name="consent" required>
+                            <label for="consent">Eu concordo em receber comunicações sobre este e futuros eventos.</label>
+                        </div>
+                        <div id="form-messages" class="text-center"></div>
+                        <button type="submit" class="w-full bg-[#E63946] hover:bg-[#c9323d] text-white font-bold py-3 rounded-lg text-lg transition-colors duration-300">Inscrever-se Agora</button>
                     </form>
                 </div>
                 <!-- Coluna de Informações e Apoio -->
@@ -165,7 +181,11 @@
                     <h3 class="text-2xl font-bold">Data</h3>
                     <p class="text-lg text-gray-700 mt-2">13 e 14 de Novembro</p>
                     <h3 class="text-2xl font-bold mt-6">Local</h3>
-                    <p class="text-lg text-gray-700 mt-2">ISULPAR - Instituto Superior do Litoral do Paraná<br>Paranaguá - PR</p>
+                    <p class="text-lg text-gray-700 mt-2 mb-4">ISULPAR - Instituto Superior do Litoral do Paraná<br>Paranaguá - PR</p>
+                    
+                    <div class="map-container">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3602.937746205809!2d-48.50954002470258!3d-25.44029997755535!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94dbee903150338b%3A0x973a1e5c26b0142a!2sR.%20Jo%C3%A3o%20Eug%C3%AAnio%2C%20534%20-%20Costeira%2C%20Paranagu%C3%A1%20-%20PR%2C%2083203-400!5e0!3m2!1spt-BR!2sbr!4v1721344893129!5m2!1spt-BR!2sbr" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
                     
                     <h3 class="text-2xl font-bold mt-8 mb-4">Realização e Apoio</h3>
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-x-8 gap-y-6 items-center">
@@ -220,7 +240,7 @@
     </footer>
 
     <!-- Menu Overlay para Mobile -->
-    <div id="mobile-menu" class="fixed inset-0 bg-[#062E51]/90 backdrop-blur-lg flex-col items-center justify-center space-y-8 text-2xl z-40 hidden">
+    <div id="mobile-menu" class="fixed inset-0 bg-[#062E51]/90 backdrop-blur-lg items-center justify-center space-y-8 text-2xl z-40">
         <a href="#inicio" class="mobile-link text-white">Início</a>
         <a href="#sobre" class="mobile-link text-white">Sobre</a>
         <a href="#programacao" class="mobile-link text-white">Programação</a>
@@ -230,5 +250,6 @@
 
     <!-- Caminho para o arquivo JavaScript dentro da pasta 'js' -->
     <script src="js/script.js" defer></script>
+    <script src="https://www.youtube.com/iframe_api" defer></script>
 </body>
 </html>
