@@ -7,7 +7,7 @@
 // 1. Configuração da conexão com o Supabase
 const SUPABASE_URL = 'https://onqettyqcdyutkticrab.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ucWV0dHlxY2R5dXRrdGljcmFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjE5NDM5MjUsImV4cCI6MjAzNzUxOTkyNX0.hKNkb5lHdwr2JxRGoakTOA_eWyBt3dd-tTfMh2Vf_Y8'; // Sua chave PÚBLICA (Publishable Key)
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const { createClient } = supabase; const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 // --- FIM DA INFORMAÇÃO NOVA ---
 
 // Aguarda o carregamento completo do HTML antes de executar os scripts.
