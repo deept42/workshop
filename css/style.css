@@ -79,6 +79,13 @@ body {
     z-index: 1;
 }
 
+/* Ajuste específico para a seção de início (Hero) */
+#inicio {
+    height: 90vh; /* Ocupa 90% da altura da tela */
+    align-items: center; /* Centraliza o conteúdo verticalmente */
+    padding-top: 0; /* Remove o padding superior para centralização correta */
+}
+
 /* Estilos para o player do YouTube se comportar como um vídeo de fundo */
 #youtube-player {
     position: absolute;
@@ -147,6 +154,29 @@ body {
     background-image: linear-gradient(rgba(240, 242, 245, 0.95), rgba(240, 242, 245, 0.95)), url('https://images.pexels.com/photos/1595385/pexels-photo-1595385.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
 }
 
+/* --- Estilos para os Cards da Programação --- */
+#programacao .grid > div {
+    background-color: #E63946 !important; /* Fundo vermelho, !important para sobrescrever Tailwind */
+    color: white;
+}
+
+#programacao .grid > div h3,
+#programacao .grid > div h4 {
+    color: white;
+}
+
+#programacao .grid > div h3 {
+    border-color: rgba(255, 255, 255, 0.5); /* Borda branca semitransparente */
+}
+
+#programacao .grid > div .text-blue-800 {
+    color: white !important; /* Garante que o título da sala seja branco */
+}
+
+#programacao .grid > div .text-gray-600 {
+    color: rgba(255, 255, 255, 0.8) !important; /* Texto cinza fica branco semitransparente */
+}
+
 /* --- Tipografia Fluida --- */
 
 /* Título principal no painel Hero */
@@ -165,11 +195,11 @@ body {
 
 /* Estilo para a barra de navegação flutuante */
 .glass-nav {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.3); /* Opacidade aumentada para mais branco */
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px); /* Suporte para Safari */
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
 }
 
@@ -180,14 +210,14 @@ body {
 
 /* Estilo para o link de navegação ativo */
 .nav-links a.active-link {
-    color: #ffffff; /* Cor branca para o link ativo */
+    color: #E63946; /* CORREÇÃO: Cor vermelha para o link ativo */
     font-weight: 700;
 }
 
 /* Efeito de "botão aceso" para o link ativo */
 .nav-links a.active-link::before {
-    background-color: #E63946; /* Fundo vermelho sólido */
-    border-color: #E63946;
+    background-color: #ffffff; /* CORREÇÃO: Fundo branco sólido */
+    border-color: #ffffff;
     border-bottom: none; /* Remove a borda inferior para fundir com o próximo item */
 }
 
@@ -196,6 +226,7 @@ body {
     position: relative;
     padding: 0.6rem 1.5rem; /* Ajusta o padding para um visual mais compacto */
     font-weight: 600;
+    color: white; /* CORREÇÃO: Texto branco por padrão */
     transition: color 0.3s ease;
 }
 
@@ -207,9 +238,9 @@ body {
     transform: translateY(-50%);
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Linha separadora */
+    background-color: #E63946; /* CORREÇÃO: Fundo vermelho por padrão */
+    border: 1px solid #c9323d;
+    border-bottom: 1px solid #a12831; /* Linha separadora mais escura */
     transition: all 0.3s ease;
     z-index: -1;
 }
@@ -221,11 +252,11 @@ body {
 
 .nav-links a:last-child::before {
     border-radius: 0 0 8px 8px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Garante que o último item tenha borda */
+    border-bottom: 1px solid #c9323d; /* Garante que o último item tenha borda */
 }
 
 .nav-links a:hover::before {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: #c9323d; /* Efeito hover mais escuro */
 }
 
 /* --- Estilos para os Botões de Navegação Lateral --- */
@@ -481,20 +512,23 @@ body {
 
 /* Transforma o container de logos em um card branco */
 .hero-logos-container {
-    background-color: rgba(255, 255, 255, 0.9);
+    /* Efeito Glassmorphism */
+    background: rgba(255, 255, 255, 0.3); /* Opacidade aumentada para mais branco */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     padding: 1.5rem;
     border-radius: 12px;
     display: inline-block; /* Faz o container se ajustar ao conteúdo */
 }
 
 .hero-logos-container p {
-    color: #062E51; /* Garante que o título seja legível no fundo branco */
+    color: white; /* Garante que o título seja legível no fundo de vidro */
 }
 
 /* Classe para transformar um logo branco em preto usando filtro */
 .logo-to-black {
-    /* Inverte as cores (branco vira preto) e ajusta o brilho para garantir o preto sólido */
-    filter: brightness(0) invert(1);
+    filter: brightness(0); /* Transforma qualquer cor em preto */
 }
 
 /* --- Estilos para Animação na Rolagem --- */
