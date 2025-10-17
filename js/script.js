@@ -3,6 +3,13 @@
  * @description Controla a interatividade da página de formato "folder".
  */
 
+// --- INFORMAÇÃO NOVA A ADICIONAR ---
+// 1. Configuração da conexão com o Supabase
+const SUPABASE_URL = 'https://onqettyqcdyutkticrab.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ucWV0dHlxY2R5dXRrdGljcmFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjE5NDM5MjUsImV4cCI6MjAzNzUxOTkyNX0.hKNkb5lHdwr2JxRGoakTOA_eWyBt3dd-tTfMh2Vf_Y8'; // Sua chave PÚBLICA (Publishable Key)
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// --- FIM DA INFORMAÇÃO NOVA ---
+
 // Aguarda o carregamento completo do HTML antes de executar os scripts.
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -284,14 +291,22 @@ document.addEventListener('DOMContentLoaded', () => {
     /**
      * Sets up real-time validation for the lead generation form.
      */
+    /**
+     * Sets up form submission to Supabase with validation.
+     */
     function setupFormValidation() {
         const form = document.getElementById('lead-form');
         const formMessages = document.getElementById('form-messages');
-        if (!form || !formMessages) return;
+        const submitButton = form.querySelector('button[type="submit"]');
 
-        form.addEventListener('submit', function(event) {
+        if (!form || !formMessages || !submitButton) return;
+
+        // Tornamos a função 'async' para poder usar 'await'
+        form.addEventListener('submit', async function(event) {
             event.preventDefault();
             formMessages.innerHTML = ''; // Limpa mensagens anteriores
+            submitButton.disabled = true;
+            submitButton.textContent = 'Enviando...';
 
             const nome = form.elements['nome'].value.trim();
             const empresa = form.elements['empresa'].value.trim();
@@ -302,46 +317,86 @@ document.addEventListener('DOMContentLoaded', () => {
             const dia13 = form.elements['dia13'].checked;
             const dia14 = form.elements['dia14'].checked;
 
-            // Validação dos campos
+            // Validação (seu código original, mantido)
             if (!nome || !empresa || !email || !municipio) {
                 displayMessage('Por favor, preencha todos os campos obrigatórios.', 'error');
+                submitButton.disabled = false;
+                submitButton.textContent = 'Inscrever-se Agora';
                 return;
             }
 
             if (!validateEmail(email)) {
                 displayMessage('Por favor, insira um endereço de e-mail válido.', 'error');
+                submitButton.disabled = false;
+                submitButton.textContent = 'Inscrever-se Agora';
                 return;
             }
 
             if (telefone && !validateTelefone(telefone)) {
                 displayMessage('Por favor, insira um telefone válido (10 ou 11 dígitos).', 'error');
+                submitButton.disabled = false;
+                submitButton.textContent = 'Inscrever-se Agora';
                 return;
             }
 
             if (!dia13 && !dia14) {
                 displayMessage('Por favor, selecione pelo menos um dia de participação.', 'error');
+                submitButton.disabled = false;
+                submitButton.textContent = 'Inscrever-se Agora';
                 return;
             }
 
             if (!consent) {
                 displayMessage('Você precisa concordar com os termos para se inscrever.', 'error');
+                submitButton.disabled = false;
+                submitButton.textContent = 'Inscrever-se Agora';
                 return;
             }
 
-            // Se tudo estiver OK
-            displayMessage('Inscrição realizada com sucesso! Aguarde nosso contato.', 'success');
-            
-            // Mostra o modal customizado para o certificado
-            setTimeout(() => {
-                showCertificateModal();
-            }, 500); // Delay de 0.5 segundos
+            // --- CÓDIGO DE ENVIO PARA O SUPABASE ---
+            const { data, error } = await supabaseClient
+                .from('cadastro_workshop') // Nome da sua tabela
+                .insert([{
+                    nome_completo: nome,
+                    empresa: empresa,
+                    email: email,
+                    telefone: telefone,
+                    municipio: municipio,
+                    participa_dia_13: dia13,
+                    participa_dia_14: dia14,
+                    concorda_comunicacoes: consent,
+                    quer_certificado: false, // Valor inicial
+                    status_pagamento: 'nao_solicitado' // Valor inicial
+                }])
+                .select(); // Adiciona .select() para retornar o registro criado
 
-            form.reset();
-            // Aqui você enviaria os dados para o seu backend/serviço de e-mail
-            // Ex: sendDataToBackend({ nome, empresa, email, municipio });
+            // --- LÓGICA APÓS O ENVIO ---
+            if (error) {
+                console.error('Erro do Supabase:', error);
+                displayMessage('Ocorreu um erro na inscrição. Tente novamente.', 'error');
+                submitButton.disabled = false;
+                submitButton.textContent = 'Inscrever-se Agora';
+            } else {
+                displayMessage('Inscrição realizada com sucesso!', 'success');
+                form.reset();
+
+                // Pega o ID do novo registro para usar no modal de certificado
+                const newRecordId = data ? data[0].id : null;
+                
+                setTimeout(() => {
+                    showCertificateModal(newRecordId); // Passa o ID para o modal
+                }, 500);
+
+                setTimeout(() => {
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Inscrever-se Agora';
+                }, 3000);
+            }
         });
-
-        function showCertificateModal() {
+        
+        // --- MODIFICAR A FUNÇÃO DO MODAL ---
+        // A função precisa aceitar o ID do registro
+        async function showCertificateModal(recordId) {
             const modal = document.getElementById('certificate-modal');
             const modalContent = document.getElementById('certificate-modal-content');
             const btnYes = document.getElementById('cert-btn-yes');
@@ -358,12 +413,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => modal.classList.add('hidden'), 300);
             };
 
-            btnYes.onclick = () => {
+            // Clone e substitua os botões para remover event listeners antigos
+            const newBtnYes = btnYes.cloneNode(true);
+            btnYes.parentNode.replaceChild(newBtnYes, btnYes);
+            const newBtnNo = btnNo.cloneNode(true);
+            btnNo.parentNode.replaceChild(newBtnNo, btnNo);
+
+            newBtnYes.onclick = async () => {
+                if (recordId) {
+                    // Atualiza o registro no Supabase
+                    const { error } = await supabaseClient
+                        .from('cadastro_workshop')
+                        .update({ quer_certificado: true, status_pagamento: 'pendente' })
+                        .eq('id', recordId); // Atualiza apenas o registro correto
+                    if (error) console.error('Erro ao atualizar certificado:', error);
+                }
                 window.open('https://www.asaas.com/c/p9v42o92yos25x75', '_blank');
                 closeModal();
             };
 
-            btnNo.onclick = () => {
+            newBtnNo.onclick = () => {
                 closeModal();
             };
         }
