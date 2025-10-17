@@ -6,7 +6,7 @@
 // --- INFORMAÇÃO NOVA A ADICIONAR ---
 // 1. Configuração da conexão com o Supabase
 const SUPABASE_URL = 'https://onqettyqcdyutkticrab.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ucWV0dHlxY2R5dXRrdGljcmFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2Njg5OTksImV4cCI6MjA3NjI0NDk5OX0.LZJhIX3f0Jd3TxVo-YGHBVpiejLimGo-ClACeipilqc';
+const SUPABASE_KEY = 'sb_publishable_hKNkb5lHdwr2JxRGoakTOA_eWyBt3dd';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 // --- FIM DA INFORMAÇÃO NOVA ---
 
@@ -357,16 +357,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const { data, error } = await supabaseClient
                 .from('cadastro_workshop') // Nome da sua tabela
                 .insert([{
-                    nome_completo: nome,
-                    empresa: empresa,
-                    email: email,
-                    telefone: telefone,
-                    municipio: municipio,
-                    participa_dia_13: dia13,
-                    participa_dia_14: dia14,
-                    concorda_comunicacoes: consent,
-                    quer_certificado: false, // Valor inicial
-                    status_pagamento: 'nao_solicitado' // Valor inicial
+                    // ATENÇÃO: Verifique se os nomes à esquerda correspondem EXATAMENTE às suas colunas no Supabase
+                    nome_completo: nome,            // CORRIGIDO: Usando o nome da coluna da sua tabela
+                    empresa: empresa,               // Verifique este
+                    email: email,                   // Verifique este
+                    telefone: telefone,             // Verifique este
+                    municipio: municipio,           // Verifique este
+                    participa_dia_13: dia13,        // Verifique este
+                    participa_dia_14: dia14,        // Verifique este
+                    concorda_comunicacoes: consent, // Verifique este
+                    quer_certificado: false,        // Verifique este
+                    status_pagamento: 'nao_solicitado' // Verifique este
                 }])
                 .select(); // Adiciona .select() para retornar o registro criado
 
