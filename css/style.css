@@ -25,12 +25,12 @@ body {
 
 /* Estilo para cada painel/seção do folder */
 .folder-panel {
-    background-color: transparent; /* Garante que o fundo do body seja visível */
+    background-color: white; /* Fundo sólido para evitar sobreposição visual */
     width: 100vw; /* Cada painel ocupa a largura inteira da tela */
     height: 100vh; /* Cada painel ocupa a altura inteira da tela */
     flex-shrink: 0; /* Impede que os painéis encolham */
     
-    /* Centraliza o conteúdo dentro do painel */
+    /* Centraliza o conteúdo */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -40,7 +40,8 @@ body {
 
     /* Permite rolagem vertical DENTRO do painel se o conteúdo for muito grande (em telas pequenas) */
     overflow-y: auto;
-    position: relative; /* Necessário para posicionar os indicadores de rolagem */
+    position: relative; /* Necessário para z-index e posicionamento de filhos */
+    z-index: 1; /* Garante um contexto de empilhamento para cada painel */
 }
 
 /* Wrapper de conteúdo dentro de cada painel */
@@ -102,6 +103,27 @@ body {
     overflow: hidden;
     border-radius: 0.5rem; /* 8px */
     position: relative; /* Necessário para o iframe absoluto */
+}
+
+/* Estilo para o botão de play customizado sobre o vídeo */
+#custom-play-button {
+    position: absolute;
+    inset: 0; /* Ocupa todo o espaço do container pai */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.4); /* Sobreposição escura */
+    color: #E63946; /* Cor vermelha do ícone */
+    border: none;
+    cursor: pointer;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+    z-index: 5; /* Garante que fique acima do iframe do vídeo */
+}
+
+#custom-play-button.hidden {
+    opacity: 0;
+    pointer-events: none; /* Impede cliques quando estiver invisível */
 }
 
 /* Fundos para as outras seções com sobreposição para legibilidade */
@@ -375,14 +397,13 @@ body {
 
 /* --- Estilos para Indicadores de Rolagem --- */
 .scroll-indicator-container {
-    position: absolute;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
+    /* Removido o posicionamento absoluto para que os botões ocupem seu próprio espaço */
     display: flex;
-    flex-direction: row;
+    justify-content: center; /* Centraliza os botões */
     gap: 1rem;
-    z-index: 10;
+    width: 100%;
+    margin-top: 2rem; /* Adiciona um espaço acima dos botões */
+    padding-bottom: 2rem; /* Garante espaço na parte inferior */
 }
 
 .scroll-indicator {
@@ -465,6 +486,12 @@ body {
 
 .hero-logos-container p {
     color: #062E51; /* Garante que o título seja legível no fundo branco */
+}
+
+/* Classe para transformar um logo branco em preto usando filtro */
+.logo-to-black {
+    /* Inverte as cores (branco vira preto) e ajusta o brilho para garantir o preto sólido */
+    filter: brightness(0) invert(1);
 }
 
 /* --- Estilos para Animação na Rolagem --- */

@@ -384,15 +384,15 @@ document.addEventListener('DOMContentLoaded', () => {
     /**
      * Sets up YouTube video players.
      */
-    function setupYouTubeBackground() {
+    function setupYouTubePlayers() {
         // Função para criar um player. Pode ser reutilizada.
-        const createPlayer = (elementId, videoId, start, end) => {
-            if (!document.getElementById(elementId)) return;
+        const createPlayer = (elementId, videoId, playerVars) => {
+            if (!document.getElementById(elementId)) return null;
 
             return new YT.Player(elementId, {
                 videoId: videoId,
                 playerVars: {
-                    autoplay: 1,
+                    // Default settings
                     controls: 0,
                     showinfo: 0,
                     modestbranding: 1,
@@ -402,14 +402,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     iv_load_policy: 3,
                     autohide: 0,
                     mute: 1,
-                    start: start,
-                    end: end,
-                    playlist: videoId // Required for the loop to work
-                },
-                events: {
-                    onReady: function(event) {
-                        event.target.playVideo();
-                    }
+                    playlist: videoId, // Required for the loop to work
+                    ...playerVars // Sobrescreve as configurações padrão
                 }
             });
         };
@@ -417,11 +411,39 @@ document.addEventListener('DOMContentLoaded', () => {
         // This function will be called by the YouTube API script once it's loaded
         window.onYouTubeIframeAPIReady = function() {
             // Player para a seção de início (fundo)
-            createPlayer('youtube-player', '9lJSGvqRjUc', 10, 112);
+            const backgroundPlayer = createPlayer('youtube-player', '9lJSGvqRjUc', {
+                autoplay: 1,
+                start: 10,
+                end: 112
+            });
+            if (backgroundPlayer) {
+                backgroundPlayer.addEventListener('onReady', (event) => event.target.playVideo());
+            }
 
             // Player para a seção "Sobre" (planejamento)
-            // O vídeo tem 1:18 (78s). Vamos usar o vídeo inteiro.
-            createPlayer('planning-video-player', 'IhK0ju7oE_U', 0, 78);
+            const planningPlayer = createPlayer('planning-video-player', 'IhK0ju7oE_U', {
+                autoplay: 0, // Não inicia automaticamente
+                mute: 0,     // Inicia com som
+                controls: 0, // Esconde os controles nativos
+                rel: 0       // Não mostra vídeos relacionados no final
+            });
+
+            const customPlayButton = document.getElementById('custom-play-button');
+
+            if (planningPlayer && customPlayButton) {
+                customPlayButton.addEventListener('click', () => {
+                    planningPlayer.playVideo();
+                });
+
+                planningPlayer.addEventListener('onStateChange', (event) => {
+                    // YT.PlayerState.PLAYING = 1, PAUSED = 2, ENDED = 0
+                    if (event.data === YT.PlayerState.PLAYING) {
+                        customPlayButton.classList.add('hidden');
+                    } else {
+                        customPlayButton.classList.remove('hidden');
+                    }
+                });
+            }
         };
     }
 
@@ -436,6 +458,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setupScrollProgressBar();
         setupFormValidation();
         setupPhoneMask();
-        setupYouTubeBackground();
+        setupYouTubePlayers();
     }
 });

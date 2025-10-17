@@ -46,12 +46,13 @@
                 
                 <div class="hero-logos-container animate-on-scroll mt-12" style="--animation-delay: 0.3s;">
                     <p class="text-sm uppercase tracking-widest mb-4 opacity-70">Realização e Apoio</p>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-8 gap-y-6 items-center hero-logos">
+                    <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-6 gap-x-8 gap-y-6 items-center hero-logos">
                         <img src="https://www.defesacivil.pr.gov.br/sites/defesa-civil/arquivos_restritos/files/imagem/2019-05/1769_Defesa_Civil__PR.PNG" alt="Logo Defesa Civil Paraná" class="logo-apoio">
                         <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo Corpo de Bombeiros Militar Paraná" class="logo-apoio">
                         <img src="https://web.celepar.pr.gov.br/drupal/images/seil/portos/logo_portos_300x86.png" alt="Logo Portos do Paraná" class="logo-apoio">
                         <img src="https://portal.isulpar.edu.br/wp-content/uploads/2024/10/logo-texto-1024x378.png" alt="Logo ISULPAR" class="logo-apoio">
-                        <img src="https://maximizados.com.br/_next/image?url=%2Fimages%2FLogo.png&w=128&q=75" alt="Logo Maximizados" class="logo-apoio">
+                        <img src="https://maximizados.com.br/_next/image?url=%2Fimages%2FLogo.png&w=128&q=75" alt="Logo Maximizados" class="logo-apoio logo-to-black">
+                        <img src="https://talentosbrasil.com.br/img/logotipo/logotipo.png" alt="Logo Talentos Brasil" class="logo-apoio">
                     </div>
                 </div>
                 </div>
@@ -71,7 +72,12 @@
                 <h2 class="animate-on-scroll section-title font-bold text-[#062E51] mb-8 text-center" style="--animation-delay: 0s;">Um Encontro para Fortalecer o Litoral Paranaense</h2>
                 <div class="flex flex-col md:flex-row items-center gap-8">
                     <div id="planning-video-player" class="animate-on-scroll w-full md:w-1/2 shadow-xl" style="--animation-delay: 0.1s;">
-                        <!-- O vídeo do YouTube será injetado aqui pelo JavaScript -->
+                        <!-- O vídeo será injetado aqui, e o botão de play ficará sobre ele -->
+                        <button id="custom-play-button" aria-label="Tocar vídeo">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-24 h-24">
+                                <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm14.024-.983a1.125 1.125 0 010 1.966l-5.603 3.113A1.125 1.125 0 019 15.113V8.887c0-.857.921-1.4 1.671-.983l5.603 3.113z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
                     </div>
                     <div class="animate-on-scroll w-full md:w-1/2 text-center md:text-left" style="--animation-delay: 0.2s;">
                         <p class="text-gray-700 mb-6">
@@ -207,77 +213,80 @@
 
         <!-- Painel 5: Inscrição, Local e Apoio -->
         <section id="inscricao" class="folder-panel">
-            <div class="panel-content flex flex-col lg:flex-row items-center justify-center gap-10">
-                <!-- Coluna do Formulário -->
-                <div class="animate-on-scroll w-full lg:w-1/2 bg-white p-8 rounded-lg shadow-lg" style="--animation-delay: 0s;">
-                    <h2 class="text-3xl font-bold text-[#062E51] mb-2 text-center">Garanta sua Vaga no Workshop</h2>
-                    <p class="text-center text-gray-600 mb-6">Preencha o formulário abaixo para confirmar sua participação.</p>
-                    <form id="lead-form" class="space-y-4" novalidate>
-                        <div>
-                            <label for="nome" class="sr-only">Nome Completo</label>
-                            <input type="text" id="nome" name="nome" class="form-input" placeholder="Nome Completo" required>
-                        </div>
-                        <div>
-                            <label for="empresa" class="sr-only">Empresa / Instituição</label>
-                            <input type="text" id="empresa" name="empresa" class="form-input" placeholder="Empresa / Instituição" required>
-                        </div>
-                        <div>
-                            <label for="email" class="sr-only">Seu melhor e-mail</label>
-                            <input type="email" id="email" name="email" class="form-input" placeholder="Seu melhor e-mail" required>
-                        </div>
-                        <div>
-                            <label for="telefone" class="sr-only">Telefone com WhatsApp</label>
-                            <input type="tel" id="telefone" name="telefone" class="form-input" placeholder="Telefone com WhatsApp">
-                        </div>
-                        <div>
-                            <label for="municipio-input" class="sr-only">Digite seu Município</label>
-                            <div class="autocomplete-container relative">
-                                <input type="text" id="municipio-input" name="municipio" class="form-input" placeholder="Digite seu Município" required autocomplete="off">
-                                <div id="municipio-suggestions" class="autocomplete-suggestions hidden"></div>
+            <div class="panel-content flex flex-col items-center justify-center">
+                <div class="flex flex-col lg:flex-row items-center justify-center gap-10 w-full">
+                    <!-- Coluna do Formulário -->
+                    <div class="animate-on-scroll w-full lg:w-1/2 bg-white p-8 rounded-lg shadow-lg" style="--animation-delay: 0s;">
+                        <h2 class="text-3xl font-bold text-[#062E51] mb-2 text-center">Garanta sua Vaga no Workshop</h2>
+                        <p class="text-center text-gray-600 mb-6">Preencha o formulário abaixo para confirmar sua participação.</p>
+                        <form id="lead-form" class="space-y-4" novalidate>
+                            <div>
+                                <label for="nome" class="sr-only">Nome Completo</label>
+                                <input type="text" id="nome" name="nome" class="form-input" placeholder="Nome Completo" required>
                             </div>
+                            <div>
+                                <label for="empresa" class="sr-only">Empresa / Instituição</label>
+                                <input type="text" id="empresa" name="empresa" class="form-input" placeholder="Empresa / Instituição" required>
+                            </div>
+                            <div>
+                                <label for="email" class="sr-only">Seu melhor e-mail</label>
+                                <input type="email" id="email" name="email" class="form-input" placeholder="Seu melhor e-mail" required>
+                            </div>
+                            <div>
+                                <label for="telefone" class="sr-only">Telefone com WhatsApp</label>
+                                <input type="tel" id="telefone" name="telefone" class="form-input" placeholder="Telefone com WhatsApp">
+                            </div>
+                            <div>
+                                <label for="municipio-input" class="sr-only">Digite seu Município</label>
+                                <div class="autocomplete-container relative">
+                                    <input type="text" id="municipio-input" name="municipio" class="form-input" placeholder="Digite seu Município" required autocomplete="off">
+                                    <div id="municipio-suggestions" class="autocomplete-suggestions hidden"></div>
+                                </div>
+                            </div>
+                            <div class="consent-checkbox">
+                                <input type="checkbox" id="consent" name="consent" required>
+                                <label for="consent">Eu concordo em receber comunicações sobre este e futuros eventos.</label>
+                            </div>
+                            <div id="form-messages" class="text-center"></div>
+                            <button type="submit" class="w-full bg-[#E63946] hover:bg-[#c9323d] text-white font-bold py-3 rounded-lg text-lg transition-colors duration-300">Inscrever-se Agora</button>
+                        </form>
+                    </div>
+                    <!-- Coluna de Informações e Apoio -->
+                    <div class="animate-on-scroll w-full lg:w-1/2 text-center lg:text-left text-[#062E51]" style="--animation-delay: 0.1s;">
+                        <h3 class="text-2xl font-bold">Data</h3>
+                        <p class="text-lg text-gray-700 mt-2">13 e 14 de Novembro</p>
+                        <h3 class="text-2xl font-bold mt-6">Local</h3>
+                        <p class="text-lg text-gray-700 mt-2 mb-4">ISULPAR - Instituto Superior do Litoral do Paraná<br>Paranaguá - PR</p>
+                        
+                        <div class="map-container">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3602.937746205809!2d-48.50954002470258!3d-25.44029997755535!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94dbee903150338b%3A0x973a1e5c26b0142a!2sR.%20Jo%C3%A3o%20Eug%C3%AAnio%2C%20534%20-%20Costeira%2C%20Paranagu%C3%A1%20-%20PR%2C%2083203-400!5e0!3m2!1spt-BR!2sbr!4v1721344893129!5m2!1spt-BR!2sbr" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
-                        <div class="consent-checkbox">
-                            <input type="checkbox" id="consent" name="consent" required>
-                            <label for="consent">Eu concordo em receber comunicações sobre este e futuros eventos.</label>
+                        
+                        <h3 class="text-2xl font-bold mt-8 mb-4">Realização e Apoio</h3>
+                        <div class="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-3 gap-x-8 gap-y-6 items-center">
+                            <img src="https://www.defesacivil.pr.gov.br/sites/defesa-civil/arquivos_restritos/files/imagem/2019-05/1769_Defesa_Civil__PR.PNG" alt="Logo Defesa Civil Paraná" class="logo-apoio">
+                            <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo Corpo de Bombeiros Militar Paraná" class="logo-apoio">
+                            <img src="https://web.celepar.pr.gov.br/drupal/images/seil/portos/logo_portos_300x86.png" alt="Logo Portos do Paraná" class="logo-apoio">
+                            <img src="https://portal.isulpar.edu.br/wp-content/uploads/2024/10/logo-texto-1024x378.png" alt="Logo ISULPAR" class="logo-apoio">
+                            <img src="https://maximizados.com.br/_next/image?url=%2Fimages%2FLogo.png&w=128&q=75" alt="Logo Maximizados" class="logo-apoio logo-to-black">
+                            <img src="https://talentosbrasil.com.br/img/logotipo/logotipo.png" alt="Logo Talentos Brasil" class="logo-apoio">
                         </div>
-                        <div id="form-messages" class="text-center"></div>
-                        <button type="submit" class="w-full bg-[#E63946] hover:bg-[#c9323d] text-white font-bold py-3 rounded-lg text-lg transition-colors duration-300">Inscrever-se Agora</button>
-                    </form>
-                </div>
-                <!-- Coluna de Informações e Apoio -->
-                <div class="animate-on-scroll w-full lg:w-1/2 text-center lg:text-left text-[#062E51]" style="--animation-delay: 0.1s;">
-                    <h3 class="text-2xl font-bold">Data</h3>
-                    <p class="text-lg text-gray-700 mt-2">13 e 14 de Novembro</p>
-                    <h3 class="text-2xl font-bold mt-6">Local</h3>
-                    <p class="text-lg text-gray-700 mt-2 mb-4">ISULPAR - Instituto Superior do Litoral do Paraná<br>Paranaguá - PR</p>
-                    
-                    <div class="map-container">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3602.937746205809!2d-48.50954002470258!3d-25.44029997755535!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94dbee903150338b%3A0x973a1e5c26b0142a!2sR.%20Jo%C3%A3o%20Eug%C3%AAnio%2C%20534%20-%20Costeira%2C%20Paranagu%C3%A1%20-%20PR%2C%2083203-400!5e0!3m2!1spt-BR!2sbr!4v1721344893129!5m2!1spt-BR!2sbr" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                    </div>
-                    
-                    <h3 class="text-2xl font-bold mt-8 mb-4">Realização e Apoio</h3>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-x-8 gap-y-6 items-center">
-                        <img src="https://www.defesacivil.pr.gov.br/sites/defesa-civil/arquivos_restritos/files/imagem/2019-05/1769_Defesa_Civil__PR.PNG" alt="Logo Defesa Civil Paraná" class="logo-apoio">
-                        <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo Corpo de Bombeiros Militar Paraná" class="logo-apoio">
-                        <img src="https://web.celepar.pr.gov.br/drupal/images/seil/portos/logo_portos_300x86.png" alt="Logo Portos do Paraná" class="logo-apoio">
-                        <img src="https://portal.isulpar.edu.br/wp-content/uploads/2024/10/logo-texto-1024x378.png" alt="Logo ISULPAR" class="logo-apoio">
-                        <img src="https://maximizados.com.br/_next/image?url=%2Fimages%2FLogo.png&w=128&q=75" alt="Logo Maximizados" class="logo-apoio">
-                    </div>
-                    <div class="mt-10 flex flex-col items-center lg:items-start">
-                        <p class="text-xs text-gray-500 mt-4">&copy; 2025 - Todos os direitos reservados.</p>
+                        <div class="mt-10 flex flex-col items-center lg:items-start">
+                            <p class="text-xs text-gray-500 mt-4">&copy; 2025 - Todos os direitos reservados.</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <!-- Indicador de Rolagem para Cima -->
-            <div class="scroll-indicator-container">
-                <a href="#palestrantes" class="scroll-indicator up" aria-label="Rolar para a seção anterior">
-                    <span class="indicator-label">Palestrantes</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
-                </a>
-                <a href="#inicio" class="scroll-indicator up" aria-label="Voltar ao início">
-                    <span class="indicator-label">Voltar ao Início</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
-                </a>
+                <!-- Indicador de Rolagem para Cima -->
+                <div class="scroll-indicator-container flex-col">
+                    <a href="#palestrantes" class="scroll-indicator up" aria-label="Rolar para a seção anterior">
+                        <span class="indicator-label">Palestrantes</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+                    </a>
+                    <a href="#inicio" class="scroll-indicator up" aria-label="Voltar ao início">
+                        <span class="indicator-label">Voltar ao Início</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+                    </a>
+                </div>
             </div>
         </section>
 
