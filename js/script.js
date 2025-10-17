@@ -420,8 +420,8 @@ document.addEventListener('DOMContentLoaded', () => {
             createPlayer('youtube-player', '9lJSGvqRjUc', 10, 112);
 
             // Player para a seção "Sobre" (planejamento)
-            // O vídeo tem 1:07 (67s). Vamos usar o vídeo inteiro.
-            createPlayer('planning-video-player', '67Gecu5r2IE', 0, 67);
+            // O vídeo tem 1:18 (78s). Vamos usar o vídeo inteiro.
+            createPlayer('planning-video-player', 'IhK0ju7oE_U', 0, 78);
         };
     }
 
