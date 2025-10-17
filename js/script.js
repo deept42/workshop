@@ -299,6 +299,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const telefone = form.elements['telefone'].value.trim();
             const municipio = form.elements['municipio'].value.trim();
             const consent = form.elements['consent'].checked;
+            const dia13 = form.elements['dia13'].checked;
+            const dia14 = form.elements['dia14'].checked;
 
             // Validação dos campos
             if (!nome || !empresa || !email || !municipio) {
@@ -316,6 +318,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            if (!dia13 && !dia14) {
+                displayMessage('Por favor, selecione pelo menos um dia de participação.', 'error');
+                return;
+            }
+
             if (!consent) {
                 displayMessage('Você precisa concordar com os termos para se inscrever.', 'error');
                 return;
@@ -323,11 +330,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Se tudo estiver OK
             displayMessage('Inscrição realizada com sucesso! Aguarde nosso contato.', 'success');
-            form.reset(); // Limpa o formulário
+            
+            // Mostra o modal customizado para o certificado
+            setTimeout(() => {
+                showCertificateModal();
+            }, 500); // Delay de 0.5 segundos
 
+            form.reset();
             // Aqui você enviaria os dados para o seu backend/serviço de e-mail
             // Ex: sendDataToBackend({ nome, empresa, email, municipio });
         });
+
+        function showCertificateModal() {
+            const modal = document.getElementById('certificate-modal');
+            const modalContent = document.getElementById('certificate-modal-content');
+            const btnYes = document.getElementById('cert-btn-yes');
+            const btnNo = document.getElementById('cert-btn-no');
+
+            if (!modal || !btnYes || !btnNo) return;
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => modalContent.style.transform = 'scale(1)', 50); // Ativa a animação
+
+            const closeModal = () => {
+                modalContent.style.transform = 'scale(0.95)';
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            };
+
+            btnYes.onclick = () => {
+                window.open('https://www.asaas.com/c/p9v42o92yos25x75', '_blank');
+                closeModal();
+            };
+
+            btnNo.onclick = () => {
+                closeModal();
+            };
+        }
 
         function displayMessage(message, type) {
             const messageElement = document.createElement('p');

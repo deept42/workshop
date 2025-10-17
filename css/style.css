@@ -646,6 +646,19 @@ body {
     border: none;
 }
 
+/* --- Estilos para o Link de Pagamento --- */
+#payment-link-container {
+    transition: all 0.4s ease-in-out;
+    max-height: 0;
+    overflow: hidden;
+}
+
+/* --- Estilos para o Cartão Dourado de Certificado --- */
+.gold-gradient-card {
+    background: linear-gradient(145deg, #fde08d, #fff8e1, #e6c35c, #fff8e1, #d4af37); /* Gradiente mais claro */
+    border: 2px solid #e6c35c; /* Borda mais clara */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
 
 /* --- Esconde a Barra de Rolagem Principal --- */
 /* Mantém a funcionalidade de rolagem, mas esconde a barra visualmente */
@@ -664,6 +677,12 @@ body {
 /* Estilo para o zoom da imagem */
 #image-zoom-overlay {
     transition: opacity 0.3s ease-in-out;
+}
+
+/* Estilo para a animação do modal de certificado */
+#certificate-modal-content {
+    transform: scale(0.95);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 /* --- Estilos para o Crachá do Palestrante --- */

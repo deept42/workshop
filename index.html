@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workshop: Cidades Resilientes - Litoral do Paraná</title>
+    <title>Workshop: MUNICÍPIOS Resilientes - Litoral do Paraná</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -38,7 +38,7 @@
             </div>
             <div class="panel-content text-center">
                 <div class="hero-content relative">
-                    <h1 class="animate-on-scroll font-extrabold leading-tight mb-4" style="--animation-delay: 0s;">Workshop: Cidades Mais Resilientes em Desastres</h1>
+                    <h1 class="animate-on-scroll font-extrabold leading-tight mb-4" style="--animation-delay: 0s;">Workshop: MUNICÍPIOS Mais Resilientes em Desastres</h1>
                 <p class="animate-on-scroll text-lg md:text-xl font-light mb-8 max-w-3xl mx-auto" style="--animation-delay: 0.1s;">Capacitando gestores e comunidades do Litoral do Paraná para um futuro mais seguro.</p>
                 <div class="mb-8">
                     <a href="#inscricao" class="hero-button animate-on-scroll bg-[#E63946] hover:bg-[#c9323d] text-white font-bold py-4 px-8 rounded-lg text-lg transition duration-300" style="--animation-delay: 0.2s;">Garanta sua Vaga</a>
@@ -129,7 +129,7 @@
                             <li><strong>09h00:</strong> Abertura (cerimonial, vídeo institucional, palavra do Cmt…)</li>
                             <li><strong>09h30:</strong> Palestra de abertura - Cel Barros - ÁGUAS DE MARÇO eventos do ano de 2011</li>
                             <li><strong>10h15:</strong> Coffee break</li>
-                            <li><strong>10h30:</strong> Palestrante TC Pinheiro - Cidades Resilientes</li>
+                            <li><strong>10h30:</strong> Palestrante TC Pinheiro - MUNICÍPIOS Resilientes</li>
                             <li><strong>11h00:</strong> Palestrante CEGERD - Gerenciamento de Desastre</li>
                             <li><strong>11h00:</strong> Palestrante SIMEPAR - Monitoramento e Previsão (Chuva/Evento/Descarga Atmosféricas)</li>
                             <li><strong>12h00:</strong> Almoço</li>
@@ -163,7 +163,7 @@
                         </div>
 
                         <div>
-                            <h4 class="text-lg font-bold text-blue-800 mb-2">Sala 1 (Cidades Resilientes)</h4>
+                            <h4 class="text-lg font-bold text-blue-800 mb-2">Sala 1 (MUNICÍPIOS Resilientes)</h4>
                             <p class="text-sm text-gray-600 mb-3">Público: COMPDECs, Gestores de Parques</p>
                             <ul class="space-y-3">
                                 <li><strong>09h00:</strong> Palestrantes Cel Schinda, TC Frazatto e Dr Angelo - Prevenção de áreas de risco e afogamento</li>
@@ -267,10 +267,19 @@
                                     <div id="municipio-suggestions" class="autocomplete-suggestions hidden"></div>
                                 </div>
                             </div>
-                            <div class="consent-checkbox bg-blue-50 border border-blue-200 p-3 rounded-md">
-                                <input type="checkbox" id="certificado" name="certificado">
-                                <label for="certificado" class="font-semibold text-gray-700">Desejo receber o certificado de participação.</label>
-                                <p class="text-xs text-gray-500 mt-1 ml-7">Taxa de R$ 20,00. As instruções para pagamento serão enviadas por e-mail.</p>
+                            <!-- Seleção de Dias de Participação -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Você participará de quais dias?</label>
+                                <div class="flex items-center justify-start gap-6 p-3 bg-gray-50 border rounded-md">
+                                    <div class="flex items-center gap-2">
+                                        <input type="checkbox" id="dia13" name="dia13" class="h-5 w-5 rounded border-gray-300 text-[#E63946] focus:ring-[#E63946] cursor-pointer">
+                                        <label for="dia13" class="text-gray-800 cursor-pointer">13/11/2025</label>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <input type="checkbox" id="dia14" name="dia14" class="h-5 w-5 rounded border-gray-300 text-[#E63946] focus:ring-[#E63946] cursor-pointer">
+                                        <label for="dia14" class="text-gray-800 cursor-pointer">14/11/2025</label>
+                                    </div>
+                                </div>
                             </div>
                             <div class="consent-checkbox">
                                 <input type="checkbox" id="consent" name="consent" required>
@@ -366,6 +375,20 @@
         <img id="zoomed-image" src="" alt="Imagem ampliada" class="max-w-full max-h-full object-contain rounded-lg">
     </div>
 
+    <!-- Modal Customizado para Certificado -->
+    <div id="certificate-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+        <div id="certificate-modal-content" class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h3 class="text-2xl font-bold text-[#062E51] mb-2">Inscrição Confirmada!</h3>
+            <p class="text-gray-600 mb-6">Deseja receber o certificado oficial de participação por uma taxa de R$ 20,00?</p>
+            <div class="flex justify-center gap-4">
+                <button id="cert-btn-no" class="px-6 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold transition-colors">Não, obrigado</button>
+                <button id="cert-btn-yes" class="px-6 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-bold transition-colors">Sim, quero o certificado!</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Caminho para o arquivo JavaScript dentro da pasta 'js' -->
     <script src="js/script.js" defer></script>
