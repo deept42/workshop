@@ -117,7 +117,7 @@
                 <div class="grid md:grid-cols-2 gap-8 text-left">
                     <!-- Dia 1 -->
                     <div class="animate-on-scroll bg-white p-6 rounded-lg shadow-lg" style="--animation-delay: 0.1s;">
-                        <h3 class="text-2xl font-bold mb-4 border-b pb-2">Dia 1 (Auditório)</h3>
+                        <h3 class="text-2xl font-bold mb-4 border-b pb-2">1° Dia - Auditório (13/11/2025)</h3>
                         <ul class="space-y-3">
                             <li><strong>08h00:</strong> Credenciamento</li>
                             <li><strong>09h00:</strong> Abertura (cerimonial, vídeo institucional, palavra do Cmt…)</li>
@@ -138,7 +138,7 @@
 
                     <!-- Dia 2 -->
                     <div class="animate-on-scroll bg-white p-6 rounded-lg shadow-lg" style="--animation-delay: 0.2s;">
-                        <h3 class="text-2xl font-bold mb-4 border-b pb-2">Dia 2 (Auditório e Salas)</h3>
+                        <h3 class="text-2xl font-bold mb-4 border-b pb-2">2° Dia (14/11/2025)</h3>
                         
                         <div class="mb-6">
                             <h4 class="text-lg font-bold text-blue-800 mb-2">Auditório (PAM e PP)</h4>
@@ -157,7 +157,7 @@
                         </div>
 
                         <div>
-                            <h4 class="text-lg font-bold text-blue-800 mb-2">Sala 1 (Cidades Resilientes, Afogamento)</h4>
+                            <h4 class="text-lg font-bold text-blue-800 mb-2">Sala 1 (Cidades Resilientes)</h4>
                             <p class="text-sm text-gray-600 mb-3">Público: COMPDECs, Gestores de Parques</p>
                             <ul class="space-y-3">
                                 <li><strong>09h00:</strong> Palestrantes Cel Schinda, TC Frazatto e Dr Angelo - Prevenção de áreas de risco e afogamento</li>
@@ -192,11 +192,29 @@
         <section id="palestrantes" class="folder-panel">
              <div class="panel-content text-center">
                 <h2 class="animate-on-scroll section-title font-bold text-[#062E51] mb-10" style="--animation-delay: 0s;">Palestrantes Confirmados</h2>
-                 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
-                    <div class="animate-on-scroll text-center" style="--animation-delay: 0.1s;"><img src="https://placehold.co/200x200/60A5FA/FFFFFF?text=Dr.+Silva" alt="Foto do Dr. João Silva" class="w-40 h-40 mx-auto rounded-full shadow-lg mb-4"><h3 class="text-xl font-bold text-[#062E51]">Dr. João Silva</h3><p class="text-gray-500">Climatologista - UFPR</p></div>
-                    <div class="animate-on-scroll text-center" style="--animation-delay: 0.2s;"><img src="https://placehold.co/200x200/F97316/FFFFFF?text=Cap.+Ana" alt="Foto da Capitã Ana Souza" class="w-40 h-40 mx-auto rounded-full shadow-lg mb-4"><h3 class="text-xl font-bold text-[#062E51]">Capitã Ana Souza</h3><p class="text-gray-500">Defesa Civil Estadual</p></div>
-                    <div class="animate-on-scroll text-center" style="--animation-delay: 0.3s;"><img src="https://placehold.co/200x200/3B82F6/FFFFFF?text=Dra.+Lima" alt="Foto da Dra. Mariana Lima" class="w-40 h-40 mx-auto rounded-full shadow-lg mb-4"><h3 class="text-xl font-bold text-[#062E51]">Dra. Mariana Lima</h3><p class="text-gray-500">Urbanista Regional</p></div>
-                </div>
+                 <div class="flex justify-center">
+                    <!-- Crachá do Palestrante -->
+                    <div class="speaker-badge">
+                        <div class="badge-top-part">
+                            <div class="badge-header"></div>
+                            <div class="badge-photo-container">
+                                <img id="speaker-image-paula" src="https://i.ibb.co/TMjGrYrG/200506-Paula-Scardino-0108-1.jpg" alt="Foto da Palestrante Paula Scardino" class="badge-photo">
+                            </div>
+                        </div>
+                        <div class="badge-content">
+                            <h3 class="badge-name">Paula Scardino</h3>
+                            <p class="badge-title">PALESTRANTE</p>
+                            <div class="badge-details">
+                                <p>Coordenação Nacional NBR 14.787 e 16.577 ABNT</p>
+                                <p>Membro GT Tripartite NR-33</p>
+                                <p>Comendadora Prevencionista 2024</p>
+                            </div>
+                        </div>
+                        <div class="badge-footer">
+                            <span>WMRD-PR 2025</span>
+                        </div>
+                    </div>
+                 </div>
                 <!-- Indicadores de Rolagem -->
                 <div class="scroll-indicator-container">
                     <a href="#programacao" class="scroll-indicator up" aria-label="Rolar para a seção anterior">
@@ -325,6 +343,12 @@
         <a href="#palestrantes" class="mobile-link text-white">Palestrantes</a>
         <a href="#inscricao" class="mobile-link text-white">Inscrição</a>
     </div>
+
+    <!-- Overlay para Zoom de Imagem -->
+    <div id="image-zoom-overlay" class="fixed inset-0 bg-black/80 z-[100] hidden items-center justify-center p-4 cursor-pointer">
+        <img id="zoomed-image" src="" alt="Imagem ampliada" class="max-w-full max-h-full object-contain rounded-lg">
+    </div>
+
 
     <!-- Caminho para o arquivo JavaScript dentro da pasta 'js' -->
     <script src="js/script.js" defer></script>

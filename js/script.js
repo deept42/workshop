@@ -447,6 +447,32 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    /**
+     * Sets up click-to-zoom functionality for specified images.
+     */
+    function setupImageZoom() {
+        const speakerImage = document.getElementById('speaker-image-paula');
+        const overlay = document.getElementById('image-zoom-overlay');
+        const zoomedImage = document.getElementById('zoomed-image');
+
+        if (!speakerImage || !overlay || !zoomedImage) return;
+
+        speakerImage.addEventListener('click', () => {
+            zoomedImage.src = speakerImage.src;
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+        });
+
+        overlay.addEventListener('click', () => {
+            overlay.classList.add('hidden');
+            overlay.classList.remove('flex');
+            // Optional: clear src to prevent loading image in the background
+            setTimeout(() => {
+                zoomedImage.src = "";
+            }, 300); // Delay matches CSS transition
+        });
+    }
+
     // --- INITIALIZATION ---
     if (folderContainer) {
         setupSmoothScrolling();
@@ -459,5 +485,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setupFormValidation();
         setupPhoneMask();
         setupYouTubePlayers();
+        setupImageZoom();
     }
 });
