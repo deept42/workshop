@@ -1,6 +1,7 @@
 /* Reset e configuração base para a experiência de tela cheia */
 html {
-    scroll-behavior: auto; /* 'smooth' pode interferir com o snap instantâneo */
+    scroll-behavior: smooth; /* Rolagem suave ao clicar nos links */
+    /* scroll-snap-type: y mandatory; */ /* EFEITO REMOVIDO */
 }
 body {
     margin: 0;
@@ -14,29 +15,30 @@ body {
 
 /* Container principal que segura todos os painéis */
 #folder-container {
-    display: block; /* Painéis um abaixo do outro */
+    display: flex;
+    flex-direction: column; /* CORREÇÃO: Painéis um abaixo do outro */
     width: 100%;
-    height: auto;
+    height: auto; /* Altura automática para acomodar todo o conteúdo */
 
     /* Faz a rolagem "grudar" nos painéis (efeito de snapping) */
-    scroll-snap-type: y mandatory;
-    overflow-y: scroll;
+    /* scroll-snap-type: y mandatory; */ /* EFEITO REMOVIDO */
+    overflow-y: visible; /* Remove a barra de rolagem interna */
 }
 
 /* Estilo para cada painel/seção do folder */
 .folder-panel {
     background-color: white; /* Fundo sólido para evitar sobreposição visual */
     width: 100vw; /* Cada painel ocupa a largura inteira da tela */
-    height: 100vh; /* Cada painel ocupa a altura inteira da tela */
+    height: auto; /* Altura baseada no conteúdo, sem altura mínima forçada */
     flex-shrink: 0; /* Impede que os painéis encolham */
     
     /* Centraliza o conteúdo */
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; /* Alinha o conteúdo no topo */
 
-    /* Define o ponto de "snap" da rolagem */
-    scroll-snap-align: start;
+    /* Define o ponto de "snap" da rolagem - EFEITO REMOVIDO */
+    /* scroll-snap-align: start; */
 
     /* Permite rolagem vertical DENTRO do painel se o conteúdo for muito grande (em telas pequenas) */
     overflow-y: auto;
@@ -51,7 +53,8 @@ body {
     max-width: clamp(320px, 95%, 1280px);
     margin-left: auto;
     margin-right: auto;
-    padding: 2rem 1rem; /* Adiciona espaçamento vertical e horizontal */
+    padding: 2rem;
+    padding-top: 5rem; /* Espaçamento superior reduzido */
 }
 
 /* --- Estilos de Fundo por Seção --- */
@@ -320,8 +323,8 @@ body {
         overflow-y: auto; /* PERMITE a rolagem vertical novamente */
     }
     .panel-content {
-        padding-top: 5rem; /* Espaço para a barra de topo não sobrepor */
-        padding-bottom: 5rem; /* Espaço para o menu não sobrepor */
+        padding-top: 4rem; /* Espaço reduzido para a barra de topo não sobrepor */
+        padding-bottom: 3rem; /* Espaço reduzido para o menu não sobrepor */
     }
 
     /* Reduz drasticamente o tamanho dos títulos */
@@ -498,16 +501,14 @@ body {
 
 /* Prepara os elementos para a animação (invisíveis por padrão) */
 .animate-on-scroll {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-    transition-delay: var(--animation-delay, 0s); /* Usa a variável de delay ou 0s como padrão */
+    /* Efeito de animação ao rolar removido para que o conteúdo esteja sempre visível. */
+    opacity: 1;
+    transform: none;
 }
 
 /* Classe que ativa a animação quando o elemento está visível */
 .animate-on-scroll.is-visible {
-    opacity: 1;
-    transform: translateY(0);
+    /* Esta classe não tem mais efeito visual, pois os elementos já começam visíveis. */
 }
 
 /* --- Estilos para o Formulário --- */

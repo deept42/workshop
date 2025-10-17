@@ -22,8 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const targetPanel = document.querySelector(targetId);
                 
                 if (targetPanel) {
-                    // O comportamento 'auto' (ou a ausência de 'behavior') garante o "snap" instantâneo.
-                    targetPanel.scrollIntoView({ inline: 'start' });
+                    // Garante a rolagem suave que foi definida no CSS.
+                    targetPanel.scrollIntoView({ behavior: 'smooth' });
                 }
             });
         });
