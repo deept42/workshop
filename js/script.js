@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (panels.length === 0) return;
 
         let lastActiveLinks = [];
+        const navIndicator = document.getElementById('nav-indicator');
 
         const observerOptions = {
             root: null, // Observa em relação ao viewport do navegador (CORREÇÃO)
@@ -62,14 +63,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (entry.isIntersecting) {
                     currentVisiblePanel = entry.target; // Atualiza o painel visível
 
-                    const activeLinks = document.querySelectorAll(`a[href="#${entry.target.id}"]`);
+                    const activeLink = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+                    const allLinks = document.querySelectorAll(`a[href="#${entry.target.id}"]`);
                     
                     // Otimização: Remove a classe apenas dos links ativos anteriormente.
                     lastActiveLinks.forEach(link => link.classList.remove('active-link'));
                     
                     // Adiciona a classe ativa a todos os links correspondentes (desktop e mobile)
-                    activeLinks.forEach(link => link.classList.add('active-link'));
-                    lastActiveLinks = Array.from(activeLinks);
+                    allLinks.forEach(link => link.classList.add('active-link'));
+                    lastActiveLinks = Array.from(allLinks);
+
+                    // Move o indicador deslizante
+                    const sideNav = document.getElementById('side-nav');
+                    if (navIndicator && activeLink && sideNav) {
+                        navIndicator.style.opacity = '1';
+                        // A lógica agora é a mesma para ambos os estados, o CSS cuida da aparência
+                        navIndicator.style.top = `${activeLink.offsetTop}px`;
+                        navIndicator.style.height = `${activeLink.offsetHeight}px`;
+                    }
 
                     // Adiciona a classe 'is-visible' para disparar a animação
                     elementsToAnimate.forEach(el => el.classList.add('is-visible'));
@@ -91,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupMobileMenu() {
         const hamburgerBtn = document.getElementById('hamburger-btn');
         const mobileMenu = document.getElementById('mobile-menu');
-        const mobileLinks = document.querySelectorAll('.mobile-link');
+        const mobileLinks = document.querySelectorAll('#mobile-menu .mobile-link');
 
         if (!hamburgerBtn || !mobileMenu) return;
 
@@ -550,7 +561,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Player para a seção de início (fundo)
             const backgroundPlayer = createPlayer('youtube-player', '9lJSGvqRjUc', {
                 autoplay: 1,
-                start: 10,
+                start: 50, // Corta mais 20 segundos (30 + 20)
                 end: 112
             });
             if (backgroundPlayer) {

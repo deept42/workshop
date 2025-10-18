@@ -1,7 +1,6 @@
 /* Reset e configuração base para a experiência de tela cheia */
 html {
-    scroll-behavior: smooth; /* Rolagem suave ao clicar nos links */
-    /* scroll-snap-type: y mandatory; */ /* EFEITO REMOVIDO */
+    scroll-behavior: auto; /* 'smooth' pode interferir com o snap instantâneo */
 }
 body {
     margin: 0;
@@ -15,35 +14,31 @@ body {
 
 /* Container principal que segura todos os painéis */
 #folder-container {
-    display: flex;
-    flex-direction: column; /* CORREÇÃO: Painéis um abaixo do outro */
+    display: block; /* Painéis um abaixo do outro */
     width: 100%;
-    height: auto; /* Altura automática para acomodar todo o conteúdo */
+    height: auto;
 
     /* Faz a rolagem "grudar" nos painéis (efeito de snapping) */
-    /* scroll-snap-type: y mandatory; */ /* EFEITO REMOVIDO */
-    overflow-y: visible; /* Remove a barra de rolagem interna */
+    scroll-snap-type: y mandatory;
+    overflow-y: scroll;
 }
 
 /* Estilo para cada painel/seção do folder */
 .folder-panel {
-    background-color: white; /* Fundo sólido para evitar sobreposição visual */
+    background-color: transparent; /* Garante que o fundo do body seja visível */
     width: 100vw; /* Cada painel ocupa a largura inteira da tela */
-    height: auto; /* Altura baseada no conteúdo, sem altura mínima forçada */
+    min-height: 100vh; /* Garante que o painel tenha PELO MENOS a altura da tela, mas pode crescer se o conteúdo for maior */
     flex-shrink: 0; /* Impede que os painéis encolham */
     
-    /* Centraliza o conteúdo */
-    display: flex;
-    justify-content: center;
-    align-items: flex-start; /* Alinha o conteúdo no topo */
+    /* REMOVIDO: A centralização agora é responsabilidade do .panel-content */
+    /* display: flex; justify-content: center; align-items: center; */
 
-    /* Define o ponto de "snap" da rolagem - EFEITO REMOVIDO */
-    /* scroll-snap-align: start; */
+    /* Define o ponto de "snap" da rolagem */
+    scroll-snap-align: start;
 
     /* Permite rolagem vertical DENTRO do painel se o conteúdo for muito grande (em telas pequenas) */
     overflow-y: auto;
-    position: relative; /* Necessário para z-index e posicionamento de filhos */
-    z-index: 1; /* Garante um contexto de empilhamento para cada painel */
+    position: relative; /* Necessário para posicionar os indicadores de rolagem */
 }
 
 /* Wrapper de conteúdo dentro de cada painel */
@@ -53,8 +48,12 @@ body {
     max-width: clamp(320px, 95%, 1280px);
     margin-left: auto;
     margin-right: auto;
-    padding: 2rem;
-    padding-top: 5rem; /* Espaçamento superior reduzido */
+    padding: 2rem 1rem;
+    /* ADICIONADO: O .panel-content agora centraliza seu próprio conteúdo */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100%; /* Garante que ele tente preencher a altura do painel pai */
 }
 
 /* --- Estilos de Fundo por Seção --- */
@@ -77,13 +76,6 @@ body {
     height: 100%;
     background-color: rgba(0, 20, 50, 0.7);
     z-index: 1;
-}
-
-/* Ajuste específico para a seção de início (Hero) */
-#inicio {
-    height: 90vh; /* Ocupa 90% da altura da tela */
-    align-items: center; /* Centraliza o conteúdo verticalmente */
-    padding-top: 0; /* Remove o padding superior para centralização correta */
 }
 
 /* Estilos para o player do YouTube se comportar como um vídeo de fundo */
@@ -115,27 +107,6 @@ body {
     position: relative; /* Necessário para o iframe absoluto */
 }
 
-/* Estilo para o botão de play customizado sobre o vídeo */
-#custom-play-button {
-    position: absolute;
-    inset: 0; /* Ocupa todo o espaço do container pai */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(0, 0, 0, 0.4); /* Sobreposição escura */
-    color: #E63946; /* Cor vermelha do ícone */
-    border: none;
-    cursor: pointer;
-    opacity: 1;
-    transition: opacity 0.3s ease-in-out;
-    z-index: 5; /* Garante que fique acima do iframe do vídeo */
-}
-
-#custom-play-button.hidden {
-    opacity: 0;
-    pointer-events: none; /* Impede cliques quando estiver invisível */
-}
-
 /* Fundos para as outras seções com sobreposição para legibilidade */
 .folder-panel {
     background-size: cover;
@@ -148,33 +119,10 @@ body {
     background-image: linear-gradient(rgba(230, 240, 255, 0.95), rgba(230, 240, 255, 0.95)), url('https://images.pexels.com/photos/7988086/pexels-photo-7988086.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
 }
 #palestrantes {
-    background-image: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('https://i.ibb.co/qFL26WKr/Whats-App-Image-2023-04-19-at-10-15-01-3-jpeg.jpg');
+    background-image: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
 }
 #inscricao {
-    background-image: linear-gradient(rgba(240, 242, 245, 0.95), rgba(240, 242, 245, 0.95)), url('https://i.ibb.co/CK2tQ1Jv/Whats-App-Image-2022-12-03-at-18-12-53-jpeg.jpg');
-}
-
-/* --- Estilos para os Cards da Programação --- */
-#programacao .grid > div {
-    background-color: #E63946 !important; /* Fundo vermelho, !important para sobrescrever Tailwind */
-    color: white;
-}
-
-#programacao .grid > div h3,
-#programacao .grid > div h4 {
-    color: white;
-}
-
-#programacao .grid > div h3 {
-    border-color: rgba(255, 255, 255, 0.5); /* Borda branca semitransparente */
-}
-
-#programacao .grid > div .text-blue-800 {
-    color: white !important; /* Garante que o título da sala seja branco */
-}
-
-#programacao .grid > div .text-gray-600 {
-    color: rgba(255, 255, 255, 0.8) !important; /* Texto cinza fica branco semitransparente */
+    background-image: linear-gradient(rgba(240, 242, 245, 0.95), rgba(240, 242, 245, 0.95)), url('https://images.pexels.com/photos/1595385/pexels-photo-1595385.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
 }
 
 /* --- Tipografia Fluida --- */
@@ -195,68 +143,127 @@ body {
 
 /* Estilo para a barra de navegação flutuante */
 .glass-nav {
-    background: rgba(255, 255, 255, 0.3); /* Opacidade aumentada para mais branco */
+    background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px); /* Suporte para Safari */
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
 }
 
 /* --- Estilos para a Navegação Lateral (Timeline) --- */
-.nav-links {
-    position: relative;
+/* Estilo do container da navegação lateral */
+#side-nav {
+    padding: 1rem;
+    background-color: #E63946;
+    border-radius: 0 12px 12px 0;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: width 0.4s ease-in-out;
+    width: 60px; /* Largura colapsada */
+    overflow: hidden; /* Esconde o texto que transborda */
 }
 
-/* Estilo para o link de navegação ativo */
-.nav-links a.active-link {
-    color: #E63946; /* CORREÇÃO: Cor vermelha para o link ativo */
+#side-nav:hover {
+    width: 200px; /* Largura expandida */
+}
+
+.side-nav-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+    opacity: 0.7;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+}
+
+.nav-links {
+    display: flex;
+    flex-direction: column;
+    position: relative; /* Essencial para posicionar o indicador */
+    gap: 0.5rem;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 0.5rem;
+    border-radius: 10px;
+    color: white;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    white-space: nowrap; /* Impede que o texto quebre linha */
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.nav-link.active-link {
+    /* A cor do ícone será controlada pelo hover do container pai */
     font-weight: 700;
 }
 
-/* Efeito de "botão aceso" para o link ativo */
-.nav-links a.active-link::before {
-    background-color: #ffffff; /* CORREÇÃO: Fundo branco sólido */
-    border-color: #ffffff;
-    border-bottom: none; /* Remove a borda inferior para fundir com o próximo item */
+/* Apenas quando o menu está expandido, o ícone ativo fica vermelho */
+#side-nav:hover .nav-link.active-link {
+    color: #E63946;
+    background-color: transparent; /* Garante que não haja fundo no hover do link */
 }
 
-/* Os "pontos" da timeline */
-.nav-links a {
-    position: relative;
-    padding: 0.6rem 1.5rem; /* Ajusta o padding para um visual mais compacto */
-    font-weight: 600;
-    color: white; /* CORREÇÃO: Texto branco por padrão */
-    transition: color 0.3s ease;
-}
-
-.nav-links a::before {
-    content: '';
+.nav-indicator {
     position: absolute;
+    background-color: white;
+    z-index: -1; /* Fica atrás dos ícones e texto */
+    /* Estado colapsado: uma pílula vertical à esquerda */
+    width: 5px;
+    left: -12px;
+    border-radius: 2px;
+    transition: all 0.4s ease-in-out;
+    /* Inicialmente invisível */
+    opacity: 0;
+}
+
+#side-nav:hover .nav-indicator {
+    /* Estado expandido: fundo completo */
     left: 0;
-    top: 50%;
-    transform: translateY(-50%);
     width: 100%;
-    height: 100%;
-    background-color: #E63946; /* CORREÇÃO: Fundo vermelho por padrão */
-    border: 1px solid #c9323d;
-    border-bottom: 1px solid #a12831; /* Linha separadora mais escura */
-    transition: all 0.3s ease;
-    z-index: -1;
+    border-radius: 10px;
 }
 
-/* Arredonda os cantos do primeiro e último item para criar um bloco único */
-.nav-links a:first-child::before {
-    border-radius: 8px 8px 0 0;
+.nav-icon {
+    width: 1.5rem; /* 24px */
+    height: 1.5rem; /* 24px */
+    flex-shrink: 0; /* Impede que o ícone encolha */
 }
 
-.nav-links a:last-child::before {
-    border-radius: 0 0 8px 8px;
-    border-bottom: 1px solid #c9323d; /* Garante que o último item tenha borda */
+.icon-menu {
+    display: block;
 }
 
-.nav-links a:hover::before {
-    background-color: #c9323d; /* Efeito hover mais escuro */
+.nav-link-text {
+    opacity: 0;
+    transition: opacity 0.3s ease 0.1s; /* Delay para o texto aparecer depois da expansão */
+}
+
+.text-menu {
+    display: none; /* Esconde o texto "Menu" por padrão */
+}
+
+#side-nav:hover .nav-link-text {
+    opacity: 1;
+}
+
+/* Lógica para trocar ícone por texto no header */
+#side-nav:hover .icon-menu {
+    display: none; /* Esconde o ícone do menu quando expandido */
+}
+#side-nav:hover .text-menu {
+    display: block; /* Mostra o texto "Menu" quando expandido */
 }
 
 /* --- Estilos para os Botões de Navegação Lateral --- */
@@ -347,29 +354,40 @@ body {
     visibility: visible;
 }
 
+.mobile-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: white;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+.mobile-link:hover {
+    color: #E63946;
+    transform: scale(1.05);
+}
 /* --- Otimização para Mobile (até 767px) --- */
 @media (max-width: 767px) {
-    /* Remove a rolagem vertical e ajusta o padding */
+    /* Permite a rolagem vertical dentro de cada painel e ajusta o padding */
     .folder-panel {
         overflow-y: auto; /* PERMITE a rolagem vertical novamente */
     }
     .panel-content {
-        padding-top: 4rem; /* Espaço reduzido para a barra de topo não sobrepor */
-        padding-bottom: 3rem; /* Espaço reduzido para o menu não sobrepor */
+        padding-top: 4.5rem; /* Espaço para a barra de topo não sobrepor */
+        padding-bottom: 6rem; /* Espaço para o menu inferior não sobrepor */
     }
 
     /* Reduz drasticamente o tamanho dos títulos */
     #inicio h1 {
         font-size: clamp(1.5rem, 5vw, 2.25rem); /* Reduz o tamanho mínimo e máximo */
-        margin-bottom: 0.5rem;
+        margin-bottom: 1rem;
     }
     .section-title {
         font-size: clamp(1.4rem, 5vw, 2rem);
-        margin-bottom: 1rem;
+        margin-bottom: 2rem;
     }
     #inicio p {
         font-size: 0.9rem;
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem;
     }
 
     /* Compacta o botão e a seção de logos */
@@ -378,30 +396,37 @@ body {
         font-size: 1rem;
     }
     .hero-logos-container {
-        margin-top: 1.5rem;
+        margin-top: 2.5rem;
+        padding: 1rem;
     }
     .logo-apoio {
         height: 2.5rem; /* Reduz a altura dos logos */
     }
     .hero-logos {
         gap-x: 1rem;
-        gap-y: 0.75rem;
-    }
-    #inicio .mt-16 {
-        display: none; /* Esconde a dica "Role para o lado" para ganhar espaço */
+        gap-y: 1rem;
     }
 
     /* Ajusta o painel "Sobre" */
     #sobre .panel-content {
-        gap: 1rem; /* Reduz o espaço entre a imagem e o texto */
+        gap: 2rem; /* Aumenta o espaço entre o vídeo e o texto */
+    }
+    #sobre .text-lg {
+        font-size: 1rem; /* Ajusta o tamanho do texto para melhor leitura */
     }
 
     /* Ajusta o painel "Programação" */
     #programacao .grid {
-        gap: 1rem; /* Reduz o espaço entre os cards */
+        gap: 1.5rem; /* Aumenta o espaço entre os cards */
+    }
+    #programacao .text-2xl {
+        font-size: 1.25rem; /* Reduz o título dos cards */
+    }
+    #programacao .text-lg {
+        font-size: 1rem; /* Reduz o subtítulo das trilhas */
     }
     #programacao .section-title {
-        margin-bottom: 1.5rem; /* Reduz a margem abaixo do título */
+        margin-bottom: 2rem;
     }
 
     /* Ajusta o painel "Palestrantes" */
@@ -409,11 +434,26 @@ body {
         gap: 2rem; /* Reduz o espaço entre os palestrantes */
     }
     #palestrantes .section-title {
-        margin-bottom: 2rem; /* Reduz a margem abaixo do título */
+        margin-bottom: 2.5rem;
     }
-    #palestrantes img {
-        width: 7rem; /* 112px - Reduz o tamanho da foto */
-        height: 7rem; /* 112px */
+    .speaker-badge {
+        max-width: 320px; /* Limita a largura máxima em telas pequenas */
+    }
+    .badge-top-part {
+        height: 80px; /* Reduz a altura da parte superior */
+    }
+    .badge-photo-container {
+        bottom: -50px; /* Ajusta a posição da foto */
+    }
+    .badge-photo {
+        width: 100px;
+        height: 100px;
+    }
+    .badge-content {
+        padding-top: 60px; /* Ajusta o padding para a nova foto */
+    }
+    .badge-name {
+        font-size: 1.5rem; /* Reduz o nome do palestrante */
     }
 }
 
@@ -431,13 +471,12 @@ body {
 
 /* --- Estilos para Indicadores de Rolagem --- */
 .scroll-indicator-container {
-    /* Removido o posicionamento absoluto para que os botões ocupem seu próprio espaço */
     display: flex;
-    justify-content: center; /* Centraliza os botões */
+    flex-direction: row;
     gap: 1rem;
-    width: 100%;
-    margin-top: 2rem; /* Adiciona um espaço acima dos botões */
-    padding-bottom: 2rem; /* Garante espaço na parte inferior */
+    justify-content: center; /* Centraliza os botões */
+    padding-top: 2rem; /* Adiciona espaço acima dos botões */
+    padding-bottom: 2rem; /* Adiciona espaço abaixo dos botões */
 }
 
 .scroll-indicator {
@@ -512,37 +551,34 @@ body {
 
 /* Transforma o container de logos em um card branco */
 .hero-logos-container {
-    /* Efeito Glassmorphism */
-    background: rgba(255, 255, 255, 0.3); /* Opacidade aumentada para mais branco */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background-color: white;
     padding: 1.5rem;
     border-radius: 12px;
     display: inline-block; /* Faz o container se ajustar ao conteúdo */
 }
 
 .hero-logos-container p {
-    color: white; /* Garante que o título seja legível no fundo de vidro */
+    color: #1f2937; /* Garante que o título seja legível no fundo branco */
 }
 
-/* Classe para transformar um logo branco em preto usando filtro */
 .logo-to-black {
-    filter: brightness(0); /* Transforma qualquer cor em preto */
+    filter: brightness(0) invert(0);
 }
 
 /* --- Estilos para Animação na Rolagem --- */
 
 /* Prepara os elementos para a animação (invisíveis por padrão) */
 .animate-on-scroll {
-    /* Efeito de animação ao rolar removido para que o conteúdo esteja sempre visível. */
-    opacity: 1;
-    transform: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    transition-delay: var(--animation-delay, 0s); /* Usa a variável de delay ou 0s como padrão */
 }
 
 /* Classe que ativa a animação quando o elemento está visível */
 .animate-on-scroll.is-visible {
-    /* Esta classe não tem mais efeito visual, pois os elementos já começam visíveis. */
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* --- Estilos para o Formulário --- */
@@ -646,20 +682,6 @@ body {
     border: none;
 }
 
-/* --- Estilos para o Link de Pagamento --- */
-#payment-link-container {
-    transition: all 0.4s ease-in-out;
-    max-height: 0;
-    overflow: hidden;
-}
-
-/* --- Estilos para o Cartão Dourado de Certificado --- */
-.gold-gradient-card {
-    background: linear-gradient(145deg, #fde08d, #fff8e1, #e6c35c, #fff8e1, #d4af37); /* Gradiente mais claro */
-    border: 2px solid #e6c35c; /* Borda mais clara */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-
 /* --- Esconde a Barra de Rolagem Principal --- */
 /* Mantém a funcionalidade de rolagem, mas esconde a barra visualmente */
 
@@ -674,130 +696,85 @@ body {
   scrollbar-width: none;  /* Firefox */
 }
 
-/* Estilo para o zoom da imagem */
-#image-zoom-overlay {
-    transition: opacity 0.3s ease-in-out;
-}
-
-/* Estilo para a animação do modal de certificado */
-#certificate-modal-content {
-    transform: scale(0.95);
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
 /* --- Estilos para o Crachá do Palestrante --- */
 .speaker-badge {
-    background-color: #f8fafc; /* cinza-50 */
-    border: 1px solid #e2e8f0; /* cinza-200 */
-    border-radius: 16px;
-    width: 300px; /* Deixa o crachá mais retangular (vertical) */
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    position: relative; /* Necessário para a corda */
-    font-family: 'Inter', sans-serif;
-    margin-top: 40px; /* Espaço para a corda */
-}
-
-/* Simula a corda do crachá */
-.speaker-badge::before {
-    content: '';
-    position: absolute;
-    top: -40px; /* Posição acima do crachá */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100px;
-    height: 50px;
-    border: 6px solid #E63946; /* Cor vermelha da corda */
-    border-bottom: none;
-    border-radius: 50px 50px 0 0; /* Arredonda para formar as alças */
-    z-index: 0;
+    background-color: white;
+    border-radius: 1rem; /* 16px */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 360px;
+    overflow: hidden;
+    position: relative;
 }
 
 .badge-top-part {
+    background-color: #062E51; /* Azul escuro do tema */
+    height: 100px;
     position: relative;
-    height: 93px; /* Altura combinada do header e metade da foto */
 }
 
 .badge-header {
-    height: 30px;
-    background-color: #f1f5f9; /* cinza-100 */
-    position: relative;
-    z-index: 3; /* Header fica na camada mais alta */
-}
-
-/* Simula a fenda para o cordão do crachá */
-.badge-header::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60px;
-    height: 12px;
-    background-color: #cbd5e1; /* cinza-300 */
-    border-radius: 6px;
+    /* Elemento decorativo, pode ser usado para logos ou texto */
 }
 
 .badge-photo-container {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    z-index: 2; /* Foto fica abaixo do header, mas acima do content */
-}
-
-.badge-content {
-    padding: 0 1.5rem 1.5rem 1.5rem; /* Remove padding do topo */
-    text-align: center;
-    background-color: #f8fafc; /* Garante fundo sólido */
-    border-radius: 0 0 16px 16px;
+    bottom: -60px; /* Puxa a foto para baixo, centralizando na divisão */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    border-radius: 50%;
+    padding: 6px; /* Cria a borda branca ao redor da foto */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .badge-photo {
-    width: 120px; /* Ajusta a largura da foto */
-    height: 150px; /* Deixa a foto retangular (retrato) */
-    border-radius: 12px; /* Deixa a foto quadrada com cantos arredondados */
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
     object-fit: cover;
-    margin-top: 30px; /* Desce a foto para alinhar com o novo layout */
-    border: 4px solid white;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-    cursor: pointer;
+    border: 3px solid #E63946; /* Borda vermelha na foto */
+    cursor: pointer; /* Indica que a imagem é clicável para zoom */
+    transition: transform 0.3s ease;
+}
+
+.badge-photo:hover {
+    transform: scale(1.05);
+}
+
+.badge-content {
+    padding: 80px 1.5rem 1.5rem 1.5rem; /* Padding superior grande para dar espaço para a foto */
+    text-align: center;
 }
 
 .badge-name {
-    font-size: 1.5rem; /* 24px */
+    font-size: 1.75rem; /* 28px */
     font-weight: 800;
     color: #062E51;
-    margin-top: 85px; /* Aumenta o espaço para a foto retangular */
 }
 
 .badge-title {
     font-size: 0.875rem; /* 14px */
-    font-weight: 600;
+    font-weight: 700;
     color: #E63946;
     letter-spacing: 0.1em;
-    text-transform: uppercase;
     margin-top: 0.25rem;
 }
 
 .badge-details {
     margin-top: 1rem;
-    font-size: 0.8rem; /* 13px */
-    color: #475569; /* cinza-600 */
+    font-size: 0.9rem;
+    color: #4B5563; /* gray-600 */
     line-height: 1.5;
 }
 
 .badge-footer {
-    background-color: #E63946;
-    color: white;
+    background-color: #f3f4f6; /* gray-100 */
     padding: 0.75rem;
     text-align: center;
-    font-weight: 700;
-    font-size: 0.875rem;
-    letter-spacing: 0.05em;
-    overflow: hidden; /* Garante que o rodapé respeite o border-radius do pai */
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #6b7280; /* gray-500 */
+    border-top: 1px solid #e5e7eb; /* gray-200 */
 }
-
 }

@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Link para os Ícones do Google (Material Symbols) -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <!-- Caminho para o arquivo CSS dentro da pasta 'css' -->
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -38,7 +40,7 @@
             </div>
             <div class="panel-content text-center">
                 <div class="hero-content relative">
-                    <h1 class="animate-on-scroll font-extrabold leading-tight mb-4" style="--animation-delay: 0s;">Workshop: MUNICÍPIOS Mais Resilientes em Desastres</h1>
+                    <h1 class="animate-on-scroll font-extrabold leading-tight mb-4" style="--animation-delay: 0s;">Workshop: Municípios Mais Resilientes em Desastres</h1>
                 <p class="animate-on-scroll text-lg md:text-xl font-light mb-8 max-w-3xl mx-auto" style="--animation-delay: 0.1s;">Capacitando gestores e comunidades do Litoral do Paraná para um futuro mais seguro.</p>
                 <div class="mb-8">
                     <a href="#inscricao" class="hero-button animate-on-scroll bg-[#E63946] hover:bg-[#c9323d] text-white font-bold py-4 px-8 rounded-lg text-lg transition duration-300" style="--animation-delay: 0.2s;">Garanta sua Vaga</a>
@@ -49,11 +51,11 @@
                     <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-6 gap-x-8 gap-y-6 items-center hero-logos">
                         <div class="flex items-center justify-center gap-2">
                             <img src="https://www.defesacivil.pr.gov.br/sites/defesa-civil/arquivos_restritos/files/imagem/2019-05/1769_Defesa_Civil__PR.PNG" alt="Logo Defesa Civil Paraná" class="logo-apoio h-12">
-                            <span class="text-white font-semibold text-xs leading-tight">Defesa Civil<br>Paraná</span>
+                            <span class="text-gray-800 font-semibold text-xs leading-tight">Defesa Civil<br>Paraná</span>
                         </div>
                         <div class="flex items-center justify-center gap-2">
                             <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo Corpo de Bombeiros Militar Paraná" class="logo-apoio h-12">
-                            <span class="text-white font-semibold text-xs leading-tight">Corpo de<br>Bombeiros PR</span>
+                            <span class="text-gray-800 font-semibold text-xs leading-tight">Corpo de<br>Bombeiros PR</span>
                         </div>
                         <img src="https://web.celepar.pr.gov.br/drupal/images/seil/portos/logo_portos_300x86.png" alt="Logo Portos do Paraná" class="logo-apoio">
                         <img src="https://portal.isulpar.edu.br/wp-content/uploads/2024/10/logo-texto-1024x378.png" alt="Logo ISULPAR" class="logo-apoio">
@@ -66,7 +68,7 @@
                 <div class="scroll-indicator-container">
                     <a href="#sobre" class="scroll-indicator down" aria-label="Rolar para a próxima seção">
                         <span class="indicator-label">Ir para Sobre</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+                        <span class="material-symbols-outlined w-8 h-8">expand_more</span>
                     </a>
                 </div>
             </div>
@@ -79,10 +81,8 @@
                 <div class="flex flex-col md:flex-row items-center gap-8">
                     <div id="planning-video-player" class="animate-on-scroll w-full md:w-1/2 shadow-xl" style="--animation-delay: 0.1s;">
                         <!-- O vídeo será injetado aqui, e o botão de play ficará sobre ele -->
-                        <button id="custom-play-button" aria-label="Tocar vídeo">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-24 h-24">
-                                <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm14.024-.983a1.125 1.125 0 010 1.966l-5.603 3.113A1.125 1.125 0 019 15.113V8.887c0-.857.921-1.4 1.671-.983l5.603 3.113z" clip-rule="evenodd" />
-                            </svg>
+                        <button id="custom-play-button" aria-label="Tocar vídeo" class="text-white/80 hover:text-white transition-colors">
+                            <span class="material-symbols-outlined text-9xl">play_circle</span>
                         </button>
                     </div>
                     <div class="animate-on-scroll w-full md:w-1/2 text-center md:text-left" style="--animation-delay: 0.2s;">
@@ -92,11 +92,11 @@
 
                         <div class="space-y-4">
                             <div class="flex items-start gap-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#E63946] mt-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span class="material-symbols-outlined h-6 w-6 text-[#E63946] mt-1 flex-shrink-0">info</span>
                                 <div><h3 class="font-bold text-lg text-[#062E51]">Objetivo Principal</h3><p class="text-gray-600">Capacitar gestores e equipes de resposta para mitigar riscos e proteger comunidades, considerando o histórico de desastres na região.</p></div>
                             </div>
                             <div class="flex items-start gap-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#E63946] mt-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" /></svg>
+                                <span class="material-symbols-outlined h-6 w-6 text-[#E63946] mt-1 flex-shrink-0">checklist</span>
                                 <div><h3 class="font-bold text-lg text-[#062E51]">Eixos Temáticos</h3><p class="text-gray-600">Produtos Perigosos, Movimentação de Massas, Planos de Auxílio Mútuo (PAM), Eventos Marítimos e Prevenção de Afogamentos.</p></div>
                             </div>
                         </div>
@@ -106,11 +106,11 @@
                 <div class="scroll-indicator-container">
                     <a href="#inicio" class="scroll-indicator up" aria-label="Rolar para a seção anterior">
                         <span class="indicator-label">Ir para Início</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+                        <span class="material-symbols-outlined w-8 h-8">expand_less</span>
                     </a>
                     <a href="#programacao" class="scroll-indicator down" aria-label="Rolar para a próxima seção">
                         <span class="indicator-label">Ir para Programação</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+                        <span class="material-symbols-outlined w-8 h-8">expand_more</span>
                     </a>
                 </div>
             </div>
@@ -120,75 +120,72 @@
         <section id="programacao" class="folder-panel">
             <div class="panel-content text-center text-[#062E51]">
                 <h2 class="animate-on-scroll section-title font-bold mb-8" style="--animation-delay: 0s;">Programação do Workshop</h2>
-                <div class="grid md:grid-cols-2 gap-8 text-left">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
                     <!-- Dia 1 -->
                     <div class="animate-on-scroll bg-white p-6 rounded-lg shadow-lg" style="--animation-delay: 0.1s;">
                         <h3 class="text-2xl font-bold mb-4 border-b pb-2">1° Dia - Auditório (13/11/2025)</h3>
                         <ul class="space-y-3">
                             <li><strong>08h00:</strong> Credenciamento</li>
-                            <li><strong>09h00:</strong> Abertura (cerimonial, vídeo institucional, palavra do Cmt…)</li>
-                            <li><strong>09h30:</strong> Palestra de abertura - Cel Barros - ÁGUAS DE MARÇO eventos do ano de 2011</li>
-                            <li><strong>10h15:</strong> Coffee break</li>
-                            <li><strong>10h30:</strong> Palestrante TC Pinheiro - MUNICÍPIOS Resilientes</li>
-                            <li><strong>11h00:</strong> Palestrante CEGERD - Gerenciamento de Desastre</li>
-                            <li><strong>11h00:</strong> Palestrante SIMEPAR - Monitoramento e Previsão (Chuva/Evento/Descarga Atmosféricas)</li>
+                            <li><strong>09h00:</strong> Cerimônia de Abertura</li>
+                            <li><strong>09h30:</strong> Palestra de Abertura: "Águas de Março 2011"</li>
+                            <li><strong>10h15:</strong> Coffee Break</li>
+                            <li><strong>10h30:</strong> Palestra: Cidades Resilientes</li>
+                            <li><strong>11h00:</strong> Palestra: Gerenciamento de Desastres (CEGERD)</li>
+                            <li><strong>11h30:</strong> Palestra: Monitoramento e Previsão (SIMEPAR)</li>
                             <li><strong>12h00:</strong> Almoço</li>
-                            <li><strong>13h30:</strong> Palestrante Rogério - Movimentação de Massas - Serra do Mar</li>
-                            <li><strong>14h15:</strong> Palestrante EPR Litoral e Litoral Sul - Plano de Contingência e Operações - Recursos</li>
-                            <li><strong>15h00:</strong> Coffee break</li>
-                            <li><strong>15h15:</strong> GOST ou APPA - <span class="bg-white text-red-600 font-semibold px-2 rounded-md">NÃO CONFIRMADO</span></li>
-                            <li><strong>16h00:</strong> Palestrante Prof. Fernanda de Souza Sezerino - Apresentação do Plano Diretor de Paranaguá</li>
-                            <li><strong>16h45:</strong> Encerramento 1º Dia</li>
+                            <li><strong>13h30:</strong> Palestra: "Movimentação de Massas na Serra do Mar"</li>
+                            <li><strong>14h15:</strong> Palestra: "Planos de Contingência e Operações"</li>
+                            <li><strong>15h00:</strong> Coffee Break</li>
+                            <li><strong>15h15:</strong> Palestra sobre Produtos Perigosos <span class="text-red-600 font-semibold">(A confirmar)</span></li>
+                            <li><strong>16h00:</strong> Palestra: Apresentação do Plano Diretor de Paranaguá</li>
+                            <li><strong>16h45:</strong> Encerramento do 1º Dia</li>
                         </ul>
                     </div>
 
-                    <!-- Dia 2 -->
+                    <!-- Dia 2 (com as duas trilhas) -->
                     <div class="animate-on-scroll bg-white p-6 rounded-lg shadow-lg" style="--animation-delay: 0.2s;">
                         <h3 class="text-2xl font-bold mb-4 border-b pb-2">2° Dia (14/11/2025)</h3>
-                        
-                        <div class="mb-6">
-                            <h4 class="text-lg font-bold text-blue-800 mb-2">Auditório (PAM e PP)</h4>
+                        <div class="space-y-6">
+                            <!-- Trilha 1 -->
+                            <div>
+                                <h4 class="text-lg font-bold text-blue-800 mb-2">Trilha 1: PAM e Produtos Perigosos (Auditório)</h4>
+                                <ul class="space-y-3">
+                                    <li><strong>08h00:</strong> Credenciamento</li>
+                                    <li><strong>08h30:</strong> Abertura da Trilha</li>
+                                    <li><strong>09h30:</strong> Palestra: Implantação e Boas Práticas do PAM</li>
+                                    <li><strong>10h30:</strong> Coffee Break</li>
+                                    <li><strong>13h30:</strong> Palestra: Segurança em Espaço Confinado</li>
+                                    <li><strong>15h15:</strong> Palestra: Plano de Contingência Industrial</li>
+                                </ul>
+                            </div>
+                            <!-- Trilha 2 -->
+                            <div>
+                                <h4 class="text-lg font-bold text-blue-800 mb-2">Trilha 2: Municípios Resilientes (Sala 1)</h4>
                             <ul class="space-y-3">
-                                <li><strong>08h00:</strong> Credenciamento</li>
-                                <li><strong>08h30:</strong> Cel Emmanuel</li>
-                                <li><strong>09h30:</strong> Palestrante João Carlos Hermenegildo - Implantação e Boas Práticas do PAM</li>
-                                <li><strong>10h30:</strong> Coffee break Auditório</li>
-                                <li><strong>10h45:</strong> Palestrante João Carlos Hermenegildo - Implantação e Boas Práticas do PAM</li>
-                                <li><strong>12h00:</strong> Almoço (Prever 15 pessoas)</li>
-                                <li><strong>13h30:</strong> Palestrante Paula Scardino - Espaço Confinado</li>
-                                <li><strong>15h15:</strong> Palestrante Osvaldo Nogueira - Plano de Contingência</li>
-                                <li><strong>16h00:</strong> Encerramento (Cerimonial)</li>
-                                <li><strong>16h30:</strong> Coffee break</li>
+                                <li><strong>09h00:</strong> Palestra: Prevenção em Áreas de Risco e Afogamento</li>
+                                <li><strong>10h30:</strong> Coffee Break</li>
+                                <li><strong>13h30:</strong> Palestra: Recursos para COMPDECs</li>
+                                <li><strong>14h15:</strong> Apresentação de Trabalhos Acadêmicos</li>
+                                <li><strong>15h15:</strong> Palestra: Gestão de Eventos Marítimos</li>
                             </ul>
+                            </div>
                         </div>
-
-                        <div>
-                            <h4 class="text-lg font-bold text-blue-800 mb-2">Sala 1 (MUNICÍPIOS Resilientes)</h4>
-                            <p class="text-sm text-gray-600 mb-3">Público: COMPDECs, Gestores de Parques</p>
-                            <ul class="space-y-3">
-                                <li><strong>09h00:</strong> Palestrantes Cel Schinda, TC Frazatto e Dr Angelo - Prevenção de áreas de risco e afogamento</li>
-                                <li><strong>10h30:</strong> Coffee break</li>
-                                <li><strong>11h00:</strong> Palestrantes Cel Schinda, TC Frazatto e Dr Angelo - Prevenção de áreas de risco e afogamento</li>
-                                <li><strong>12h00:</strong> Almoço</li>
-                                <li><strong>13h30:</strong> Palestrante Cel Ivan - Recursos COMPDECs</li>
-                                <li><strong>14h15:</strong> PUC - Apresentação de Trabalhos</li>
-                                <li><strong>15h15:</strong> Palestrante Dr Rangel - Eventos marítimos</li>
-                                <li><strong>16h00:</strong> Encerramento no auditório</li>
-                                <li><strong>16h30:</strong> Coffee break</li>
-                            </ul>
-                        </div>
-
+                    </div>
+                    <!-- Encerramento Geral -->
+                    <div class="md:col-span-2 text-center mt-6">
+                        <p class="text-lg font-bold text-[#062E51]"><strong>16:00:</strong> Encerramento Geral no Auditório e Coffee Break</p>
                     </div>
                 </div>
+
                  <!-- Indicadores de Rolagem -->
                 <div class="scroll-indicator-container">
                     <a href="#sobre" class="scroll-indicator up" aria-label="Rolar para a seção anterior">
                         <span class="indicator-label">Ir para Sobre</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+                        <span class="material-symbols-outlined w-8 h-8">expand_less</span>
                     </a>
                     <a href="#palestrantes" class="scroll-indicator down" aria-label="Rolar para a próxima seção">
                         <span class="indicator-label">Ir para Palestrantes</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+                        <span class="material-symbols-outlined w-8 h-8">expand_more</span>
                     </a>
                 </div>
             </div>
@@ -225,11 +222,11 @@
                 <div class="scroll-indicator-container">
                     <a href="#programacao" class="scroll-indicator up" aria-label="Rolar para a seção anterior">
                         <span class="indicator-label">Ir para Programação</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+                        <span class="material-symbols-outlined w-8 h-8">expand_less</span>
                     </a>
                     <a href="#inscricao" class="scroll-indicator down" aria-label="Rolar para a próxima seção">
                         <span class="indicator-label">Ir para Inscrição</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+                        <span class="material-symbols-outlined w-8 h-8">expand_more</span>
                     </a>
                 </div>
             </div>
@@ -237,7 +234,7 @@
 
         <!-- Painel 5: Inscrição, Local e Apoio -->
         <section id="inscricao" class="folder-panel">
-            <div class="panel-content flex flex-col items-center justify-center">
+            <div class="panel-content flex flex-col items-center justify-start md:justify-center">
                 <div class="flex flex-col lg:flex-row items-center justify-center gap-10 w-full">
                     <!-- Coluna do Formulário -->
                     <div class="animate-on-scroll w-full lg:w-1/2 bg-white p-8 rounded-lg shadow-lg" style="--animation-delay: 0s;">
@@ -321,11 +318,11 @@
                 <div class="scroll-indicator-container">
                     <a href="#palestrantes" class="scroll-indicator up" aria-label="Rolar para a seção anterior">
                         <span class="indicator-label">Ir para Palestrantes</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+                        <span class="material-symbols-outlined w-8 h-8">expand_less</span>
                     </a>
                     <a href="#inicio" class="scroll-indicator up" aria-label="Voltar ao início">
                         <span class="indicator-label">Voltar ao Início</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+                        <span class="material-symbols-outlined w-8 h-8">expand_less</span>
                     </a>
                 </div>
                 <!-- Copyright -->
@@ -338,24 +335,40 @@
     </main>
     
     <!-- Navegação Lateral em formato Timeline (Desktop) -->
-    <nav id="side-nav" class="fixed left-0 top-1/2 -translate-y-1/2 z-50 p-6 hidden lg:flex flex-col items-center">
-        <div class="side-nav-header flex flex-col items-center text-white mb-6 opacity-70">
-            <svg class="w-7 h-7 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-            <h3 class="font-bold text-sm uppercase tracking-wider">Menu</h3>
+    <nav id="side-nav" class="fixed left-0 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col">
+        <div class="side-nav-header group">
+            <span class="material-symbols-outlined nav-icon icon-menu">menu</span>
+            <span class="nav-link-text text-menu">Menu</span>
         </div>
-        <div class="nav-links flex flex-col items-stretch">
-            <a href="#inicio" class="text-gray-300 hover:text-white">Início</a>
-            <a href="#sobre" class="text-gray-300 hover:text-white">Sobre</a>
-            <a href="#programacao" class="text-gray-300 hover:text-white">Programação</a>
-            <a href="#palestrantes" class="text-gray-300 hover:text-white">Palestrantes</a>
-            <a href="#inscricao" class="text-gray-300 hover:text-white">Inscrição</a>
+        <div class="nav-links">
+            <div id="nav-indicator" class="nav-indicator"></div>
+            <a href="#inicio" class="nav-link">
+                <span class="material-symbols-outlined nav-icon">home</span>
+                <span class="nav-link-text">Início</span>
+            </a>
+            <a href="#sobre" class="nav-link">
+                <span class="material-symbols-outlined nav-icon">info</span>
+                <span class="nav-link-text">Sobre</span>
+            </a>
+            <a href="#programacao" class="nav-link">
+                <span class="material-symbols-outlined nav-icon">calendar_month</span>
+                <span class="nav-link-text">Programação</span>
+            </a>
+            <a href="#palestrantes" class="nav-link">
+                <span class="material-symbols-outlined nav-icon">groups</span>
+                <span class="nav-link-text">Palestrantes</span>
+            </a>
+            <a href="#inscricao" class="nav-link">
+                <span class="material-symbols-outlined nav-icon">edit_square</span>
+                <span class="nav-link-text">Inscrição</span>
+            </a>
         </div>
     </nav>
 
     <!-- Footer Flutuante com Navegação para Mobile -->
     <footer id="main-footer" class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-md z-50 lg:hidden ">
         <nav class="glass-nav flex justify-between items-center px-4 py-3">
-            <button id="hamburger-btn" class="text-[#E63946] focus:outline-none flex items-center gap-2"><svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg><span class="font-semibold text-sm uppercase tracking-wider">Menu</span></button>
+            <button id="hamburger-btn" class="text-[#E63946] focus:outline-none flex items-center gap-2"><span class="material-symbols-outlined w-7 h-7">menu</span><span class="font-semibold text-sm uppercase tracking-wider">Menu</span></button>
             <!-- Botão de Inscrição -->
             <a href="#inscricao" class="bg-[#E63946] hover:bg-[#c9323d] text-white font-bold py-2 px-4 rounded-lg transition duration-300 text-sm sm:text-base xl:text-lg">Inscreva-se</a>
         </nav>
@@ -363,11 +376,11 @@
 
     <!-- Menu Overlay para Mobile -->
     <div id="mobile-menu" class="fixed inset-0 bg-[#062E51]/90 backdrop-blur-lg items-center justify-center space-y-8 text-2xl z-40">
-        <a href="#inicio" class="mobile-link text-white">Início</a>
-        <a href="#sobre" class="mobile-link text-white">Sobre</a>
-        <a href="#programacao" class="mobile-link text-white">Programação</a>
-        <a href="#palestrantes" class="mobile-link text-white">Palestrantes</a>
-        <a href="#inscricao" class="mobile-link text-white">Inscrição</a>
+        <a href="#inicio" class="mobile-link"><span class="material-symbols-outlined w-7 h-7">home</span><span>Início</span></a>
+        <a href="#sobre" class="mobile-link"><span class="material-symbols-outlined w-7 h-7">info</span><span>Sobre</span></a>
+        <a href="#programacao" class="mobile-link"><span class="material-symbols-outlined w-7 h-7">calendar_month</span><span>Programação</span></a>
+        <a href="#palestrantes" class="mobile-link"><span class="material-symbols-outlined w-7 h-7">groups</span><span>Palestrantes</span></a>
+        <a href="#inscricao" class="mobile-link"><span class="material-symbols-outlined w-7 h-7">edit_square</span><span>Inscrição</span></a>
     </div>
 
     <!-- Overlay para Zoom de Imagem -->
@@ -378,9 +391,7 @@
     <!-- Modal Customizado para Certificado -->
     <div id="certificate-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
         <div id="certificate-modal-content" class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full text-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+            <span class="material-symbols-outlined text-6xl text-green-500 mx-auto mb-4">check_circle</span>
             <h3 class="text-2xl font-bold text-[#062E51] mb-2">Inscrição Confirmada!</h3>
             <p class="text-gray-600 mb-6">Deseja receber o certificado oficial de participação por uma taxa de R$ 20,00?</p>
             <div class="flex justify-center gap-4">
