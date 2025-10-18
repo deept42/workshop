@@ -6,7 +6,7 @@
 // --- INFORMAÇÃO NOVA A ADICIONAR ---
 // 1. Configuração da conexão com o Supabase
 const SUPABASE_URL = 'https://onqettyqcdyutkticrab.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_hKNkb5lHdwr2JxRGoakTOA_eWyBt3dd';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ucWV0dHlxY2R5dXRrdGljcmFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2Njg5OTksImV4cCI6MjA3NjI0NDk5OX0.LZJhIX3f0Jd3TxVo-YGHBVpiejLimGo-ClACeipilqc';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 // --- FIM DA INFORMAÇÃO NOVA ---
 
@@ -22,13 +22,16 @@ document.addEventListener('DOMContentLoaded', () => {
      * para a seção correspondente ao clicar em um link.
      */
     function setupSmoothScrolling() {
-        document.querySelectorAll('a[href^="#"]').forEach(link => {
+        const anchorLinks = document.querySelectorAll('a[href^="#"]');
+        if (anchorLinks.length === 0) return;
+
+        anchorLinks.forEach(link => {
             link.addEventListener('click', function(event) {
                 event.preventDefault();
                 const targetId = this.getAttribute('href');
                 const targetPanel = document.querySelector(targetId);
                 
-                if (targetPanel) {
+                if (targetPanel && typeof targetPanel.scrollIntoView === 'function') {
                     // Garante a rolagem suave que foi definida no CSS.
                     targetPanel.scrollIntoView({ behavior: 'smooth' });
                 }
@@ -42,6 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
      * 2. Triggers scroll-based animations for elements.
      */
     function updateActiveNavLink() {
+        if (panels.length === 0) return;
+
         let lastActiveLinks = [];
 
         const observerOptions = {
@@ -171,6 +176,9 @@ document.addEventListener('DOMContentLoaded', () => {
      * to improve performance and user experience.
      */
     function setupAutocomplete() {
+        // Adiciona uma verificação para garantir que todos os elementos necessários existem.
+        const container = document.querySelector('.autocomplete-container');
+        if (!container) return;
         const input = document.getElementById('municipio-input');
         const suggestionsContainer = document.getElementById('municipio-suggestions');
         if (!input || !suggestionsContainer) return;
@@ -263,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (currentVisiblePanel) {
                     const nextPanel = currentVisiblePanel.nextElementSibling;
                     if (nextPanel && nextPanel.classList.contains('folder-panel')) {
-                        nextPanel.scrollIntoView({ inline: 'start' });
+                        nextPanel.scrollIntoView({ behavior: 'smooth' });
                     }
                 }
             }
@@ -281,7 +289,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const scrollTop = folderContainer.scrollTop;
             const scrollHeight = folderContainer.scrollHeight;
             const clientHeight = folderContainer.clientHeight;
-            
+
+            // Previne divisão por zero se o conteúdo não for rolável
+            if (scrollHeight <= clientHeight) return;
+
             const scrollPercent = (scrollTop / (scrollHeight - clientHeight)) * 100;
             
             progressBar.style.width = `${scrollPercent}%`;
@@ -302,7 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!form || !formMessages || !submitButton) return;
 
         // Tornamos a função 'async' para poder usar 'await'
-        form.addEventListener('submit', async function(event) {
+        form.addEventListener('submit', async (event) => {
             event.preventDefault();
             formMessages.innerHTML = ''; // Limpa mensagens anteriores
             submitButton.disabled = true;
@@ -373,18 +384,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // --- LÓGICA APÓS O ENVIO ---
             if (error) {
-                console.error('Erro do Supabase:', error);
-                displayMessage('Ocorreu um erro na inscrição. Tente novamente.', 'error');
+                // --- NOVA FUNÇÃO DE ERRO DETALHADO ---
+                console.error('Objeto completo do erro do Supabase:', error);
+
+                // Verifica se o erro é de e-mail duplicado (código '23505' do PostgreSQL)
+                if (error.code === '23505') {
+                    displayMessage('Este e-mail já foi cadastrado. Por favor, utilize outro.', 'error');
+                } else {
+                    // Para todos os outros erros, mostra uma mensagem genérica
+                    displayMessage('Ocorreu um erro na inscrição. Tente novamente.', 'error');
+                    console.error('Detalhes do erro:', error.message);
+                }
+                
                 submitButton.disabled = false;
                 submitButton.textContent = 'Inscrever-se Agora';
             } else {
                 displayMessage('Inscrição realizada com sucesso!', 'success');
-                form.reset();
+                if (typeof form.reset === 'function') {
+                    form.reset();
+                }
 
                 // Pega o ID do novo registro para usar no modal de certificado
                 const newRecordId = data ? data[0].id : null;
                 
-                setTimeout(() => {
+                requestAnimationFrame(() => {
                     showCertificateModal(newRecordId); // Passa o ID para o modal
                 }, 500);
 
@@ -405,12 +428,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!modal || !btnYes || !btnNo) return;
 
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            setTimeout(() => modalContent.style.transform = 'scale(1)', 50); // Ativa a animação
+            requestAnimationFrame(() => {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                if (modalContent) modalContent.style.transform = 'scale(1)';
+            });
 
             const closeModal = () => {
-                modalContent.style.transform = 'scale(0.95)';
+                if (modalContent) modalContent.style.transform = 'scale(0.95)';
                 setTimeout(() => modal.classList.add('hidden'), 300);
             };
 
@@ -427,7 +452,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         .from('cadastro_workshop')
                         .update({ quer_certificado: true, status_pagamento: 'pendente' })
                         .eq('id', recordId); // Atualiza apenas o registro correto
-                    if (error) console.error('Erro ao atualizar certificado:', error);
+                    if (error) {
+                        console.error('Erro ao atualizar para o certificado:', error.message);
+                        // Opcional: Informar o usuário que houve um erro na atualização
+                    }
                 }
                 window.open('https://www.asaas.com/c/p9v42o92yos25x75', '_blank');
                 closeModal();
@@ -540,7 +568,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const customPlayButton = document.getElementById('custom-play-button');
 
             if (planningPlayer && customPlayButton) {
-                customPlayButton.addEventListener('click', () => {
+                customPlayButton.addEventListener('click', () => { // Adiciona verificação de função
                     planningPlayer.playVideo();
                 });
 
