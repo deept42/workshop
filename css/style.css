@@ -164,6 +164,7 @@ body {
     overflow: hidden; /* Esconde o texto que transborda */
 }
 
+<<<<<<< Updated upstream
 #side-nav:hover {
     width: 200px; /* Largura expandida */
 }
@@ -216,6 +217,34 @@ body {
 }
 
 .nav-indicator {
+=======
+/* Estilo para o link de navegação ativo */
+.nav-links a {
+    position: relative;
+    padding: 0.6rem 1.5rem; /* Ajusta o padding para um visual mais compacto */
+    font-weight: 600;
+    transition: color 0.3s ease, background-color 0.3s ease;
+    color: white; /* Cor do texto padrão: branco */
+}
+
+/* Estilo para o link de navegação ativo */
+.nav-links a.active-link {
+    color: #E63946; /* Cor do texto ativo: vermelho */
+    font-weight: 700;
+}
+
+/* Efeito de "botão aceso" para o link ativo */
+.nav-links a.active-link::before {
+    background-color: #ffffff; /* Fundo branco sólido */
+    border-color: #ffffff;
+    border-bottom: none; /* Remove a borda inferior para fundir com o próximo item */
+}
+
+
+/* O fundo dos itens da timeline */
+.nav-links a::before {
+    content: '';
+>>>>>>> Stashed changes
     position: absolute;
     background-color: white;
     z-index: -1; /* Fica atrás dos ícones e texto */
@@ -232,7 +261,16 @@ body {
     /* Estado expandido: fundo completo */
     left: 0;
     width: 100%;
+<<<<<<< Updated upstream
     border-radius: 10px;
+=======
+    height: 100%;
+    background-color: #E63946; /* Fundo padrão: vermelho */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Linha separadora */
+    transition: all 0.3s ease;
+    z-index: -1;
+>>>>>>> Stashed changes
 }
 
 .nav-icon {
@@ -245,6 +283,7 @@ body {
     display: block;
 }
 
+<<<<<<< Updated upstream
 .nav-link-text {
     opacity: 0;
     transition: opacity 0.3s ease 0.1s; /* Delay para o texto aparecer depois da expansão */
@@ -264,6 +303,10 @@ body {
 }
 #side-nav:hover .text-menu {
     display: block; /* Mostra o texto "Menu" quando expandido */
+=======
+.nav-links a:hover::before {
+    background-color: #c9323d; /* Vermelho mais escuro no hover */
+>>>>>>> Stashed changes
 }
 
 /* --- Estilos para os Botões de Navegação Lateral --- */
@@ -682,6 +725,85 @@ body {
     border: none;
 }
 
+<<<<<<< Updated upstream
+=======
+/* --- Estilos para a Programação (Timeline) --- */
+.timeline {
+    position: relative;
+    padding-left: 2.5rem; /* Espaço para a linha e ícones */
+}
+
+/* A linha vertical da timeline */
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 4.5rem; /* Posição da linha: 3.5rem (tempo) + 1rem (gap) */
+    top: 10px;
+    bottom: 10px;
+    width: 2px;
+    background-color: #E5E7EB; /* cinza-200 */
+}
+
+.timeline-item {
+    position: relative;
+    display: grid;    
+    grid-template-columns: 3.5rem 1fr; /* Coluna para o tempo e coluna para o resto */
+    align-items: start;
+    gap: 1rem;
+    padding-bottom: 1.5rem; /* Espaço entre os itens */
+}
+
+.timeline-time {
+    grid-column: 1;
+    text-align: right;
+    font-weight: 600;
+    color: #4B5563; /* cinza-600 */
+}
+
+.timeline-icon {
+    grid-column: 1;
+    background-color: white;
+    border: 2px solid #E5E7EB; /* cinza-200 */
+    border-radius: 9999px;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #062E51;
+}
+
+.timeline-content {
+    grid-column: 2; /* Ocupa a segunda coluna do grid principal */
+    display: grid;
+    grid-template-columns: auto 1fr; /* Coluna para o ícone e coluna para o texto */
+    gap: 1rem;
+    align-items: start;
+}
+
+.timeline-content strong {
+    font-weight: 700;
+    color: #062E51;
+    grid-column: 2;
+}
+
+.timeline-content p {
+    font-size: 0.9rem;
+    color: #6B7280; /* cinza-500 */
+    margin-top: 0.1rem;
+    grid-column: 2;
+}
+
+.timeline-content > .timeline-icon {
+    grid-column: 1;
+}
+
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+
+>>>>>>> Stashed changes
 /* --- Esconde a Barra de Rolagem Principal --- */
 /* Mantém a funcionalidade de rolagem, mas esconde a barra visualmente */
 
