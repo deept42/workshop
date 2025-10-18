@@ -228,6 +228,15 @@ body {
 }
 
 /* Estilo para o link de navegação ativo */
+.nav-links a {
+    position: relative;
+    padding: 0.6rem 1.5rem; /* Ajusta o padding para um visual mais compacto */
+    font-weight: 600;
+    transition: color 0.3s ease, background-color 0.3s ease;
+    color: white; /* Cor do texto padrão: branco */
+}
+
+/* Estilo para o link de navegação ativo */
 .nav-links a.active-link {
     color: #E63946; /* Cor do texto ativo: vermelho */
     font-weight: 700;
@@ -306,6 +315,9 @@ body {
 =======
 .nav-links a:hover::before {
     background-color: #c9323d; /* Vermelho mais escuro no hover */
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 }
 
@@ -726,12 +738,88 @@ body {
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 /* --- Estilos para a Programação (Timeline) --- */
 .timeline {
     position: relative;
     padding-left: 2.5rem; /* Espaço para a linha e ícones */
 }
+<<<<<<< Updated upstream
+=======
+
+/* A linha vertical da timeline */
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 4.5rem; /* Posição da linha: 3.5rem (tempo) + 1rem (gap) */
+    top: 10px;
+    bottom: 10px;
+    width: 2px;
+    background-color: #E5E7EB; /* cinza-200 */
+}
+
+.timeline-item {
+    position: relative;
+    display: grid;    
+    grid-template-columns: 3.5rem 1fr; /* Coluna para o tempo e coluna para o resto */
+    align-items: start;
+    gap: 1rem;
+    padding-bottom: 1.5rem; /* Espaço entre os itens */
+}
+
+.timeline-time {
+    grid-column: 1;
+    text-align: right;
+    font-weight: 600;
+    color: #4B5563; /* cinza-600 */
+}
+
+.timeline-icon {
+    grid-column: 1;
+    background-color: white;
+    border: 2px solid #E5E7EB; /* cinza-200 */
+    border-radius: 9999px;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #062E51;
+}
+
+.timeline-content {
+    grid-column: 2; /* Ocupa a segunda coluna do grid principal */
+    display: grid;
+    grid-template-columns: auto 1fr; /* Coluna para o ícone e coluna para o texto */
+    gap: 1rem;
+    align-items: start;
+}
+
+.timeline-content strong {
+    font-weight: 700;
+    color: #062E51;
+    grid-column: 2;
+}
+
+.timeline-content p {
+    font-size: 0.9rem;
+    color: #6B7280; /* cinza-500 */
+    margin-top: 0.1rem;
+    grid-column: 2;
+}
+
+.timeline-content > .timeline-icon {
+    grid-column: 1;
+}
+
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+>>>>>>> Stashed changes
 
 /* A linha vertical da timeline */
 .timeline::before {
