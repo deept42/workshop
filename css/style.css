@@ -53,6 +53,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center; /* NOVO: Centraliza todo o conteúdo horizontalmente */
     min-height: 100%; /* Garante que ele tente preencher a altura do painel pai */
 }
 
@@ -164,7 +165,6 @@ body {
     overflow: hidden; /* Esconde o texto que transborda */
 }
 
-<<<<<<< Updated upstream
 #side-nav:hover {
     width: 200px; /* Largura expandida */
 }
@@ -195,6 +195,7 @@ body {
     gap: 1rem;
     padding: 0.75rem 0.5rem;
     border-radius: 10px;
+    cursor: pointer;
     color: white;
     transition: background-color 0.3s ease, color 0.3s ease;
     white-space: nowrap; /* Impede que o texto quebre linha */
@@ -217,52 +218,6 @@ body {
 }
 
 .nav-indicator {
-=======
-/* Estilo para o link de navegação ativo */
-.nav-links a {
-    position: relative;
-    padding: 0.6rem 1.5rem; /* Ajusta o padding para um visual mais compacto */
-    font-weight: 600;
-    transition: color 0.3s ease, background-color 0.3s ease;
-    color: white; /* Cor do texto padrão: branco */
-}
-
-/* Estilo para o link de navegação ativo */
-.nav-links a {
-    position: relative;
-    padding: 0.6rem 1.5rem; /* Ajusta o padding para um visual mais compacto */
-    font-weight: 600;
-    transition: color 0.3s ease, background-color 0.3s ease;
-    color: white; /* Cor do texto padrão: branco */
-}
-
-/* Estilo para o link de navegação ativo */
-.nav-links a {
-    position: relative;
-    padding: 0.6rem 1.5rem; /* Ajusta o padding para um visual mais compacto */
-    font-weight: 600;
-    transition: color 0.3s ease, background-color 0.3s ease;
-    color: white; /* Cor do texto padrão: branco */
-}
-
-/* Estilo para o link de navegação ativo */
-.nav-links a.active-link {
-    color: #E63946; /* Cor do texto ativo: vermelho */
-    font-weight: 700;
-}
-
-/* Efeito de "botão aceso" para o link ativo */
-.nav-links a.active-link::before {
-    background-color: #ffffff; /* Fundo branco sólido */
-    border-color: #ffffff;
-    border-bottom: none; /* Remove a borda inferior para fundir com o próximo item */
-}
-
-
-/* O fundo dos itens da timeline */
-.nav-links a::before {
-    content: '';
->>>>>>> Stashed changes
     position: absolute;
     background-color: white;
     z-index: -1; /* Fica atrás dos ícones e texto */
@@ -279,16 +234,7 @@ body {
     /* Estado expandido: fundo completo */
     left: 0;
     width: 100%;
-<<<<<<< Updated upstream
     border-radius: 10px;
-=======
-    height: 100%;
-    background-color: #E63946; /* Fundo padrão: vermelho */
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Linha separadora */
-    transition: all 0.3s ease;
-    z-index: -1;
->>>>>>> Stashed changes
 }
 
 .nav-icon {
@@ -301,7 +247,6 @@ body {
     display: block;
 }
 
-<<<<<<< Updated upstream
 .nav-link-text {
     opacity: 0;
     transition: opacity 0.3s ease 0.1s; /* Delay para o texto aparecer depois da expansão */
@@ -321,16 +266,56 @@ body {
 }
 #side-nav:hover .text-menu {
     display: block; /* Mostra o texto "Menu" quando expandido */
-=======
-.nav-links a:hover::before {
-    background-color: #c9323d; /* Vermelho mais escuro no hover */
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+}
+
+/* --- Estilos para a Navegação Lateral Direita --- */
+#side-nav-right {
+    padding: 1rem;
+    background-color: #062E51; /* Cor azul do tema */
+    border-radius: 12px 0 0 12px; /* Bordas arredondadas no lado interno */
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: width 0.4s ease-in-out;
+    width: 60px;
+    overflow: hidden;
+}
+
+#side-nav-right:hover {
+    width: 200px;
+}
+
+/* Apenas quando o menu direito está expandido, o ícone ativo fica azul */
+#side-nav-right:hover .nav-link.active-link {
+    color: #062E51; /* Cor do ícone ativo */
+}
+
+/* Indicador da navegação direita */
+#side-nav-right .nav-indicator {
+    background-color: white;
+    /* Estado colapsado: pílula na direita */
+    width: 5px;
+    right: -12px; /* Posicionado fora */
+    left: auto; /* Reseta a propriedade left */
+    border-radius: 2px;
+}
+
+#side-nav-right:hover .nav-indicator {
+    /* Estado expandido: fundo completo */
+    right: 0;
+    width: 100%;
+}
+
+/* Lógica para mostrar o texto no menu direito ao passar o mouse */
+#side-nav-right:hover .nav-link-text {
+    opacity: 1;
+}
+
+/* Lógica para trocar ícone por texto no header direito */
+#side-nav-right:hover .icon-menu {
+    display: none;
+}
+#side-nav-right:hover .text-menu {
+    display: block;
 }
 
 /* --- Estilos para os Botões de Navegação Lateral --- */
@@ -636,10 +621,10 @@ body {
 
 /* Prepara os elementos para a animação (invisíveis por padrão) */
 .animate-on-scroll {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-    transition-delay: var(--animation-delay, 0s); /* Usa a variável de delay ou 0s como padrão */
+    /* O efeito de fade-in foi desativado conforme solicitado. */
+    /* opacity: 0; */
+    /* transform: translateY(20px); */
+    /* transition: opacity 0.6s ease-out, transform 0.6s ease-out; */
 }
 
 /* Classe que ativa a animação quando o elemento está visível */
@@ -749,25 +734,6 @@ body {
     border: none;
 }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-/* --- Estilos para a Programação (Timeline) --- */
-.timeline {
-    position: relative;
-    padding-left: 2.5rem; /* Espaço para a linha e ícones */
-}
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
-
-/* A linha vertical da timeline */
 .timeline::before {
     content: '';
     position: absolute;
@@ -836,150 +802,6 @@ body {
     padding-bottom: 0;
 }
 
->>>>>>> Stashed changes
-
-/* A linha vertical da timeline */
-.timeline::before {
-    content: '';
-    position: absolute;
-    left: 4.5rem; /* Posição da linha: 3.5rem (tempo) + 1rem (gap) */
-    top: 10px;
-    bottom: 10px;
-    width: 2px;
-    background-color: #E5E7EB; /* cinza-200 */
-}
-
-.timeline-item {
-    position: relative;
-    display: grid;    
-    grid-template-columns: 3.5rem 1fr; /* Coluna para o tempo e coluna para o resto */
-    align-items: start;
-    gap: 1rem;
-    padding-bottom: 1.5rem; /* Espaço entre os itens */
-}
-
-.timeline-time {
-    grid-column: 1;
-    text-align: right;
-    font-weight: 600;
-    color: #4B5563; /* cinza-600 */
-}
-
-.timeline-icon {
-    grid-column: 1;
-    background-color: white;
-    border: 2px solid #E5E7EB; /* cinza-200 */
-    border-radius: 9999px;
-    width: 42px;
-    height: 42px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #062E51;
-}
-
-.timeline-content {
-    grid-column: 2; /* Ocupa a segunda coluna do grid principal */
-    display: grid;
-    grid-template-columns: auto 1fr; /* Coluna para o ícone e coluna para o texto */
-    gap: 1rem;
-    align-items: start;
-}
-
-.timeline-content strong {
-    font-weight: 700;
-    color: #062E51;
-    grid-column: 2;
-}
-
-.timeline-content p {
-    font-size: 0.9rem;
-    color: #6B7280; /* cinza-500 */
-    margin-top: 0.1rem;
-    grid-column: 2;
-}
-
-.timeline-content > .timeline-icon {
-    grid-column: 1;
-}
-
-.timeline-item:last-child {
-    padding-bottom: 0;
-}
-
->>>>>>> Stashed changes
-
-/* A linha vertical da timeline */
-.timeline::before {
-    content: '';
-    position: absolute;
-    left: 4.5rem; /* Posição da linha: 3.5rem (tempo) + 1rem (gap) */
-    top: 10px;
-    bottom: 10px;
-    width: 2px;
-    background-color: #E5E7EB; /* cinza-200 */
-}
-
-.timeline-item {
-    position: relative;
-    display: grid;    
-    grid-template-columns: 3.5rem 1fr; /* Coluna para o tempo e coluna para o resto */
-    align-items: start;
-    gap: 1rem;
-    padding-bottom: 1.5rem; /* Espaço entre os itens */
-}
-
-.timeline-time {
-    grid-column: 1;
-    text-align: right;
-    font-weight: 600;
-    color: #4B5563; /* cinza-600 */
-}
-
-.timeline-icon {
-    grid-column: 1;
-    background-color: white;
-    border: 2px solid #E5E7EB; /* cinza-200 */
-    border-radius: 9999px;
-    width: 42px;
-    height: 42px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #062E51;
-}
-
-.timeline-content {
-    grid-column: 2; /* Ocupa a segunda coluna do grid principal */
-    display: grid;
-    grid-template-columns: auto 1fr; /* Coluna para o ícone e coluna para o texto */
-    gap: 1rem;
-    align-items: start;
-}
-
-.timeline-content strong {
-    font-weight: 700;
-    color: #062E51;
-    grid-column: 2;
-}
-
-.timeline-content p {
-    font-size: 0.9rem;
-    color: #6B7280; /* cinza-500 */
-    margin-top: 0.1rem;
-    grid-column: 2;
-}
-
-.timeline-content > .timeline-icon {
-    grid-column: 1;
-}
-
-.timeline-item:last-child {
-    padding-bottom: 0;
-}
-
-
->>>>>>> Stashed changes
 /* --- Esconde a Barra de Rolagem Principal --- */
 /* Mantém a funcionalidade de rolagem, mas esconde a barra visualmente */
 
@@ -1075,4 +897,31 @@ body {
     color: #6b7280; /* gray-500 */
     border-top: 1px solid #e5e7eb; /* gray-200 */
 }
+
+/* --- Estilos para a Lista de Programação Simplificada --- */
+.program-list {
+    list-style: none; /* Remove os marcadores padrão da lista */
+    padding: 0;
+    margin: 0;
+    border-radius: 0.5rem; /* 8px */
+    overflow: hidden; /* Garante que o fundo dos itens respeite o border-radius */
+    border: 1px solid #e5e7eb; /* Borda sutil ao redor da lista */
 }
+
+.program-list li {
+    padding: 0.75rem 1rem; /* 12px 16px */
+    border-bottom: 1px solid #e5e7eb; /* Linha separadora */
+}
+
+.program-list li:last-child {
+    border-bottom: none; /* Remove a borda do último item */
+}
+
+/* Efeito "Zebra" (linhas alternadas) */
+.program-list li:nth-child(even) {
+    background-color: #f9fafb; /* cinza-50 do Tailwind */
+}
+
+/* Destaques para eventos específicos */
+.program-list li.event-highlight-meta { background-color: #EFF6FF; /* azul-50 do Tailwind */ }
+.program-list li.event-highlight-break { background-color: #FFFBEB; /* amber-50 do Tailwind */ }
