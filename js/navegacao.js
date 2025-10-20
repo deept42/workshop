@@ -71,13 +71,29 @@ export function configurarMenuMobile() {
  */
 export function configurarBarraProgressoRolagem() {
     const barraProgresso = document.getElementById('progress-bar');
-    const containerPrincipal = document.getElementById('folder-container');
-    if (!barraProgresso || !containerPrincipal) return;
+    if (!barraProgresso) return;
 
-    containerPrincipal.addEventListener('scroll', () => {
-        const { scrollTop, scrollHeight, clientHeight } = containerPrincipal;
-        const alturaRolavel = scrollHeight - clientHeight;
+    window.addEventListener('scroll', () => {
+        const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+        // Garante que a altura total do conteúdo seja considerada
+        const alturaRolavel = scrollHeight - clientHeight; 
         const porcentagemRolagem = alturaRolavel > 0 ? (scrollTop / alturaRolavel) * 100 : 0;
         barraProgresso.style.width = `${porcentagemRolagem}%`;
     });
+}
+
+/**
+ * Configura o botão de logout para chamar a função de logout do Supabase.
+ * @param {Function} callbackLogout - A função a ser executada ao clicar no botão.
+ */
+export function configurarBotaoLogout(callbackLogout) {
+    const botaoLogout = document.getElementById('logout-btn');
+    if (botaoLogout) {
+        botaoLogout.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (typeof callbackLogout === 'function') {
+                callbackLogout();
+            }
+        });
+    }
 }

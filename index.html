@@ -17,7 +17,7 @@
 
     <!-- Barra de Topo Fixa com Contagem Regressiva -->
     <div id="top-bar" class="fixed top-0 left-0 w-full z-50">
-        <div class="top-bar-content text-white text-center">
+        <div class="top-bar-content text-center">
             <h2 class="top-bar-title">EVENTO IMPERDÍVEL</h2>
             <div id="countdown-timer"></div>
             <p class="top-bar-subtitle">Vagas se esgotando!</p>
@@ -64,13 +64,6 @@
                     </div>
                 </div>
                 </div>
-                <!-- Indicador de Rolagem para Baixo -->
-                <div class="scroll-indicator-container">
-                    <a href="#sobre" class="scroll-indicator down" aria-label="Rolar para a próxima seção">
-                        <span class="indicator-label">Ir para Sobre</span>
-                        <span class="material-symbols-outlined w-8 h-8">expand_more</span>
-                    </a>
-                </div>
             </div>
         </section>
 
@@ -106,17 +99,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- Indicadores de Rolagem -->
-                <div class="scroll-indicator-container">
-                    <a href="#inicio" class="scroll-indicator up" aria-label="Rolar para a seção anterior">
-                        <span class="indicator-label">Ir para Início</span>
-                        <span class="material-symbols-outlined w-8 h-8">expand_less</span>
-                    </a>
-                    <a href="#programacao" class="scroll-indicator down" aria-label="Rolar para a próxima seção">
-                        <span class="indicator-label">Ir para Programação</span>
-                        <span class="material-symbols-outlined w-8 h-8">expand_more</span>
-                    </a>
                 </div>
             </div>
         </section>
@@ -193,17 +175,6 @@
                         </div>
                     </div>
                 </div>
-                 <!-- Indicadores de Rolagem -->
-                <div class="scroll-indicator-container">
-                    <a href="#sobre" class="scroll-indicator up" aria-label="Rolar para a seção anterior">
-                        <span class="indicator-label">Ir para Sobre</span>
-                        <span class="material-symbols-outlined w-8 h-8">expand_less</span>
-                    </a>
-                    <a href="#palestrantes" class="scroll-indicator down" aria-label="Rolar para a próxima seção">
-                        <span class="indicator-label">Ir para Palestrantes</span>
-                        <span class="material-symbols-outlined w-8 h-8">expand_more</span>
-                    </a>
-                </div>
             </div>
         </section>
 
@@ -239,17 +210,6 @@
                         </div>
                     </div>
                  </div>
-                </div>
-                <!-- Indicadores de Rolagem -->
-                <div class="scroll-indicator-container">
-                    <a href="#programacao" class="scroll-indicator up" aria-label="Rolar para a seção anterior">
-                        <span class="indicator-label">Ir para Programação</span>
-                        <span class="material-symbols-outlined w-8 h-8">expand_less</span>
-                    </a>
-                    <a href="#inscricao" class="scroll-indicator down" aria-label="Rolar para a próxima seção">
-                        <span class="indicator-label">Ir para Inscrição</span>
-                        <span class="material-symbols-outlined w-8 h-8">expand_more</span>
-                    </a>
                 </div>
             </div>
         </section>
@@ -347,33 +307,58 @@
                         </div>
                     </div>
                 </div>
-                <!-- Indicador de Rolagem para Cima -->
-                <div class="scroll-indicator-container">
-                    <a href="#palestrantes" class="scroll-indicator up" aria-label="Rolar para a seção anterior">
-                        <span class="indicator-label">Ir para Palestrantes</span>
-                        <span class="material-symbols-outlined w-8 h-8">expand_less</span>
-                    </a>
-                    <a href="#inicio" class="scroll-indicator up" aria-label="Voltar ao início">
-                        <span class="indicator-label">Voltar ao Início</span>
-                        <span class="material-symbols-outlined w-8 h-8">expand_less</span>
-                    </a>
-                </div>
             </div>
         </section>
 
-        <!-- Rodapé agora faz parte do conteúdo principal para rolar corretamente -->
-        <footer class="bg-[#062E51] text-gray-300">
-            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
-                <p class="text-sm mb-2 md:mb-0">
-                    &copy; 2025 - Todos os direitos reservados.
-                </p>
-                <p class="text-sm">
-                    Desenvolvido por <a href="https://maximizados.com.br/" target="_blank" rel="noopener noreferrer" class="font-semibold text-white hover:text-[#E63946] transition-colors">Maximizados</a> e <a href="https://www.bombeiros.pr.gov.br/" target="_blank" rel="noopener noreferrer" class="font-semibold text-white hover:text-[#E63946] transition-colors">Corpo de Bombeiros</a>.
-                </p>
-            </div>
-        </footer>
-
     </main>
+
+    <!-- Rodapé -->
+    <footer class="bg-[#062E51] text-gray-300 py-6 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+            <p class="text-sm mb-2 md:mb-0">
+                &copy; 2025 - Todos os direitos reservados.
+            </p>
+            <p class="text-sm">
+                Desenvolvido por <a href="https://maximizados.com.br/" target="_blank" rel="noopener noreferrer" class="font-semibold text-white hover:text-[#E63946] transition-colors">Maximizados</a> e <a href="https://www.bombeiros.pr.gov.br/" target="_blank" rel="noopener noreferrer" class="font-semibold text-white hover:text-[#E63946] transition-colors">Corpo de Bombeiros</a>.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Seção de Login -->
+    <section id="login-admin" class="min-h-screen grid grid-cols-1 md:grid-cols-2 items-center">
+        <!-- Coluna Esquerda (Azul) -->
+        <div class="login-pane-left h-full bg-[#062E51] text-white p-12 flex-col justify-center hidden md:flex text-right">
+            <h2 class="text-4xl font-bold mb-4">Bem-vindo de volta!</h2>
+            <p class="text-lg opacity-80">Esta é a área de acesso restrito para a administração do Workshop.</p>
+        </div>
+
+        <!-- Link para voltar ao site (agora posicionado sobre toda a seção) -->
+        <a href="#" id="back-to-site-btn" class="absolute top-8 right-8 text-gray-500 hover:text-[#062E51] font-semibold flex items-center gap-2 transition-colors group z-10">
+            <span class="group-hover:-translate-x-1 transition-transform">Voltar ao site</span>
+            <span class="material-symbols-outlined">arrow_forward</span>
+        </a>
+
+        <!-- Coluna Direita (Branca com o formulário) -->
+        <div class="login-pane-right w-full p-8 flex items-center justify-center">
+            <div class="max-w-sm w-full">
+                <h2 class="text-3xl font-bold text-center text-[#062E51] mb-2">Área Restrita</h2>
+                <p class="text-center text-gray-500 mb-8 text-sm">Acesso exclusivo para administradores.</p>
+                <form id="login-form" class="space-y-6">
+                    <div class="form-group">
+                        <span class="material-symbols-outlined form-icon">person</span>
+                        <input type="email" id="login-email" name="login-email" class="form-input" placeholder=" " required>
+                        <label for="login-email" class="form-label">E-mail</label>
+                    </div>
+                    <div class="form-group">
+                        <span class="material-symbols-outlined form-icon">lock</span>
+                        <input type="password" id="login-password" name="login-password" class="form-input" placeholder=" " required>
+                        <label for="login-password" class="form-label">Senha</label>
+                    </div>
+                    <button type="submit" class="w-full bg-[#062E51] hover:bg-[#001B3E] text-white font-bold py-3 rounded-lg text-lg transition-colors duration-300">Entrar</button>
+                </form>
+            </div>
+        </div>
+    </section>
 
     <!-- Navegação Lateral em formato Timeline (Desktop) -->
     <nav id="side-nav" class="fixed left-0 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col">
@@ -426,6 +411,11 @@
                 <span class="material-symbols-outlined nav-icon">restart_alt</span>
                 <span class="nav-link-text">Fonte Padrão</span>
             </a>
+            <!-- Botão dinâmico de Login/Logout -->
+            <a href="#" id="auth-btn" class="nav-link">
+                <span id="auth-icon" class="material-symbols-outlined nav-icon">login</span>
+                <span id="auth-text" class="nav-link-text">Entrar</span>
+            </a>
         </div>
     </nav>
 
@@ -468,9 +458,21 @@
         </div>
     </div>
 
+    <!-- Modal Customizado para Sucesso Genérico -->
+    <div id="success-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+        <div id="success-modal-content" class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full text-center">
+            <span class="material-symbols-outlined text-6xl text-green-500 mx-auto mb-4">check_circle</span>
+            <h3 id="success-modal-title" class="text-2xl font-bold text-[#062E51] mb-2">Ação Concluída!</h3>
+            <p id="success-modal-message" class="text-gray-600 mb-6">Sua operação foi realizada com sucesso.</p>
+            <div class="flex justify-center">
+                <button id="success-btn-close" class="px-6 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold transition-colors">Fechar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Caminho para o arquivo JavaScript dentro da pasta 'js' -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/script.js" type="module" defer></script>
     <script src="https://www.youtube.com/iframe_api" defer></script>
+    <script src="js/script.js" type="module"></script>
 </body>
 </html>

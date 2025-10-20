@@ -2,10 +2,7 @@
  * @file Gerencia todas as funcionalidades relacionadas ao formulário de inscrição.
  */
 
-// Configuração da conexão com o Supabase
-const SUPABASE_URL = 'https://onqettyqcdyutkticrab.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ucWV0dHlxY2R5dXRrdGljcmFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2Njg5OTksImV4cCI6MjA3NjI0NDk5OX0.LZJhIX3f0Jd3TxVo-YGHBVpiejLimGo-ClACeipilqc';
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+import { supabase } from './supabaseClient.js';
 
 function exibirMensagem(mensagem, tipo) {
     const mensagensForm = document.getElementById('form-messages');
@@ -141,7 +138,7 @@ export function configurarValidacaoFormulario() {
         // --- Fim da Lógica de Validação Aprimorada ---
 
         // Envio para o Supabase
-        const { data, error } = await supabaseClient
+        const { data, error } = await supabase
             .from('cadastro_workshop')
             .insert([{
                 nome_completo: nome,
@@ -180,58 +177,6 @@ export function configurarValidacaoFormulario() {
         }
     });
 
-    async function mostrarModalCertificado(idRegistro) {
-        const modal = document.getElementById('certificate-modal');
-        const botaoSim = document.getElementById('cert-btn-yes');
-        const botaoNao = document.getElementById('cert-btn-no');
-
-        if (!modal || !botaoSim || !botaoNao) return;
-
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-
-        const fecharModal = () => modal.classList.add('hidden');
-
-        // Usamos .cloneNode e .replaceWith para garantir que os listeners antigos sejam removidos.
-        const novoBotaoSim = botaoSim.cloneNode(true);
-        botaoSim.parentNode.replaceChild(novoBotaoSim, botaoSim);
-
-        const novoBotaoNao = botaoNao.cloneNode(true);
-        botaoNao.parentNode.replaceChild(novoBotaoNao, botaoNao);
-
-        novoBotaoSim.onclick = async () => {
-            if (idRegistro) {
-                await supabaseClient
-                    .from('cadastro_workshop')
-                    .update({ quer_certificado: true, status_pagamento: 'pendente' })
-                    .eq('id', idRegistro);
-            }
-            window.open('https://www.asaas.com/c/p9v42o92yos25x75', '_blank');
-            fecharModal();
-        };
-
-        novoBotaoNao.onclick = fecharModal;
-    }
-
-    async function mostrarModalErro(mensagem) {
-        const modal = document.getElementById('error-modal');
-        const mensagemEl = document.getElementById('error-modal-message');
-        const botaoFechar = document.getElementById('error-btn-close');
-
-        if (!modal || !mensagemEl || !botaoFechar) return;
-
-        mensagemEl.textContent = mensagem;
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-
-        const fecharModal = () => modal.classList.add('hidden');
-
-        // Garante que o listener de clique seja sempre novo
-        const novoBotaoFechar = botaoFechar.cloneNode(true);
-        botaoFechar.parentNode.replaceChild(novoBotaoFechar, botaoFechar);
-        novoBotaoFechar.onclick = fecharModal;
-    }
-
     function mostrarFeedbackSucessoTopo() {
         const topBar = document.getElementById('top-bar');
         const title = topBar.querySelector('.top-bar-title');
@@ -242,6 +187,7 @@ export function configurarValidacaoFormulario() {
 
         // Aplica o estado de sucesso permanentemente na sessão atual
         topBar.style.background = 'linear-gradient(to right, #16A34A, #15803D, #16A34A)'; // Gradiente verde
+        topBar.style.color = 'white'; // Garante que o texto fique legível no fundo verde
         subtitle.textContent = 'INSCRIÇÃO CONFIRMADA COM SUCESSO!';
         subtitle.style.fontWeight = 'bold';
     }
@@ -285,6 +231,103 @@ export function configurarValidacaoFormulario() {
         }
         return ehValido;
     }
+}
+
+/**
+ * Exibe um modal de confirmação para o certificado.
+ * @param {string} idRegistro - O ID do registro no Supabase.
+ */
+export async function mostrarModalCertificado(idRegistro) {
+    const modal = document.getElementById('certificate-modal');
+    const botaoSim = document.getElementById('cert-btn-yes');
+    const botaoNao = document.getElementById('cert-btn-no');
+
+    if (!modal || !botaoSim || !botaoNao) return;
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+
+    const fecharModal = () => modal.classList.add('hidden');
+
+    // Usamos .cloneNode e .replaceWith para garantir que os listeners antigos sejam removidos.
+    const novoBotaoSim = botaoSim.cloneNode(true);
+    botaoSim.parentNode.replaceChild(novoBotaoSim, botaoSim);
+
+    const novoBotaoNao = botaoNao.cloneNode(true);
+    botaoNao.parentNode.replaceChild(novoBotaoNao, botaoNao);
+
+    novoBotaoSim.onclick = async () => {
+        if (idRegistro) {
+            await supabase
+                .from('cadastro_workshop')
+                .update({ quer_certificado: true, status_pagamento: 'pendente' })
+                .eq('id', idRegistro);
+        }
+        window.open('https://www.asaas.com/c/p9v42o92yos25x75', '_blank');
+        fecharModal();
+    };
+
+    novoBotaoNao.onclick = fecharModal;
+}
+
+/**
+ * Exibe um modal de erro com uma mensagem personalizada.
+ * @param {string} mensagem - A mensagem de erro a ser exibida.
+ */
+export async function mostrarModalErro(mensagem) {
+    const modal = document.getElementById('error-modal');
+    const mensagemEl = document.getElementById('error-modal-message');
+    const botaoFechar = document.getElementById('error-btn-close');
+
+    if (!modal || !mensagemEl || !botaoFechar) return;
+
+    mensagemEl.textContent = mensagem;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+
+    const fecharModal = () => modal.classList.add('hidden');
+
+    // Garante que o listener de clique seja sempre novo
+    const novoBotaoFechar = botaoFechar.cloneNode(true);
+    botaoFechar.parentNode.replaceChild(novoBotaoFechar, botaoFechar);
+    novoBotaoFechar.onclick = fecharModal;
+}
+
+/**
+ * Exibe um modal de sucesso genérico com título e mensagem personalizáveis.
+ * @param {string} titulo - O título do modal.
+ * @param {string} mensagem - A mensagem do modal.
+ */
+export async function mostrarModalSucesso(titulo, mensagem) {
+    const modal = document.getElementById('success-modal');
+    const tituloEl = document.getElementById('success-modal-title');
+    const mensagemEl = document.getElementById('success-modal-message');
+    const botaoFechar = document.getElementById('success-btn-close');
+
+    if (!modal || !tituloEl || !mensagemEl || !botaoFechar) return;
+
+    tituloEl.textContent = titulo;
+    mensagemEl.textContent = mensagem;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+
+    const fecharModal = () => {
+        modal.classList.add('hidden');
+    };
+
+    // Garante que o listener de clique seja sempre novo
+    const novoBotaoFechar = botaoFechar.cloneNode(true);
+    botaoFechar.parentNode.replaceChild(novoBotaoFechar, botaoFechar);
+    novoBotaoFechar.onclick = fecharModal;
+}
+
+/**
+ * Exibe um modal de sucesso para o login.
+ * @param {string} mensagem - A mensagem de sucesso a ser exibida.
+ */
+export async function mostrarModalSucessoLogin(mensagem) {
+    // Reutilizando o modal de sucesso genérico para o login
+    await mostrarModalSucesso('Login Realizado com Sucesso!', mensagem);
 }
 
 /**
@@ -370,7 +413,7 @@ export async function configurarAutocompletarComDadosSalvos() {
 
         if (form && validarEmail(email)) {
             // Busca no Supabase pelo e-mail inserido
-            const { data, error } = await supabaseClient
+            const { data, error } = await supabase
                 .from('cadastro_workshop')
                 .select('nome_completo, empresa, telefone, municipio')
                 .eq('email', email)
