@@ -33,14 +33,62 @@
             color: #334155; /* Cor do texto do corpo (cinza mais escuro) */
             border-top: 1px solid #e2e8f0;
         }
+        /* Estilos para o formulário no modal de adicionar */
+        .form-input-admin {
+            width: 100%;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            background-color: #f9fafb;
+            color: #111827;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        /* --- Estilos para a Navegação Lateral Direita --- */
+        #side-nav-right {
+            padding: 1rem;
+            background-color: #062E51; /* Cor azul do tema */
+            border-radius: 12px 0 0 12px; /* Bordas arredondadas no lado interno */
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: width 0.4s ease-in-out;
+            width: 3.75rem; /* 60px */
+            overflow: hidden;
+        }
+        #side-nav-right:hover { width: 12.5rem; /* 200px */ }
+        .side-nav-header {
+            display: flex; align-items: center; gap: 1rem;
+            color: rgba(255, 255, 255, 0.7); opacity: 0.7;
+            padding: 0.5rem; margin-bottom: 1rem;
+            font-weight: 700; text-transform: uppercase; font-size: 0.8rem;
+        }
+        .nav-links { display: flex; flex-direction: column; position: relative; gap: 0.5rem; }
+        .nav-link {
+            display: flex; align-items: center; gap: 1rem;
+            padding: 0.75rem 0.5rem; border-radius: 10px;
+            cursor: pointer; color: white;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            white-space: nowrap;
+        }
+        .nav-link:hover { background-color: rgba(255, 255, 255, 0.1); }
+        .nav-icon { width: 1.5rem; height: 1.5rem; flex-shrink: 0; }
+        .icon-menu { display: block; }
+        .nav-link-text { opacity: 0; transition: opacity 0.3s ease 0.1s; }
+        .text-menu { display: none; }
+        #side-nav-right:hover .nav-link-text { opacity: 1; }
+        #side-nav-right:hover .icon-menu { display: none; }
+        #side-nav-right:hover .text-menu { display: block; }
     </style>
 </head>
 <body class="p-4 md:p-8">
 
     <header class="flex flex-col sm:flex-row justify-between items-center mb-8 pb-4 border-b border-gray-300">
-        <div>
-            <h1 class="text-3xl font-bold text-[#062E51]">Dashboard</h1>
-            <p class="text-gray-600">Lista de inscritos no Workshop.</p>
+        <div class="flex items-center gap-4">
+            <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo Corpo de Bombeiros" class="h-12 w-auto">
+            <div>
+                <h1 class="text-3xl font-bold text-[#062E51]">Dashboard</h1>
+                <p class="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full inline-block mt-1">Gerenciamento de inscritos do evento</p>
+            </div>
         </div>
         <div class="flex items-center gap-4 mt-4 sm:mt-0">
             <div class="text-right">
@@ -60,35 +108,35 @@
             <h2 class="text-xl font-bold text-gray-700 mb-4">Resumo do Evento</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Card Total de Inscritos -->
-                <div class="bg-white p-6 rounded-lg shadow-md flex items-center gap-4">
-                    <div class="bg-blue-100 p-3 rounded-full"><span class="material-symbols-outlined text-3xl text-blue-600">groups</span></div>
+                <div class="bg-blue-600 text-white p-6 rounded-lg shadow-lg flex items-center gap-5">
+                    <span class="material-symbols-outlined text-5xl opacity-80">groups</span>
                     <div>
-                        <p class="text-sm font-medium text-gray-500">Total de Inscritos</p>
-                        <p id="total-inscritos" class="text-3xl font-bold text-gray-800">0</p>
+                        <p class="text-xl font-bold">Total de Inscritos</p>
+                        <p id="total-inscritos" class="text-2xl font-semibold opacity-90">0</p>
                     </div>
                 </div>
                 <!-- Card Municípios -->
-                <div class="bg-white p-6 rounded-lg shadow-md flex items-center gap-4">
-                    <div class="bg-green-100 p-3 rounded-full"><span class="material-symbols-outlined text-3xl text-green-600">location_city</span></div>
+                <div class="bg-green-600 text-white p-6 rounded-lg shadow-lg flex items-center gap-5">
+                    <span class="material-symbols-outlined text-5xl opacity-80">location_city</span>
                     <div>
-                        <p class="text-sm font-medium text-gray-500">Municípios Diferentes</p>
-                        <p id="total-municipios" class="text-3xl font-bold text-gray-800">0</p>
+                        <p class="text-xl font-bold">Municípios Diferentes</p>
+                        <p id="total-municipios" class="text-2xl font-semibold opacity-90">0</p>
                     </div>
                 </div>
                 <!-- Card Adesão ao Certificado -->
-                <div class="bg-white p-6 rounded-lg shadow-md flex items-center gap-4">
-                    <div class="bg-yellow-100 p-3 rounded-full"><span class="material-symbols-outlined text-3xl text-yellow-600">workspace_premium</span></div>
+                <div class="bg-yellow-500 text-white p-6 rounded-lg shadow-lg flex items-center gap-5">
+                    <span class="material-symbols-outlined text-5xl opacity-80">workspace_premium</span>
                     <div>
-                        <p class="text-sm font-medium text-gray-500">Adesão ao Certificado</p>
-                        <p id="taxa-certificado" class="text-3xl font-bold text-gray-800">0%</p>
+                        <p class="text-xl font-bold">Adesão ao Certificado</p>
+                        <p id="taxa-certificado" class="text-2xl font-semibold opacity-90">0%</p>
                     </div>
                 </div>
                 <!-- Card Interativo de Participantes por Dia -->
-                <div id="card-participantes-dia" class="bg-white p-6 rounded-lg shadow-md flex items-center gap-4 cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                    <div id="card-participantes-icon-bg" class="p-3 rounded-full transition-colors"><span id="card-participantes-icon" class="material-symbols-outlined text-3xl transition-colors">today</span></div>
+                <div id="card-participantes-dia" class="text-white p-6 rounded-lg shadow-lg flex items-center gap-5 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <span id="card-participantes-icon" class="material-symbols-outlined text-5xl opacity-80 transition-transform duration-300">today</span>
                     <div>
-                        <p id="card-participantes-titulo" class="text-sm font-medium text-gray-500 flex items-center">Participantes Dia 13 <span class="material-symbols-outlined text-base ml-1 text-gray-400">sync_alt</span></p>
-                        <p id="card-participantes-valor" class="text-3xl font-bold text-gray-800">0</p>
+                        <p id="card-participantes-titulo" class="text-xl font-bold flex items-center">Participantes Dia 13 <span class="material-symbols-outlined text-base ml-1 opacity-70">sync_alt</span></p>
+                        <p id="card-participantes-valor" class="text-2xl font-semibold opacity-90">0</p>
                     </div>
                 </div>
             </div>
@@ -114,9 +162,9 @@
 
         <!-- Seção da Tabela de Inscritos -->
         <div class="bg-white p-6 rounded-lg shadow-md">
-            <div class="flex flex-col sm:flex-row gap-4 mb-4">
-                <!-- Novo Componente de Busca com Dropdown -->
-                <div class="flex w-full group">
+            <div class="flex flex-col md:flex-row items-center gap-4 mb-4">
+                <!-- Componente de Busca -->
+                <div class="flex w-full md:w-auto group">
                     <select id="filtro-coluna" class="flex-shrink-0 p-3 border border-r-0 border-gray-300 rounded-l-lg bg-gray-50 focus:ring-2 focus:ring-[#062E51] focus:outline-none transition text-gray-600 font-semibold">
                         <option value="all">Buscar em Tudo</option>
                         <option value="nome">Nome</option>
@@ -127,14 +175,34 @@
                     </select>
                     <input type="text" id="filtro-busca" placeholder="Digite para filtrar..." class="w-full p-3 border border-gray-300 rounded-r-lg focus:ring-2 focus:ring-[#062E51] focus:outline-none transition group-focus-within:border-[#062E51] group-focus-within:ring-2">
                 </div>
-                <button id="export-csv-btn" class="flex-shrink-0 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors border border-gray-300">
-                    <span class="material-symbols-outlined">download</span>
-                    Exportar CSV
-                </button>
-                <button id="export-pdf-btn" class="flex-shrink-0 bg-[#062E51] hover:bg-[#001B3E] text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
-                    <span class="material-symbols-outlined">picture_as_pdf</span>
-                    Exportar PDF
-                </button>
+                
+                <!-- Botões de Ação -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <button id="add-inscrito-btn" class="flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                        <span class="material-symbols-outlined">person_add</span> Adicionar
+                    </button>
+                    <button id="export-csv-btn" class="flex-shrink-0 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors border border-gray-300">
+                        <span class="material-symbols-outlined">download</span> Exportar CSV
+                    </button>
+                    <button id="export-pdf-btn" class="flex-shrink-0 bg-[#062E51] hover:bg-[#001B3E] text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                        <span class="material-symbols-outlined">picture_as_pdf</span> Exportar PDF
+                    </button>
+                    <button id="export-checklist-btn" class="flex-shrink-0 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                        <span class="material-symbols-outlined">checklist</span> Exportar Checklist
+                    </button>
+                </div>
+
+                <!-- Interruptor para alternar entre Ativos e Lixeira -->
+                <div class="flex items-center gap-3 ml-auto">
+                    <span id="toggle-label-ativos" class="font-semibold text-green-700 transition-colors">Ativos</span>
+                    <button id="view-toggle-switch" type="button" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-green-600 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2" role="switch" aria-checked="false">
+                        <span id="toggle-thumb" aria-hidden="true" class="pointer-events-none inline-block h-5 w-5 translate-x-0 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+                    </button>
+                    <span id="toggle-label-lixeira" class="font-semibold text-gray-400 transition-colors relative">
+                        Lixeira
+                        <span id="trash-count-badge" class="absolute -top-2 -right-3 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                    </span>
+                </div>
             </div>
             <div class="overflow-x-auto">
                 <table class="admin-table min-w-full">
@@ -158,12 +226,15 @@
                             <th scope="col" data-column="dias">
                                 <div class="flex items-center gap-2">Dias <span class="material-symbols-outlined text-sm opacity-50">unfold_more</span></div>
                             </th>
+                            <th scope="col">
+                                <div class="flex items-center gap-2">Ações</div>
+                            </th>
                         </tr>
                     </thead>
                     <tbody id="lista-inscritos">
                         <!-- Linha de carregamento -->
                         <tr>
-                            <td colspan="6" class="px-6 py-4 text-center text-gray-500">Carregando inscritos...</td>
+                            <td colspan="7" class="px-6 py-4 text-center text-gray-500">Carregando inscritos...</td>
                         </tr>
                         <!-- As linhas com os dados dos inscritos serão inseridas aqui via JavaScript -->
                     </tbody>
@@ -171,6 +242,105 @@
             </div>
         </div>
     </main>
+
+    <!-- Navegação Lateral Direita (Acessibilidade) -->
+    <nav id="side-nav-right" class="fixed right-0 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col">
+        <div class="side-nav-header group">
+            <span class="material-symbols-outlined nav-icon icon-menu">accessibility_new</span>
+            <span class="nav-link-text text-menu">Acessibilidade</span>
+        </div>
+        <div class="nav-links">
+            <a href="#" id="font-increase-btn" class="nav-link">
+                <span class="material-symbols-outlined nav-icon">text_increase</span>
+                <span class="nav-link-text">A+ Aumentar</span>
+            </a>
+            <a href="#" id="font-decrease-btn" class="nav-link">
+                <span class="material-symbols-outlined nav-icon">text_decrease</span>
+                <span class="nav-link-text">A- Diminuir</span>
+            </a>
+            <a href="#" id="font-reset-btn" class="nav-link">
+                <span class="material-symbols-outlined nav-icon">restart_alt</span>
+                <span class="nav-link-text">Fonte Padrão</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div id="delete-confirm-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full text-center">
+            <span class="material-symbols-outlined text-6xl text-red-600 mx-auto mb-4">warning</span>
+            <h3 class="text-2xl font-bold text-[#062E51] mb-2">Confirmar Exclusão</h3>
+            <p id="delete-confirm-message" class="text-gray-600 mb-6">Você tem certeza que deseja remover este inscrito? Esta ação não pode ser desfeita.</p>
+            <div class="flex justify-center gap-4">
+                <button id="delete-btn-cancel" class="px-6 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold transition-colors">Cancelar</button>
+                <button id="delete-btn-confirm" class="px-6 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold transition-colors">Sim, excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Adicionar Inscrito Manualmente -->
+    <div id="add-inscrito-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-lg w-full">
+            <div class="flex justify-between items-start mb-6">
+                <h3 class="text-2xl font-bold text-[#062E51]">Adicionar Novo Inscrito</h3>
+                <button id="add-modal-close-btn" class="text-gray-400 hover:text-gray-600">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <form id="add-inscrito-form" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" name="nome" class="form-input-admin" placeholder="Nome Completo *" required>
+                    <input type="email" name="email" class="form-input-admin" placeholder="E-mail *" required>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" name="empresa" class="form-input-admin" placeholder="Empresa / Instituição *" required>
+                    <input type="text" name="telefone" class="form-input-admin" placeholder="Telefone">
+                </div>
+                <input type="text" name="municipio" class="form-input-admin" placeholder="Município *" required>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Dias de participação:</label>
+                    <div class="flex gap-4">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="dia13" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                            <span>Dia 13</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="dia14" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                            <span>Dia 14</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-4 pt-4">
+                    <button type="button" id="add-modal-cancel-btn" class="px-6 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold transition-colors">Cancelar</button>
+                    <button type="submit" class="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold transition-colors">Salvar Inscrito</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Customizado para Sucesso Genérico -->
+    <div id="success-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full text-center">
+            <span class="material-symbols-outlined text-6xl text-green-500 mx-auto mb-4">check_circle</span>
+            <h3 id="success-modal-title" class="text-2xl font-bold text-[#062E51] mb-2">Ação Concluída!</h3>
+            <p id="success-modal-message" class="text-gray-600 mb-6">Sua operação foi realizada com sucesso.</p>
+            <div class="flex justify-center">
+                <button id="success-btn-close" class="px-6 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold transition-colors">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Customizado para Erro -->
+    <div id="error-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full text-center">
+            <span class="material-symbols-outlined text-6xl text-red-600 mx-auto mb-4">error</span>
+            <h3 class="text-2xl font-bold text-[#062E51] mb-2">Ocorreu um Erro</h3>
+            <p id="error-modal-message" class="text-gray-600 mb-6">Mensagem de erro dinâmica aqui.</p>
+            <div class="flex justify-center">
+                <button id="error-btn-close" class="px-6 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold transition-colors">Fechar</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
