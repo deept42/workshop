@@ -77,8 +77,9 @@
         <!-- Painel 2: Sobre -->
         <section id="sobre" class="folder-panel">
             <div class="panel-content-full grid grid-rows-[1fr_auto] gap-8">
-                <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
-                    <!-- Coluna da Esquerda (Vídeo) -->
+                <!-- Novo container para controlar a largura do conteúdo -->
+                <div class="w-full md:w-4/5 lg:w-3/4 mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                    <!-- Coluna da Esquerda (Vídeo) - ocupa 50% do container pai -->
                     <div class="w-full md:w-1/2 panel-content flex justify-center">
                         <div id="planning-video-player" class="animate-on-scroll w-full shadow-xl" style="--animation-delay: 0s;">
                         <!-- O vídeo será injetado aqui, e o botão de play ficará sobre ele -->

@@ -39,7 +39,7 @@ body {
 .panel-content {
     /* Define uma largura fluida que vai de 95% em telas pequenas até um máximo de 1280px */
     max-width: clamp(20rem, 95%, 80rem);
-    padding: 2rem 3rem; /* Aumenta o padding lateral para centralizar mais o conteúdo */
+    padding: 2rem 4rem; /* Aumenta ainda mais o padding lateral para um layout mais limpo */
 }
 
 /* Variação do panel-content que ocupa a largura total, útil para fundos divididos */
