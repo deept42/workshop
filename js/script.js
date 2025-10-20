@@ -544,6 +544,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     iv_load_policy: 3,
                     autohide: 0,
                     mute: 1,
+                    origin: window.location.origin, // Corrige o erro de 'postMessage' no console
                     playlist: videoId, // Necessário para o loop funcionar
                     ...playerVars // Sobrescreve as configurações padrão
                 }

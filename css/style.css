@@ -606,6 +606,140 @@ body {
 @media (min-width: 768px) { .panel-content { padding-left: 1.5rem; padding-right: 1.5rem; } }
 @media (max-width: 1023px) { .scroll-indicator-container { display: none; } }
 
+/* --- Estilos para o Formulário Profissional --- */
+
+.form-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.form-icon {
+    position: absolute;
+    left: 1rem;
+    color: #9ca3af; /* gray-400 */
+    transition: color 0.2s;
+}
+
+.form-input {
+    width: 100%;
+    border: 1px solid #d1d5db; /* gray-300 */
+    border-radius: 0.5rem;
+    padding: 1rem 1rem 1rem 3rem; /* Espaço para o ícone e label */
+    background-color: #f9fafb; /* gray-50 */
+    color: #111827; /* gray-900 */
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-label {
+    position: absolute;
+    left: 3rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280; /* gray-500 */
+    background-color: #f9fafb; /* Mesmo fundo do input */
+    padding: 0 0.25rem;
+    transition: all 0.2s ease-in-out;
+    pointer-events: none; /* Permite cliques através do label */
+}
+
+/* Efeito de label flutuante */
+.form-input:focus + .form-label,
+.form-input:not(:placeholder-shown) + .form-label {
+    top: 0;
+    left: 2.75rem;
+    font-size: 0.75rem;
+    color: #062E51; /* Cor principal do tema */
+    font-weight: 600;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #062E51;
+    box-shadow: 0 0 0 3px rgba(6, 46, 81, 0.2);
+}
+
+.form-input:focus ~ .form-icon {
+    color: #062E51;
+}
+
+/* --- Estilos para o Autocomplete do Formulário --- */
+.autocomplete-suggestions {
+    position: absolute;
+    border: 1px solid #D1D5DB;
+    border-top: none;
+    border-radius: 0 0 0.5rem 0.5rem;
+    background-color: white;
+    width: 100%;
+    max-height: 12.5rem; /* 200px */
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.suggestion-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.suggestion-item:hover {
+    background-color: #F3F4F6; /* cinza-100 do Tailwind */
+}
+
+.suggestion-item.highlighted {
+    background-color: #E5E7EB; /* cinza-200 do Tailwind */
+}
+
+/* --- Estilos para Checkboxes --- */
+
+/* Checkbox de consentimento */
+.consent-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    cursor: pointer;
+}
+
+.consent-checkbox input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid #D1D5DB; /* gray-300 */
+    border-radius: 0.25rem;
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.consent-checkbox input[type="checkbox"]:checked {
+    background-color: #E63946;
+    border-color: #E63946;
+}
+
+.consent-checkbox input[type="checkbox"]:checked::after {
+    content: '✔';
+    color: white;
+    font-size: 0.8rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.consent-checkbox label {
+    font-size: 0.875rem;
+    color: #4B5563; /* gray-600 */
+    cursor: pointer;
+}
+
+/* Mensagens de erro/sucesso */
+.form-message-error { color: #DC2626; /* red-600 */ font-weight: 500; }
+.form-message-success { color: #16A34A; /* green-600 */ font-weight: 500; }
+
 /* --- Estilos para o Crachá do Palestrante --- */
 .speaker-badge {
     background-color: white;
@@ -710,6 +844,41 @@ body {
 /* Efeito "Zebra" (linhas alternadas) */
 .program-list li:nth-child(even) {
     background-color: #f9fafb; /* cinza-50 do Tailwind */
+}
+
+/* --- Estilos para Seleção de Dias (Checkbox como Botão) --- */
+.days-selection-container {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.day-checkbox-input {
+    display: none; /* Esconde o checkbox real */
+}
+
+.day-checkbox-label {
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #d1d5db; /* gray-300 */
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    color: #4b5563; /* gray-600 */
+    transition: all 0.2s ease-in-out;
+    text-align: center;
+}
+
+.day-checkbox-label:hover {
+    border-color: #9ca3af; /* gray-400 */
+    background-color: #f9fafb; /* gray-50 */
+}
+
+.day-checkbox-input:checked + .day-checkbox-label {
+    background-color: #E63946;
+    border-color: #E63946;
+    color: white;
+    box-shadow: 0 4px 10px rgba(230, 57, 70, 0.3);
+    transform: translateY(-2px);
 }
 
 /* Destaques para eventos específicos */

@@ -49,13 +49,13 @@
                 <div class="hero-logos-container animate-on-scroll mt-12" style="--animation-delay: 0.3s;">
                     <p class="text-sm uppercase tracking-widest mb-4 opacity-70">Realização e Apoio</p>
                     <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-6 gap-x-8 gap-y-6 items-center hero-logos">
-                        <div class="flex items-center justify-center gap-2">
+                        <div class="flex items-center justify-start gap-2">
                             <img src="https://www.defesacivil.pr.gov.br/sites/defesa-civil/arquivos_restritos/files/imagem/2019-05/1769_Defesa_Civil__PR.PNG" alt="Logo Defesa Civil Paraná" class="logo-apoio h-12">
-                            <span class="text-gray-800 font-semibold text-xs leading-tight">Defesa Civil<br>Paraná</span>
+                            <span class="text-gray-800 font-semibold text-sm leading-tight uppercase">Defesa Civil<br>Paraná</span>
                         </div>
-                        <div class="flex items-center justify-center gap-2">
+                        <div class="flex items-center justify-start gap-2">
                             <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo Corpo de Bombeiros Militar Paraná" class="logo-apoio h-12">
-                            <span class="text-gray-800 font-semibold text-xs leading-tight">Corpo de<br>Bombeiros PR</span>
+                            <span class="text-gray-800 font-semibold text-sm leading-tight uppercase">Corpo de<br>Bombeiros PR</span>
                         </div>
                         <img src="https://web.celepar.pr.gov.br/drupal/images/seil/portos/logo_portos_300x86.png" alt="Logo Portos do Paraná" class="logo-apoio">
                         <img src="https://portal.isulpar.edu.br/wp-content/uploads/2024/10/logo-texto-1024x378.png" alt="Logo ISULPAR" class="logo-apoio">
@@ -250,42 +250,44 @@
                     <div class="animate-on-scroll w-full lg:w-1/2 bg-white p-8 rounded-lg shadow-lg" style="--animation-delay: 0s;">
                         <h2 class="text-3xl font-bold text-[#062E51] mb-2 text-center">Garanta sua Vaga no Workshop</h2>
                         <p class="text-center text-gray-600 mb-6">Preencha o formulário abaixo para confirmar sua participação.</p>
-                        <form id="lead-form" class="space-y-4" novalidate>
-                            <div>
-                                <label for="nome" class="sr-only">Nome Completo</label>
-                                <input type="text" id="nome" name="nome" class="form-input" placeholder="Nome Completo" required>
+                        <form id="lead-form" class="space-y-6" novalidate>
+                            <div class="form-group">
+                                <span class="material-symbols-outlined form-icon">person</span>
+                                <input type="text" id="nome" name="nome" class="form-input" placeholder=" " required>
+                                <label for="nome" class="form-label">Nome Completo</label>
                             </div>
-                            <div>
-                                <label for="empresa" class="sr-only">Empresa / Instituição</label>
-                                <input type="text" id="empresa" name="empresa" class="form-input" placeholder="Empresa / Instituição" required>
+                            <div class="form-group">
+                                <span class="material-symbols-outlined form-icon">business_center</span>
+                                <input type="text" id="empresa" name="empresa" class="form-input" placeholder=" " required>
+                                <label for="empresa" class="form-label">Empresa / Instituição</label>
                             </div>
-                            <div>
-                                <label for="email" class="sr-only">Seu melhor e-mail</label>
-                                <input type="email" id="email" name="email" class="form-input" placeholder="Seu melhor e-mail" required>
+                            <div class="form-group">
+                                <span class="material-symbols-outlined form-icon">mail</span>
+                                <input type="email" id="email" name="email" class="form-input" placeholder=" " required>
+                                <label for="email" class="form-label">Seu melhor e-mail</label>
                             </div>
-                            <div>
-                                <label for="telefone" class="sr-only">Telefone com WhatsApp</label>
-                                <input type="tel" id="telefone" name="telefone" class="form-input" placeholder="Telefone com WhatsApp">
+                            <div class="form-group">
+                                <span class="material-symbols-outlined form-icon">call</span>
+                                <input type="tel" id="telefone" name="telefone" class="form-input" placeholder=" ">
+                                <label for="telefone" class="form-label">Telefone com WhatsApp</label>
                             </div>
-                            <div>
-                                <label for="municipio-input" class="sr-only">Digite seu Município</label>
-                                <div class="autocomplete-container relative">
-                                    <input type="text" id="municipio-input" name="municipio" class="form-input" placeholder="Digite seu Município" required autocomplete="off">
+                            <div class="form-group">
+                                <span class="material-symbols-outlined form-icon">location_city</span>
+                                <div class="autocomplete-container w-full">
+                                    <input type="text" id="municipio-input" name="municipio" class="form-input" placeholder=" " required autocomplete="off">
+                                    <label for="municipio-input" class="form-label">Digite seu Município</label>
                                     <div id="municipio-suggestions" class="autocomplete-suggestions hidden"></div>
                                 </div>
                             </div>
                             <!-- Seleção de Dias de Participação -->
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Você participará de quais dias?</label>
-                                <div class="flex items-center justify-center gap-6 p-3 bg-gray-50 border rounded-md">
-                                    <div class="flex items-center gap-2">
-                                        <input type="checkbox" id="dia13" name="dia13" class="h-5 w-5 rounded border-gray-300 text-[#E63946] focus:ring-[#E63946] cursor-pointer">
-                                        <label for="dia13" class="text-gray-800 cursor-pointer">13/11/2025</label>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <input type="checkbox" id="dia14" name="dia14" class="h-5 w-5 rounded border-gray-300 text-[#E63946] focus:ring-[#E63946] cursor-pointer">
-                                        <label for="dia14" class="text-gray-800 cursor-pointer">14/11/2025</label>
-                                    </div>
+                                <div class="days-selection-container">
+                                    <input type="checkbox" id="dia13" name="dia13" class="day-checkbox-input">
+                                    <label for="dia13" class="day-checkbox-label">13/11/2025</label>
+                                    
+                                    <input type="checkbox" id="dia14" name="dia14" class="day-checkbox-input">
+                                    <label for="dia14" class="day-checkbox-label">14/11/2025</label>
                                 </div>
                             </div>
                             <div class="consent-checkbox">
@@ -309,13 +311,13 @@
                         
                         <h3 class="text-2xl font-bold mt-8 mb-4">Realização e Apoio</h3>
                         <div class="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-3 gap-x-8 gap-y-6 items-center">
-                            <div class="flex items-center justify-center gap-2">
+                            <div class="flex items-center justify-start gap-2">
                                 <img src="https://www.defesacivil.pr.gov.br/sites/defesa-civil/arquivos_restritos/files/imagem/2019-05/1769_Defesa_Civil__PR.PNG" alt="Logo Defesa Civil Paraná" class="logo-apoio h-12">
-                                <span class="text-[#062E51] font-semibold text-xs leading-tight">Defesa Civil<br>Paraná</span>
+                                <span class="text-[#062E51] font-semibold text-sm leading-tight uppercase">Defesa Civil<br>Paraná</span>
                             </div>
-                            <div class="flex items-center justify-center gap-2">
+                            <div class="flex items-center justify-start gap-2">
                                 <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo Corpo de Bombeiros Militar Paraná" class="logo-apoio h-12">
-                                <span class="text-[#062E51] font-semibold text-xs leading-tight">Corpo de<br>Bombeiros PR</span>
+                                <span class="text-[#062E51] font-semibold text-sm leading-tight uppercase">Corpo de<br>Bombeiros PR</span>
                             </div>
                             <img src="https://web.celepar.pr.gov.br/drupal/images/seil/portos/logo_portos_300x86.png" alt="Logo Portos do Paraná" class="logo-apoio">
                             <img src="https://portal.isulpar.edu.br/wp-content/uploads/2024/10/logo-texto-1024x378.png" alt="Logo ISULPAR" class="logo-apoio">
