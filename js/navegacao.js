@@ -12,6 +12,9 @@ export function configurarRolagemSuave() {
     linksAncora.forEach(link => {
         link.addEventListener('click', function(evento) {
             evento.preventDefault();
+            // Ignora links que são apenas âncoras vazias (usados em botões de acessibilidade, etc.)
+            if (this.getAttribute('href') === '#') return;
+
             const idAlvo = this.getAttribute('href');
             const painelAlvo = document.querySelector(idAlvo);
             
@@ -27,9 +30,11 @@ export function configurarRolagemSuave() {
  */
 export function configurarNavegacaoMouseMeio() {
     document.addEventListener('mousedown', (evento) => {
+        // A classe 'active-link' é adicionada ao link de navegação pela função 'atualizarLinkNavegacaoAtivo'.
+        const linkAtivo = document.querySelector('.nav-link.active-link');
         if (evento.button === 1) { // Botão do meio do mouse
             evento.preventDefault(); 
-            const painelVisivel = document.querySelector('.folder-panel.is-visible'); // Suposição
+            const painelVisivel = linkAtivo ? document.querySelector(linkAtivo.getAttribute('href')) : null;
             if (painelVisivel) {
                 const proximoPainel = painelVisivel.nextElementSibling;
                 if (proximoPainel && proximoPainel.classList.contains('folder-panel')) {

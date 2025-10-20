@@ -5,7 +5,27 @@
 // Configuração da conexão com o Supabase
 const SUPABASE_URL = 'https://onqettyqcdyutkticrab.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ucWV0dHlxY2R5dXRrdGljcmFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2Njg5OTksImV4cCI6MjA3NjI0NDk5OX0.LZJhIX3f0Jd3TxVo-YGHBVpiejLimGo-ClACeipilqc';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+function exibirMensagem(mensagem, tipo) {
+    const mensagensForm = document.getElementById('form-messages');
+    if (!mensagensForm) return;
+    const elementoMensagem = document.createElement('p');
+    elementoMensagem.textContent = mensagem;
+    elementoMensagem.className = tipo === 'error' ? 'form-message-error' : 'form-message-success';
+    mensagensForm.innerHTML = ''; // Limpa mensagens anteriores antes de adicionar uma nova
+    mensagensForm.appendChild(elementoMensagem);
+}
+
+function validarEmail(email) {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
+
+function validarTelefone(telefone) {
+    const apenasDigitos = telefone.replace(/\D/g, '');
+    return /^\d{10,11}$/.test(apenasDigitos);
+}
 
 /**
  * Configura a validação e o envio do formulário de inscrição para o Supabase.
@@ -13,7 +33,7 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 export function configurarValidacaoFormulario() {
     const form = document.getElementById('lead-form');
     const mensagensForm = document.getElementById('form-messages');
-    const botaoSubmit = form.querySelector('button[type="submit"]');
+    const botaoSubmit = form ? form.querySelector('button[type="submit"]') : null;
 
     if (!form || !mensagensForm || !botaoSubmit) return;
 
@@ -27,7 +47,7 @@ export function configurarValidacaoFormulario() {
         const empresa = form.elements['empresa'].value.trim();
         const email = form.elements['email'].value.trim();
         const telefone = form.elements['telefone'].value.trim();
-        const municipio = form.elements['municipio-input'].value.trim();
+        const municipio = form.elements['municipio'].value.trim();
         const consentimento = form.elements['consent'].checked;
         const participaDia13 = form.elements['dia13'].checked;
         const participaDia14 = form.elements['dia14'].checked;
@@ -69,7 +89,7 @@ export function configurarValidacaoFormulario() {
         }
 
         // Envio para o Supabase
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('cadastro_workshop')
             .insert([{
                 nome_completo: nome,
@@ -129,7 +149,7 @@ export function configurarValidacaoFormulario() {
 
         novoBotaoSim.onclick = async () => {
             if (idRegistro) {
-                await supabase
+                await supabaseClient
                     .from('cadastro_workshop')
                     .update({ quer_certificado: true, status_pagamento: 'pendente' })
                     .eq('id', idRegistro);
@@ -139,23 +159,6 @@ export function configurarValidacaoFormulario() {
         };
 
         novoBotaoNao.onclick = fecharModal;
-    }
-
-    function exibirMensagem(mensagem, tipo) {
-        const elementoMensagem = document.createElement('p');
-        elementoMensagem.textContent = mensagem;
-        elementoMensagem.className = tipo === 'error' ? 'form-message-error' : 'form-message-success';
-        mensagensForm.appendChild(elementoMensagem);
-    }
-
-    function validarEmail(email) {
-        const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(String(email).toLowerCase());
-    }
-
-    function validarTelefone(telefone) {
-        const apenasDigitos = telefone.replace(/\D/g, '');
-        return /^\d{10,11}$/.test(apenasDigitos);
     }
 }
 
@@ -225,5 +228,43 @@ export function configurarMascaraTelefone() {
             valorFormatado += `-${valor.slice(2 + tamanhoParte2)}`;
         }
         input.value = valorFormatado;
+    });
+}
+
+/**
+ * Configura o preenchimento automático do formulário ao inserir um e-mail já cadastrado.
+ */
+export async function configurarAutocompletarComDadosSalvos() {
+    const inputEmail = document.getElementById('email');
+    if (!inputEmail) return;
+
+    // O evento 'blur' é disparado quando o usuário clica fora do campo
+    inputEmail.addEventListener('blur', async () => {
+        const email = inputEmail.value.trim();
+        const form = document.getElementById('lead-form');
+
+        if (form && validarEmail(email)) {
+            // Busca no Supabase pelo e-mail inserido
+            const { data, error } = await supabaseClient
+                .from('cadastro_workshop')
+                .select('nome_completo, empresa, telefone, municipio')
+                .eq('email', email)
+                .single(); // .single() retorna um único objeto ou null
+
+            if (data && !error) {
+                // Se encontrou dados, preenche o formulário
+                form.elements['nome'].value = data.nome_completo || '';
+                form.elements['empresa'].value = data.empresa || '';
+                form.elements['municipio'].value = data.municipio || '';
+
+                const inputTelefone = form.elements['telefone'];
+                if (inputTelefone && data.telefone) {
+                    inputTelefone.value = data.telefone;
+                    // Dispara o evento 'input' para que a máscara de telefone seja aplicada
+                    inputTelefone.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+                exibirMensagem('Detectamos um cadastro anterior e preenchemos alguns campos para você!', 'success');
+            }
+        }
     });
 }

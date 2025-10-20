@@ -74,15 +74,23 @@ export function configurarRecalculoIndicadorAoRedimensionar() {
     const navEsquerda = document.getElementById('side-nav');
     const navDireita = document.getElementById('side-nav-right');
 
-    if (!window.ResizeObserver) return; // Sai se o navegador não suportar a API.
+    if (!window.ResizeObserver || !navEsquerda || !navDireita) return;
 
     const observador = new ResizeObserver(() => {
-        // Força a re-execução da lógica de atualização do link ativo.
-        const painelVisivel = document.querySelector('.folder-panel.is-visible'); // Supõe que a classe is-visible está no painel
+        // Encontra o link ativo para saber qual indicador ajustar.
         const linkAtivo = document.querySelector('.nav-link.active-link');
         if (linkAtivo) {
-            // Simula um evento para forçar a atualização dos indicadores.
-            atualizarLinkNavegacaoAtivo();
+            // Atualiza o indicador esquerdo.
+            const indicadorEsquerdo = document.getElementById('nav-indicator');
+            if (indicadorEsquerdo && navEsquerda.contains(linkAtivo)) {
+                indicadorEsquerdo.style.top = `${linkAtivo.offsetTop}px`;
+            }
+
+            // Atualiza o indicador direito.
+            const indicadorDireita = document.getElementById('nav-indicator-right');
+            if (indicadorDireita) {
+                indicadorDireita.style.top = `${linkAtivo.offsetTop}px`;
+            }
         }
     });
 
