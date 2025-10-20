@@ -18,7 +18,7 @@ body {
     width: 100%;
     height: 100vh;
     overflow-y: scroll; /* Permite a rolagem vertical */
-    scroll-snap-type: y mandatory; /* Faz a rolagem "grudar" nos painéis */
+    /* scroll-snap-type: y mandatory; */ /* Efeito de "snap" desativado a pedido do usuário */
 }
 
 /* Estilo para cada painel/seção do folder */
@@ -31,7 +31,7 @@ body {
     justify-content: center;
     align-items: center;
     /* Define o ponto de "snap" da rolagem */
-    scroll-snap-align: start;
+    /* scroll-snap-align: start; */ /* Efeito de "snap" desativado a pedido do usuário */
     /* Permite rolagem vertical DENTRO do painel se o conteúdo for muito grande (em telas pequenas) */
     overflow-y: auto;
     position: relative; /* Necessário para posicionar os indicadores de rolagem */

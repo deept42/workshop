@@ -339,8 +339,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const dia14 = form.elements['dia14'].checked;
 
             // Validação (seu código original, mantido)
-            if (!nome || !empresa || !email || !municipio) {
-                displayMessage('Por favor, preencha todos os campos obrigatórios.', 'error');
+            if (!nome || !email) {
+                displayMessage('Por favor, preencha os campos de Nome e E-mail.', 'error');
                 submitButton.disabled = false;
                 submitButton.textContent = 'Inscrever-se Agora';
                 return;
