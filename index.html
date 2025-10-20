@@ -40,7 +40,7 @@
             </div>
             <div class="panel-content text-center">
                 <div class="hero-content relative">
-                    <h1 class="animate-on-scroll font-extrabold leading-tight mb-4" style="--animation-delay: 0s;">Workshop: Municípios Mais Resilientes em Desastres</h1>
+                    <h1 class="animate-on-scroll font-extrabold leading-tight mb-4" style="--animation-delay: 0s;"><span class="animated-gradient">Workshop</span>: Municípios Mais Resilientes em Desastres</h1>
                 <p class="animate-on-scroll text-lg md:text-xl font-light mb-8 max-w-3xl mx-auto" style="--animation-delay: 0.1s;">Capacitando gestores e comunidades do Litoral do Paraná para um futuro mais seguro.</p>
                 <div class="mb-8">
                     <a href="#inscricao" class="hero-button animate-on-scroll bg-[#E63946] hover:bg-[#c9323d] text-white font-bold py-4 px-8 rounded-lg text-lg transition duration-300" style="--animation-delay: 0.2s;">Garanta sua Vaga</a>
@@ -76,17 +76,22 @@
 
         <!-- Painel 2: Sobre -->
         <section id="sobre" class="folder-panel">
-            <div class="panel-content grid grid-rows-[1fr_auto] gap-8">
-                <div class="flex flex-col md:flex-row items-center gap-8">
-                    <div id="planning-video-player" class="animate-on-scroll w-full md:w-1/2 shadow-xl" style="--animation-delay: 0s;">
+            <div class="panel-content-full grid grid-rows-[1fr_auto] gap-8">
+                <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                    <!-- Coluna da Esquerda (Vídeo) -->
+                    <div class="w-full md:w-1/2 panel-content flex justify-center">
+                        <div id="planning-video-player" class="animate-on-scroll w-full shadow-xl" style="--animation-delay: 0s;">
                         <!-- O vídeo será injetado aqui, e o botão de play ficará sobre ele -->
                         <button id="custom-play-button" aria-label="Tocar vídeo" class="text-white/80 hover:text-white transition-colors">
                             <span class="material-symbols-outlined text-9xl">play_circle</span>
                         </button>
                     </div>
-                    <div class="animate-on-scroll w-full md:w-1/2 text-center" style="--animation-delay: 0.1s;">
-                        <h2 class="section-title font-bold text-[#062E51] mb-4">Um Encontro para Fortalecer o Litoral Paranaense</h2>
-                        <p class="text-gray-700 mb-4">
+                    </div>
+                    <div class="w-full md:w-1/2 panel-content animate-on-scroll text-center md:text-left" style="--animation-delay: 0.1s;">
+                        <!-- Elemento decorativo para o título -->
+                        <div class="w-16 h-1 bg-[#062E51] mb-4 mx-auto md:mx-0"></div>
+                        <h2 class="section-title font-bold text-[#062E51] mb-6">Um Encontro para Fortalecer o Litoral Paranaense</h2>
+                        <p class="text-gray-700 mb-4 text-white md:text-gray-700">
                             Nos dias <strong>13 e 14 de novembro de 2025</strong>, o Corpo de Bombeiros Militar do Paraná, com o apoio da Portos do Paraná e da Defesa Civil Estadual, promove o <strong>WMRD-PR</strong>. O evento busca discutir estratégias e capacitar profissionais para aumentar a resiliência dos nossos municípios frente aos desastres.
                         </p>
                         <div class="space-y-4">
@@ -117,9 +122,12 @@
 
         <!-- Painel 3: Programação -->
         <section id="programacao" class="folder-panel">
-            <div class="panel-content grid grid-rows-[1fr_auto] gap-8 text-center text-[#062E51]">
-                <div>
-                    <h2 class="animate-on-scroll section-title font-bold mb-10" style="--animation-delay: 0s;">PROGRAMAÇÃO DO WORKSHOP</h2>
+            <div class="panel-content grid grid-rows-[1fr_auto] gap-8 text-[#062E51]">
+                <div class="text-center md:text-left">
+                    <!-- Elemento decorativo para o título -->
+                    <div class="w-16 h-1 bg-[#E63946] mb-4 mx-auto md:mx-0"></div>
+
+                    <h2 class="animate-on-scroll section-title font-bold mb-10" style="--animation-delay: 0s;">Programação do Workshop</h2>
                     <div class="grid lg:grid-cols-2 gap-8">
                        <!-- Dia 1 -->
                        <div class="animate-on-scroll bg-white p-6 rounded-lg shadow-lg" style="--animation-delay: 0.1s;">
@@ -200,8 +208,11 @@
 
         <!-- Painel 4: Palestrantes -->
         <section id="palestrantes" class="folder-panel">
-             <div class="panel-content grid grid-rows-[1fr_auto] gap-8 text-center">
-                <div>
+             <div class="panel-content grid grid-rows-[1fr_auto] gap-8">
+                <div class="text-center md:text-left">
+                    <!-- Elemento decorativo para o título -->
+                    <div class="w-16 h-1 bg-[#E63946] mb-4 mx-auto md:mx-0"></div>
+
                     <h2 class="animate-on-scroll section-title font-bold text-[#062E51] mb-10" style="--animation-delay: 0s;">Palestrante Confirmada</h2>
                  <div class="flex justify-center">
                     <!-- Crachá do Palestrante -->
@@ -247,8 +258,11 @@
             <div class="panel-content grid grid-rows-[1fr_auto] gap-8">
                 <div class="flex flex-col lg:flex-row items-center justify-center gap-10">
                     <!-- Coluna do Formulário -->
-                    <div class="animate-on-scroll w-full lg:w-1/2 bg-white p-8 rounded-lg shadow-lg" style="--animation-delay: 0s;">
-                        <h2 class="text-3xl font-bold text-[#062E51] mb-2 text-center">Garanta sua Vaga no Workshop</h2>
+                    <div class="animate-on-scroll w-full lg:w-1/2 bg-white p-8 rounded-lg shadow-lg text-center md:text-left" style="--animation-delay: 0s;">
+                        <!-- Elemento decorativo para o título -->
+                        <div class="w-16 h-1 bg-[#E63946] mb-4 mx-auto md:mx-0"></div>
+
+                        <h2 class="text-3xl font-bold text-[#062E51] mb-2">Garanta sua Vaga no Workshop</h2>
                         <p class="text-center text-gray-600 mb-6">Preencha o formulário abaixo para confirmar sua participação.</p>
                         <form id="lead-form" class="space-y-6" novalidate>
                             <div class="form-group">
@@ -299,17 +313,24 @@
                         </form>
                     </div>
                     <!-- Coluna de Informações e Apoio -->
-                    <div class="animate-on-scroll w-full lg:w-1/2 text-center text-[#062E51]" style="--animation-delay: 0.1s;">
-                        <h3 class="text-2xl font-bold">Data</h3>
-                        <p class="text-lg text-gray-700 mt-2">13 e 14 de Novembro</p>
-                        <h3 class="text-2xl font-bold mt-6">Local</h3>
-                        <p class="text-lg text-gray-700 mt-2 mb-4">ISULPAR - Instituto Superior do Litoral do Paraná<br>Paranaguá - PR</p>
+                    <div class="animate-on-scroll w-full lg:w-1/2 text-[#062E51]" style="--animation-delay: 0.1s;">
+                        <!-- Container para Data e Local lado a lado -->
+                        <div class="flex flex-col sm:flex-row gap-6 mb-6 text-center">
+                            <div class="flex-1 bg-white/50 p-4 rounded-lg shadow-sm border border-gray-200">
+                                <h3 class="text-xl font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">calendar_month</span>Data</h3>
+                                <p class="text-lg text-gray-700 mt-2">13 e 14 de Novembro</p>
+                            </div>
+                            <div class="flex-1 bg-white/50 p-4 rounded-lg shadow-sm border border-gray-200">
+                                <h3 class="text-xl font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">location_on</span>Local</h3>
+                                <p class="text-lg text-gray-700 mt-2">ISULPAR, Paranaguá - PR</p>
+                            </div>
+                        </div>
                         
                         <div class="map-container">
                             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3602.937746205809!2d-48.50954002470258!3d-25.44029997755535!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94dbee903150338b%3A0x973a1e5c26b0142a!2sR.%20Jo%C3%A3o%20Eug%C3%AAnio%2C%20534%20-%20Costeira%2C%20Paranagu%C3%A1%20-%20PR%2C%2083203-400!5e0!3m2!1spt-BR!2sbr!4v1721344893129!5m2!1spt-BR!2sbr" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
                         
-                        <h3 class="text-2xl font-bold mt-8 mb-4">Realização e Apoio</h3>
+                        <h3 class="text-2xl font-bold mt-8 mb-4 text-center">Realização e Apoio</h3>
                         <div class="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-3 gap-x-8 gap-y-6 items-center">
                             <div class="flex items-center justify-start gap-2">
                                 <img src="https://www.defesacivil.pr.gov.br/sites/defesa-civil/arquivos_restritos/files/imagem/2019-05/1769_Defesa_Civil__PR.PNG" alt="Logo Defesa Civil Paraná" class="logo-apoio h-12">
@@ -322,9 +343,6 @@
                             <img src="https://web.celepar.pr.gov.br/drupal/images/seil/portos/logo_portos_300x86.png" alt="Logo Portos do Paraná" class="logo-apoio">
                             <img src="https://portal.isulpar.edu.br/wp-content/uploads/2024/10/logo-texto-1024x378.png" alt="Logo ISULPAR" class="logo-apoio">
                             <img src="https://maximizados.com.br/_next/image?url=%2Fimages%2FLogo.png&w=128&q=75" alt="Logo Maximizados" class="logo-apoio logo-to-black">
-                        </div>
-                        <div class="mt-10 flex flex-col items-center">
-                            <p class="text-xs text-gray-500 mt-4">&copy; 2025 - Todos os direitos reservados.</p>
                         </div>
                     </div>
                 </div>
@@ -342,8 +360,20 @@
             </div>
         </section>
 
+        <!-- Rodapé agora faz parte do conteúdo principal para rolar corretamente -->
+        <footer class="bg-[#062E51] text-gray-300">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+                <p class="text-sm mb-2 md:mb-0">
+                    &copy; 2025 - Todos os direitos reservados.
+                </p>
+                <p class="text-sm">
+                    Desenvolvido por <a href="https://maximizados.com.br/" target="_blank" rel="noopener noreferrer" class="font-semibold text-white hover:text-[#E63946] transition-colors">Maximizados</a> e <a href="https://www.bombeiros.pr.gov.br/" target="_blank" rel="noopener noreferrer" class="font-semibold text-white hover:text-[#E63946] transition-colors">Corpo de Bombeiros</a>.
+                </p>
+            </div>
+        </footer>
+
     </main>
-    
+
     <!-- Navegação Lateral em formato Timeline (Desktop) -->
     <nav id="side-nav" class="fixed left-0 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col">
         <div class="side-nav-header group">
