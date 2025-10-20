@@ -37,6 +37,22 @@ export function configurarValidacaoFormulario() {
 
     if (!form || !mensagensForm || !botaoSubmit) return;
 
+    // --- Validação em Tempo Real ---
+    const camposParaValidar = ['nome', 'empresa', 'email', 'telefone', 'municipio'];
+    camposParaValidar.forEach(nomeCampo => {
+        const input = form.elements[nomeCampo];
+        if (input) {
+            input.addEventListener('blur', () => validarCampo(input));
+        }
+    });
+
+    ['dia13', 'dia14'].forEach(idDia => {
+        const checkbox = document.getElementById(idDia);
+        if (checkbox) {
+            checkbox.addEventListener('change', () => validarGrupoDias());
+        }
+    });
+
     form.addEventListener('submit', async (evento) => {
         evento.preventDefault();
         mensagensForm.innerHTML = ''; // Limpa mensagens anteriores
@@ -52,41 +68,77 @@ export function configurarValidacaoFormulario() {
         const participaDia13 = form.elements['dia13'].checked;
         const participaDia14 = form.elements['dia14'].checked;
 
-        // Validações
-        if (!nome || !empresa || !email || !municipio) {
-            exibirMensagem('Por favor, preencha todos os campos obrigatórios.', 'error');
-            botaoSubmit.disabled = false;
-            botaoSubmit.textContent = 'Inscrever-se Agora';
-            return;
+        // --- Lógica de Validação Aprimorada ---
+        let isFormValid = true;
+        // Reseta todos os erros e sucessos visuais antes de validar novamente
+        form.querySelectorAll('.form-group, .days-selection-group').forEach(el => {
+            el.classList.remove('error');
+            el.classList.remove('success');
+        });
+
+        // Valida campo Nome (obrigatório)
+        const nomeGroup = form.elements['nome'].closest('.form-group');
+        if (nome) {
+            nomeGroup.classList.add('success');
+        } else {
+            nomeGroup.classList.add('error');
+            isFormValid = false;
         }
 
-        if (!validarEmail(email)) {
-            exibirMensagem('Por favor, insira um endereço de e-mail válido.', 'error');
-            botaoSubmit.disabled = false;
-            botaoSubmit.textContent = 'Inscrever-se Agora';
-            return;
+        // Valida campo Empresa (obrigatório)
+        const empresaGroup = form.elements['empresa'].closest('.form-group');
+        if (empresa) {
+            empresaGroup.classList.add('success');
+        } else {
+            empresaGroup.classList.add('error');
+            isFormValid = false;
         }
 
-        if (telefone && !validarTelefone(telefone)) {
-            exibirMensagem('Por favor, insira um telefone válido (10 ou 11 dígitos).', 'error');
-            botaoSubmit.disabled = false;
-            botaoSubmit.textContent = 'Inscrever-se Agora';
-            return;
+        // Valida campo E-mail (obrigatório e formato válido)
+        const emailGroup = form.elements['email'].closest('.form-group');
+        if (email && validarEmail(email)) {
+            emailGroup.classList.add('success');
+        } else {
+            emailGroup.classList.add('error');
+            isFormValid = false;
         }
 
+        // Valida campo Telefone (obrigatório e formato válido)
+        const telefoneGroup = form.elements['telefone'].closest('.form-group');
+        if (telefone && validarTelefone(telefone)) {
+            telefoneGroup.classList.add('success');
+        } else {
+            telefoneGroup.classList.add('error');
+            isFormValid = false;
+        }
+
+        // Valida campo Município (obrigatório)
+        const municipioGroup = form.elements['municipio'].closest('.form-group');
+        if (municipio) {
+            municipioGroup.classList.add('success');
+        } else {
+            municipioGroup.classList.add('error');
+            isFormValid = false;
+        }
+
+        // Validações sem feedback visual direto no campo, mas que invalidam o formulário
+        const daysGroup = form.querySelector('.days-selection-group');
         if (!participaDia13 && !participaDia14) {
-            exibirMensagem('Por favor, selecione pelo menos um dia de participação.', 'error');
-            botaoSubmit.disabled = false;
-            botaoSubmit.textContent = 'Inscrever-se Agora';
-            return;
+            if (daysGroup) daysGroup.classList.add('error');
+            isFormValid = false;
+        }
+        if (!consentimento) {
+            isFormValid = false;
         }
 
-        if (!consentimento) {
-            exibirMensagem('Você precisa concordar com os termos para se inscrever.', 'error');
+        // Se algum campo for inválido, mostra o modal e para a execução.
+        if (!isFormValid) {
+            await mostrarModalErro('Por favor, corrija os campos destacados em vermelho.');
             botaoSubmit.disabled = false;
             botaoSubmit.textContent = 'Inscrever-se Agora';
             return;
         }
+        // --- Fim da Lógica de Validação Aprimorada ---
 
         // Envio para o Supabase
         const { data, error } = await supabaseClient
@@ -108,14 +160,14 @@ export function configurarValidacaoFormulario() {
         if (error) {
             console.error('Objeto completo do erro do Supabase:', error);
             if (error.code === '23505') { // Código de violação de chave única (e-mail duplicado)
-                exibirMensagem('Este e-mail já foi cadastrado. Por favor, utilize outro.', 'error');
+                await mostrarModalErro('Este e-mail já foi cadastrado. Por favor, utilize outro.');
             } else {
-                exibirMensagem('Ocorreu um erro na inscrição. Tente novamente.', 'error');
+                await mostrarModalErro('Ocorreu um erro inesperado na inscrição. Por favor, tente novamente.');
             }
             botaoSubmit.disabled = false;
             botaoSubmit.textContent = 'Inscrever-se Agora';
         } else {
-            exibirMensagem('Inscrição realizada com sucesso!', 'success');
+            mostrarFeedbackSucessoTopo();
             form.reset();
 
             const idNovoRegistro = data ? data[0].id : null;
@@ -159,6 +211,79 @@ export function configurarValidacaoFormulario() {
         };
 
         novoBotaoNao.onclick = fecharModal;
+    }
+
+    async function mostrarModalErro(mensagem) {
+        const modal = document.getElementById('error-modal');
+        const mensagemEl = document.getElementById('error-modal-message');
+        const botaoFechar = document.getElementById('error-btn-close');
+
+        if (!modal || !mensagemEl || !botaoFechar) return;
+
+        mensagemEl.textContent = mensagem;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+
+        const fecharModal = () => modal.classList.add('hidden');
+
+        // Garante que o listener de clique seja sempre novo
+        const novoBotaoFechar = botaoFechar.cloneNode(true);
+        botaoFechar.parentNode.replaceChild(novoBotaoFechar, botaoFechar);
+        novoBotaoFechar.onclick = fecharModal;
+    }
+
+    function mostrarFeedbackSucessoTopo() {
+        const topBar = document.getElementById('top-bar');
+        const title = topBar.querySelector('.top-bar-title');
+        const countdown = topBar.querySelector('#countdown-timer');
+        const subtitle = topBar.querySelector('.top-bar-subtitle');
+
+        if (!topBar || !title || !countdown || !subtitle) return;
+
+        // Aplica o estado de sucesso permanentemente na sessão atual
+        topBar.style.background = 'linear-gradient(to right, #16A34A, #15803D, #16A34A)'; // Gradiente verde
+        subtitle.textContent = 'INSCRIÇÃO CONFIRMADA COM SUCESSO!';
+        subtitle.style.fontWeight = 'bold';
+    }
+
+    function validarCampo(input) {
+        const grupo = input.closest('.form-group');
+        if (!grupo) return true;
+
+        let ehValido = false;
+        const valor = input.value.trim();
+
+        switch (input.name) {
+            case 'email':
+                ehValido = valor && validarEmail(valor);
+                break;
+            case 'telefone':
+                ehValido = valor && validarTelefone(valor);
+                break;
+            default: // Para nome, empresa, municipio
+                ehValido = !!valor; // Verifica se não está vazio
+        }
+
+        grupo.classList.remove('success', 'error');
+        if (ehValido) {
+            grupo.classList.add('success');
+        } else {
+            grupo.classList.add('error');
+        }
+        return ehValido;
+    }
+
+    function validarGrupoDias() {
+        const grupo = form.querySelector('.days-selection-group');
+        const dia13 = form.elements['dia13'].checked;
+        const dia14 = form.elements['dia14'].checked;
+        const ehValido = dia13 || dia14;
+
+        if (grupo) {
+            grupo.classList.remove('error');
+            if (!ehValido) grupo.classList.add('error');
+        }
+        return ehValido;
     }
 }
 

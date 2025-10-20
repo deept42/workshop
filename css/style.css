@@ -696,6 +696,43 @@ body {
     background-color: #E5E7EB; /* cinza-200 do Tailwind */
 }
 
+/* Estilo para o item destacado pela navegação com teclado */
+.suggestion-item.highlighted {
+    background-color: #EFF6FF; /* azul-50 do Tailwind */
+}
+
+/* --- Estilos para Erro no Formulário --- */
+.form-group.error .form-input {
+    border-color: #DC2626; /* red-600 */
+    background-color: #FEF2F2; /* red-50 */
+}
+.form-group.error .form-label {
+    color: #DC2626; /* red-600 */
+}
+.form-group.error .form-icon {
+    color: #DC2626; /* red-600 */
+}
+
+/* --- Estilos para Sucesso no Formulário --- */
+.form-group.success .form-input {
+    border-color: #16A34A; /* green-600 */
+    background-color: #F0FDF4; /* green-50 */
+}
+.form-group.success .form-label {
+    color: #15803D; /* green-700 */
+}
+.form-group.success .form-icon {
+    color: #15803D; /* green-700 */
+}
+
+/* Estilo de erro para o grupo de seleção de dias */
+.days-selection-group.error .days-selection-label {
+    color: #DC2626; /* red-600 */
+}
+.days-selection-group.error .day-checkbox-label {
+    border-color: #DC2626; /* red-600 */
+}
+
 /* --- Estilos para Checkboxes --- */
 
 /* Checkbox de consentimento */
