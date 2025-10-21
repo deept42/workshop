@@ -40,7 +40,7 @@ export function configurarLoginAdmin() {
             await mostrarModalSucessoLogin(`Login realizado com sucesso! Bem-vindo, ${data.user.email}.`);
             // Redireciona para o painel de administração após um breve delay
             setTimeout(() => {
-                window.location.href = '/admin.html';
+                window.location.href = 'admin.html';
             }, 1500); // 1.5 segundos para o usuário ler o modal
         }
     });

@@ -20,7 +20,7 @@ async function inicializarPainelAdministrativo() {
     if (!session) {
         // Se não houver sessão, redireciona para a página inicial
         alert('Acesso negado. Por favor, faça o login como administrador.');
-        window.location.replace('/index.html');
+        window.location.replace('index.html');
         return; // Interrompe a execução
     }
 
@@ -63,7 +63,7 @@ async function inicializarPainelAdministrativo() {
             await supabase.auth.signOut();
             // O onAuthStateChange na página principal cuidará do resto,
             // mas garantimos o redirecionamento.
-            window.location.replace('/index.html');
+            window.location.replace('index.html');
         });
     }
 
