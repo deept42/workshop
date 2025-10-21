@@ -104,7 +104,7 @@ body {
 }
 #sobre {
     /* Efeito de meia-tela vermelha e branca a pedido do usuário */
-    background: linear-gradient(to right, #E63946 50%, white 50%);
+    background: linear-gradient(to right, #E63946 50%, white 50%)
 }
 #programacao {
     background-image: linear-gradient(rgba(230, 240, 255, 0.95), rgba(230, 240, 255, 0.95)), url('https://images.pexels.com/photos/7988086/pexels-photo-7988086.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
@@ -417,6 +417,11 @@ body {
     .panel-content {
         padding-top: 4.5rem; /* Espaço para a barra de topo não sobrepor */
         padding-bottom: 6rem; /* Espaço para o menu inferior não sobrepor */
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    #sobre {
+        background: #E63946; /* Fundo vermelho sólido em telas menores */
     }
 
     /* Reduz drasticamente o tamanho dos títulos */
@@ -453,14 +458,6 @@ body {
     .hero-logos {
         gap-x: 1rem;
         gap-y: 1rem;
-    }
-
-    /* Ajusta o painel "Sobre" */
-    #sobre .panel-content {
-        gap: 2rem; /* Aumenta o espaço entre o vídeo e o texto */
-    }
-    #sobre .text-lg {
-        font-size: 1rem; /* Ajusta o tamanho do texto para melhor leitura */
     }
 
     /* Ajusta o painel "Programação" */

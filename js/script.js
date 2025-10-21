@@ -27,10 +27,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const navLateralEsquerda = document.getElementById('side-nav');
         const navLateralDireita = document.getElementById('side-nav-right'); // Acessibilidade
         const bottomNav = document.getElementById('mobile-tablet-bottom-nav'); // Nova navegação inferior
-        // Elementos do botão de autenticação
+        // Elementos do botão de autenticação (Desktop)
         const authBtn = document.getElementById('auth-btn');
         const authIcon = document.getElementById('auth-icon');
         const authText = document.getElementById('auth-text');
+        // Elementos do botão de autenticação (Mobile)
+        const authBtnMobile = document.getElementById('auth-btn-mobile');
+        const authIconMobile = document.getElementById('auth-icon-mobile');
+        const authTextMobile = document.getElementById('auth-text-mobile');
 
         const estaLogado = !!session;
 
@@ -74,23 +78,27 @@ document.addEventListener('DOMContentLoaded', () => {
             alternarTelaLogin(false, true); // Esconde instantaneamente ao carregar a página se já estiver logado (e mostra as navs apropriadas)
         }
 
-        // Atualiza o botão de autenticação
-        if (authBtn && authIcon && authText) {
-            authIcon.textContent = estaLogado ? 'logout' : 'login';
-            authText.textContent = estaLogado ? 'Sair' : 'Entrar';
-            authBtn.onclick = (e) => { 
-                e.preventDefault(); // Previne o comportamento padrão do link
-                if (estaLogado) {
-                    fazerLogout().then(() => {
-                        // Após o logout, a tela de login deve aparecer
-                        alternarTelaLogin(true); // Chama a função em português
-                    });
-                } else {
-                    // Se não está logado, mostra a tela de login
-                    alternarTelaLogin(true);
-                }
-            };
+        // Função para configurar um botão de autenticação
+        const configurarBotaoAuth = (btn, icon, text) => {
+            if (btn && icon && text) {
+                icon.textContent = estaLogado ? 'logout' : 'login';
+                text.textContent = estaLogado ? 'Sair' : 'Entrar';
+                btn.onclick = (e) => { 
+                    e.preventDefault();
+                    if (estaLogado) {
+                        fazerLogout().then(() => {
+                            alternarTelaLogin(true);
+                        });
+                    } else {
+                        alternarTelaLogin(true);
+                    }
+                };
+            }
         }
+
+        // Configura ambos os botões de autenticação (desktop e mobile)
+        configurarBotaoAuth(authBtn, authIcon, authText);
+        configurarBotaoAuth(authBtnMobile, authIconMobile, authTextMobile);
 
         // --- LÓGICA PARA O BOTÃO "VOLTAR AO SITE" ---
         const backToSiteBtn = document.getElementById('back-to-site-btn');
