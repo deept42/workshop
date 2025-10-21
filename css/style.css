@@ -410,6 +410,10 @@ body {
 }
 /* --- Otimização para Mobile (até 767px) --- */
 @media (max-width: 1023px) {
+    html {
+        font-size: 100%; /* Garante que a fonte base seja 16px em mobile */
+    }
+
     /* Permite a rolagem vertical dentro de cada painel e ajusta o padding */
     .folder-panel {
         overflow-y: auto; /* PERMITE a rolagem vertical novamente */
@@ -434,7 +438,7 @@ body {
         margin-bottom: 2rem;
     }
     #inicio p {
-        font-size: 0.9rem;
+        font-size: 1rem; /* Aumenta o texto do parágrafo inicial */
         margin-bottom: 2rem;
     }
     
@@ -463,6 +467,11 @@ body {
     /* Ajusta o painel "Programação" */
     #programacao .grid {
         gap: 1.5rem; /* Aumenta o espaço entre os cards */
+    }
+    /* Ajuste fino no padding da seção "Sobre" para telas bem pequenas */
+    #sobre .w-full.md\:w-4\/5 {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
     }
     #programacao .text-2xl {
         font-size: 1.25rem; /* Reduz o título dos cards */
