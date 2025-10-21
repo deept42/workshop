@@ -67,8 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (areaPrincipal) areaPrincipal.style.display = 'block';
                     if (barraTopo) barraTopo.style.display = 'block';
                     if (rodape) rodape.style.display = 'block';
-                    if (navLateralEsquerda) navLateralEsquerda.style.display = 'flex';
-                    if (bottomNav) bottomNav.style.display = 'flex'; // Mostra a nova navegação inferior
+                    if (navLateralEsquerda) navLateralEsquerda.style.display = ''; // Remove o estilo inline para que as classes do CSS (hidden lg:flex) voltem a funcionar
+                    if (bottomNav) bottomNav.style.display = ''; // Remove o estilo inline para que as classes do CSS (lg:hidden) voltem a funcionar
                 }, ehInstantaneo ? 0 : 600); // 600ms corresponde à duração da transição no CSS
             } // Fim da função alternarTelaLogin
         }; // Fim da função alternarTelaLogin
