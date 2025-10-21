@@ -424,6 +424,10 @@ body {
         padding-left: 1rem;
         padding-right: 1rem;
     }
+    /* Garante que a navegação lateral do desktop NUNCA apareça em telas menores */
+    #side-nav {
+        display: none !important;
+    }
     #sobre {
         background: #E63946; /* Fundo vermelho sólido em telas menores */
     }
