@@ -40,7 +40,10 @@ async function inicializarPainelAdmin() {
         configurarFiltroDeBusca();
         configurarOrdenacaoTabela(todosInscritos, renderizarVisualizacao);
         configurarAcoesTabela();
+        configurarAcoesEmMassa(todosInscritos);
+        configurarSelecaoEmMassa();
         configurarExportacaoCSV();
+        configurarCardCertificadoInterativo(todosInscritos.filter(i => !i.is_deleted));
         preencherMetricas(todosInscritos.filter(i => !i.is_deleted)); // Métricas apenas com ativos
         configurarCardParticipantesInterativo(todosInscritos.filter(i => !i.is_deleted));
         configurarExportacaoPDF();
@@ -50,7 +53,7 @@ async function inicializarPainelAdmin() {
         criarGraficos(todosInscritos.filter(i => !i.is_deleted));
     } else {
         const corpoTabela = document.getElementById('lista-inscritos');
-        corpoTabela.innerHTML = `<tr><td colspan="7" class="px-6 py-4 text-center text-red-500">Falha ao carregar dados.</td></tr>`;
+        corpoTabela.innerHTML = `<tr><td colspan="8" class="px-6 py-4 text-center text-red-500">Falha ao carregar dados.</td></tr>`;
     }
 
     // 3. Configurar o Botão de Logout
@@ -133,7 +136,7 @@ function renderizarTabela(inscritos, naLixeira = false) {
     if (!corpoTabela) return;
 
     if (inscritos.length === 0) {
-        corpoTabela.innerHTML = `<tr><td colspan="7" class="px-6 py-4 text-center text-gray-500">Nenhum inscrito encontrado.</td></tr>`;
+        corpoTabela.innerHTML = `<tr><td colspan="8" class="px-6 py-4 text-center text-gray-500">Nenhum inscrito encontrado.</td></tr>`;
         return;
     }
 
@@ -154,6 +157,9 @@ function renderizarTabela(inscritos, naLixeira = false) {
 
         return `
             <tr>
+                <td class="text-center">
+                    <input type="checkbox" class="row-checkbox h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" data-id="${inscrito.id}">
+                </td>
                 <td class="whitespace-nowrap font-medium">${inscrito.nome_completo}</td>
                 <td class="whitespace-nowrap">${inscrito.email}</td>
                 <td class="whitespace-nowrap">${inscrito.telefone}</td>
@@ -168,7 +174,13 @@ function renderizarTabela(inscritos, naLixeira = false) {
     }).join('');
 
     corpoTabela.innerHTML = linhasHtml;
+
+    // Após renderizar, reconfigura a seleção para garantir que os listeners estejam nos novos elementos
+    configurarSelecaoEmMassa();
 }
+
+
+
 
 /**
  * Configura o campo de busca para filtrar a tabela de inscritos.
@@ -186,12 +198,12 @@ function configurarFiltroDeBusca() {
 
         // Mapeia os valores do <select> para os índices das colunas da tabela (começando em 0)
         const mapaColunas = {
-            'nome': 0,
-            'email': 1,
-            'telefone': 2,
-            'empresa': 3,
-            'municipio': 4,
-            'dias': 5
+            'nome': 1,
+            'email': 2,
+            'telefone': 3,
+            'empresa': 4,
+            'municipio': 5,
+            'dias': 6
         };
 
         linhasTabela.forEach(linha => {
@@ -274,6 +286,141 @@ function configurarOrdenacaoTabela(inscritos, callbackRender) {
             atualizarIconesOrdenacao(headers, colunaSelecionada, direcaoOrdenacaoAtual);
         });
     });
+}
+
+/**
+ * Configura os botões e a lógica da barra de ações em massa.
+ * @param {Array} todosInscritos - A lista completa de todos os inscritos.
+ */
+function configurarAcoesEmMassa(todosInscritos) {
+    const bulkMoveBtn = document.getElementById('bulk-move-to-trash-btn');
+    const bulkCsvBtn = document.getElementById('bulk-export-csv-btn');
+    const bulkPdfBtn = document.getElementById('bulk-export-pdf-btn');
+    const bulkChecklistBtn = document.getElementById('bulk-export-checklist-btn');
+
+    // Ação: Mover para a lixeira em massa
+    if (bulkMoveBtn) {
+        bulkMoveBtn.addEventListener('click', async () => {
+            const idsParaMover = obterIdsSelecionados();
+            if (idsParaMover.length === 0) return;
+
+            const confirmado = await mostrarModalConfirmacaoDeletar(
+                `Mover ${idsParaMover.length} Itens`,
+                `Você tem certeza que deseja mover os ${idsParaMover.length} itens selecionados para a lixeira?`,
+                `Sim, mover`
+            );
+
+            if (confirmado) {
+                const { error } = await supabase.from('cadastro_workshop').update({ is_deleted: true }).in('id', idsParaMover);
+                if (error) await mostrarModalErro('Ocorreu um erro ao mover os itens.');
+                else location.reload();
+            }
+        });
+    }
+
+    // Ação: Exportar CSV dos selecionados
+    if (bulkCsvBtn) {
+        bulkCsvBtn.addEventListener('click', () => {
+            const linhasSelecionadas = obterLinhasParaExportacao();
+            if (linhasSelecionadas.length === 0) return;
+            gerarCSV(linhasSelecionadas);
+        });
+    }
+
+    // Ação: Exportar PDF dos selecionados
+    if (bulkPdfBtn) {
+        bulkPdfBtn.addEventListener('click', () => {
+            const linhasSelecionadas = obterLinhasParaExportacao();
+            if (linhasSelecionadas.length === 0) return;
+            gerarPDF(linhasSelecionadas);
+        });
+    }
+
+    // Ação: Exportar Checklist dos selecionados
+    if (bulkChecklistBtn) {
+        bulkChecklistBtn.addEventListener('click', () => {
+            const linhasSelecionadas = obterLinhasParaExportacao();
+            if (linhasSelecionadas.length === 0) return;
+            gerarChecklist(linhasSelecionadas);
+        });
+    }
+}
+
+/**
+ * Retorna os IDs dos checkboxes selecionados na tabela.
+ * @returns {string[]}
+ */
+function obterIdsSelecionados() {
+    const selecionados = document.querySelectorAll('.row-checkbox:checked');
+    return Array.from(selecionados).map(cb => cb.dataset.id);
+}
+
+/**
+ * Retorna as linhas da tabela que devem ser usadas para exportação.
+ * @returns {Element[]} Uma lista de elementos <tr>.
+ */
+function obterLinhasParaExportacao() {
+    const selecionados = document.querySelectorAll('.row-checkbox:checked');
+    
+    if (selecionados.length > 0) {
+        // Se há seleção, retorna as linhas pai dos checkboxes selecionados
+        return Array.from(selecionados).map(checkbox => checkbox.closest('tr'));
+    } else {
+        // Se não há seleção, retorna todas as linhas visíveis
+        return Array.from(document.querySelectorAll('#lista-inscritos tr')).filter(
+            linha => linha.style.display !== 'none'
+        );
+    }
+}
+
+/**
+ * Configura a lógica para seleção em massa de itens na tabela.
+ */
+function configurarSelecaoEmMassa() {
+    const selectAllCheckbox = document.getElementById('select-all-checkbox');
+    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+    const bulkActionsBar = document.getElementById('bulk-actions-bar');
+    const bulkActionsCount = document.getElementById('bulk-actions-count');
+    const bulkMoveBtn = document.getElementById('bulk-move-to-trash-btn');
+
+    if (!selectAllCheckbox || !bulkActionsBar || !bulkActionsCount || !bulkMoveBtn) return;
+
+    // Função para atualizar a barra de ações em massa
+    const atualizarBarraDeAcoes = () => {
+        const selecionados = document.querySelectorAll('.row-checkbox:checked');
+        const totalSelecionado = selecionados.length;
+
+        if (totalSelecionado > 0) {
+            bulkActionsBar.classList.remove('hidden');
+            bulkActionsCount.textContent = `${totalSelecionado} item(s) selecionado(s)`;
+        } else {
+            bulkActionsBar.classList.add('hidden');
+        }
+
+        // Atualiza o estado do checkbox "selecionar tudo"
+        const totalVisivel = document.querySelectorAll('.row-checkbox').length;
+        selectAllCheckbox.checked = totalVisivel > 0 && totalSelecionado === totalVisivel;
+        selectAllCheckbox.indeterminate = totalSelecionado > 0 && totalSelecionado < totalVisivel;
+    };
+
+    // Evento para o checkbox "selecionar tudo"
+    selectAllCheckbox.addEventListener('change', () => {
+        rowCheckboxes.forEach(checkbox => {
+            // Seleciona apenas as linhas visíveis
+            if (checkbox.closest('tr').style.display !== 'none') {
+                checkbox.checked = selectAllCheckbox.checked;
+            }
+        });
+        atualizarBarraDeAcoes();
+    });
+
+    // Evento para os checkboxes de cada linha
+    rowCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', atualizarBarraDeAcoes);
+    });
+
+    // Inicializa a barra de ações
+    atualizarBarraDeAcoes();
 }
 
 /**
@@ -455,7 +602,6 @@ function atualizarIconesOrdenacao(headers, colunaAtiva, direcao) {
 function preencherMetricas(inscritos) {
     const totalInscritosEl = document.getElementById('total-inscritos');
     const totalMunicipiosEl = document.getElementById('total-municipios');
-    const taxaCertificadoEl = document.getElementById('taxa-certificado');
 
     const totalInscritos = inscritos.length;
 
@@ -467,12 +613,39 @@ function preencherMetricas(inscritos) {
         const municipiosUnicos = new Set(inscritos.map(i => i.municipio).filter(Boolean));
         totalMunicipiosEl.textContent = municipiosUnicos.size;
     }
+}
 
-    if (taxaCertificadoEl) {
+/**
+ * Configura o card interativo de Adesão ao Certificado para alternar entre % e valor absoluto.
+ * @param {Array} inscritos - A lista de objetos de inscritos ativos.
+ */
+function configurarCardCertificadoInterativo(inscritos) {
+    const card = document.getElementById('card-adesao-certificado');
+    const valorEl = document.getElementById('card-certificado-valor');
+
+    if (!card || !valorEl) return;
+
+    let mostrandoPorcentagem = true;
+
+    const atualizarCard = () => {
+        const totalInscritos = inscritos.length;
         const comCertificado = inscritos.filter(i => i.quer_certificado).length;
-        const taxa = totalInscritos > 0 ? (comCertificado / totalInscritos) * 100 : 0;
-        taxaCertificadoEl.textContent = `${taxa.toFixed(0)}%`;
-    }
+
+        if (mostrandoPorcentagem) {
+            const taxa = totalInscritos > 0 ? (comCertificado / totalInscritos) * 100 : 0;
+            valorEl.textContent = `${taxa.toFixed(0)}%`;
+        } else {
+            valorEl.textContent = comCertificado;
+        }
+    };
+
+    card.addEventListener('click', () => {
+        mostrandoPorcentagem = !mostrandoPorcentagem;
+        atualizarCard();
+    });
+
+    // Inicializa o card com o primeiro estado
+    atualizarCard();
 }
 
 /**
@@ -536,25 +709,29 @@ function configurarExportacaoCSV() {
     const exportBtn = document.getElementById('export-csv-btn');
     if (!exportBtn) return;
 
-    exportBtn.addEventListener('click', () => {
-        const linhasTabela = document.querySelectorAll('#lista-inscritos tr');
+    exportBtn.addEventListener('click', () => gerarCSV(obterLinhasParaExportacao()));
+}
+
+/**
+ * Gera e baixa um arquivo CSV com base nas linhas da tabela fornecidas.
+ * @param {Element[]} linhasTabela 
+ */
+function gerarCSV(linhasTabela) {
         let csvContent = "";
 
         // Cabeçalho do CSV
-        const headers = ["Nome Completo", "E-mail", "Telefone", "Empresa", "Município", "Dias de Participação"];
+        const headers = ["Nome Completo", "E-mail", "Telefone", "Empresa", "Município", "Dias"];
         csvContent += headers.join(";") + "\r\n";
 
         linhasTabela.forEach(linha => {
-            // Verifica se a linha está visível
-            if (linha.style.display === 'none') return;
-
             const colunas = linha.querySelectorAll('td');
             const dadosLinha = Array.from(colunas).map(coluna => {
                 // Limpa o texto e coloca entre aspas para evitar problemas com vírgulas
                 let dado = coluna.innerText.replace(/"/g, '""');
-                return `"${dado}"`;
+                return `"${dado}"`; // Envolve em aspas
             });
-            csvContent += dadosLinha.join(";") + "\r\n";
+            // Pula a primeira coluna (checkbox) e a última (ações)
+            csvContent += dadosLinha.slice(1, -1).join(";") + "\r\n";
         });
 
         // Cria o link para download
@@ -571,7 +748,6 @@ function configurarExportacaoCSV() {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-    });
 }
 
 /**
@@ -582,8 +758,15 @@ function configurarExportacaoPDF() {
     const exportBtn = document.getElementById('export-pdf-btn');
     if (!exportBtn) return;
 
-    exportBtn.addEventListener('click', () => {
-        const { jsPDF } = window.jspdf;
+    exportBtn.addEventListener('click', () => gerarPDF(obterLinhasParaExportacao()));
+}
+
+/**
+ * Gera e baixa um arquivo PDF com a lista de inscritos.
+ * @param {Element[]} linhasTabela 
+ */
+function gerarPDF(linhasTabela) {
+    const { jsPDF } = window.jspdf; // Acessa o jsPDF do objeto global
         const doc = new jsPDF();
         const dataAtual = new Date().toLocaleDateString('pt-BR');
 
@@ -599,13 +782,9 @@ function configurarExportacaoPDF() {
         const head = [["Nome Completo", "E-mail", "Telefone", "Empresa", "Município", "Dias"]];
         const body = [];
 
-        const linhasTabela = document.querySelectorAll('#lista-inscritos tr');
-        let contador = 1;
         linhasTabela.forEach(linha => {
-            if (linha.style.display === 'none') return; // Pula linhas escondidas pelo filtro
-
             const colunas = linha.querySelectorAll('td');
-            const dadosLinha = Array.from(colunas).slice(0, 6).map(coluna => coluna.innerText); // Pega os dados das 6 primeiras colunas
+            const dadosLinha = Array.from(colunas).slice(1, -1).map(c => c.innerText);
             body.push(dadosLinha);
         });
 
@@ -633,7 +812,6 @@ function configurarExportacaoPDF() {
         });
 
         doc.save(`inscritos_workshop_${new Date().toISOString().slice(0, 10)}.pdf`);
-    });
 }
 
 /**
@@ -643,8 +821,15 @@ function configurarExportacaoChecklist() {
     const exportBtn = document.getElementById('export-checklist-btn');
     if (!exportBtn) return;
 
-    exportBtn.addEventListener('click', () => {
-        const { jsPDF } = window.jspdf;
+    exportBtn.addEventListener('click', () => gerarChecklist(obterLinhasParaExportacao()));
+}
+
+/**
+ * Gera e baixa um arquivo PDF formatado como lista de chamada.
+ * @param {Element[]} linhasTabela 
+ */
+function gerarChecklist(linhasTabela) {
+    const { jsPDF } = window.jspdf; // Acessa o jsPDF do objeto global
         const doc = new jsPDF();
         const dataAtual = new Date().toLocaleDateString('pt-BR');
 
@@ -660,14 +845,11 @@ function configurarExportacaoChecklist() {
         const head = [['#', 'Nome Completo', 'Empresa / Instituição', 'Assinatura']];
         const body = [];
 
-        const linhasTabela = document.querySelectorAll('#lista-inscritos tr');
         let contador = 1;
         linhasTabela.forEach(linha => {
-            if (linha.style.display === 'none') return; // Pula linhas escondidas pelo filtro
-
             const colunas = linha.querySelectorAll('td');
-            const nome = colunas[0] ? colunas[0].innerText : '';
-            const empresa = colunas[3] ? colunas[3].innerText : '';
+            const nome = colunas[1] ? colunas[1].innerText : '';
+            const empresa = colunas[4] ? colunas[4].innerText : '';
             
             body.push([contador, nome, empresa, '']); // Adiciona uma coluna vazia para assinatura
             contador++;
@@ -698,7 +880,6 @@ function configurarExportacaoChecklist() {
         });
 
         doc.save(`lista_chamada_workshop_${new Date().toISOString().slice(0, 10)}.pdf`);
-    });
 }
 
 /**
@@ -769,6 +950,26 @@ function configurarModalAdicionarInscrito() {
     const form = document.getElementById('add-inscrito-form');
     const closeBtn = document.getElementById('add-modal-close-btn');
     const cancelBtn = document.getElementById('add-modal-cancel-btn');
+
+    // Lógica para o botão de copiar link
+    const copyBtn = document.getElementById('copy-link-btn');
+    const linkInput = document.getElementById('certificate-link-input');
+    const copyIcon = document.getElementById('copy-link-icon');
+    const copyText = document.getElementById('copy-link-text');
+
+    if (copyBtn && linkInput) {
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(linkInput.value).then(() => {
+                // Feedback visual de sucesso
+                copyText.textContent = 'Copiado!';
+                copyIcon.textContent = 'check';
+                setTimeout(() => {
+                    copyText.textContent = 'Copiar';
+                    copyIcon.textContent = 'content_copy';
+                }, 2000); // Volta ao normal após 2 segundos
+            });
+        });
+    }
 
     if (!openBtn || !modal || !form || !closeBtn || !cancelBtn) return;
 
