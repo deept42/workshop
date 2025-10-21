@@ -598,6 +598,7 @@ body {
     /* transition: opacity 0.6s ease-out, transform 0.6s ease-out; */
 }
 
+
 /* Classe que ativa a animação quando o elemento está visível */
 .animate-on-scroll.is-visible {
     /* Não é mais necessário com a animação desativada */
@@ -605,6 +606,14 @@ body {
     /* transform: translateY(0); */
 }
 /* --- Media Queries para Responsividade --- */
+
+/* Ajustes específicos para telas de laptop (1024px e acima) */
+@media (min-width: 1024px) {
+    /* Remove o padding-left do #folder-container e os ajustes da #top-bar
+       para que a navegação lateral fique sobre o conteúdo, e não o empurre. */
+    #folder-container { /* padding-left: 3.75rem; */ }
+    #top-bar { /* width: calc(100% - 3.75rem); left: 3.75rem; */ }
+}
 
 /* Tablets e Desktops (md e acima) */
 @media (min-width: 768px) { .panel-content { padding-left: 1.5rem; padding-right: 1.5rem; } }

@@ -9,7 +9,7 @@ import { configurarControlesAcessibilidade } from './acessibilidade.js';
 /**
  * Função principal que inicializa o painel de administração.
  */
-async function inicializarPainelAdmin() {
+async function inicializarPainelAdministrativo() {
     // Variáveis de estado para controlar a visualização
     let todosInscritos = [];
     let mostrandoLixeira = false;
@@ -951,8 +951,8 @@ function configurarModalAdicionarInscrito() {
     const closeBtn = document.getElementById('add-modal-close-btn');
     const cancelBtn = document.getElementById('add-modal-cancel-btn');
 
-    // Lógica para o botão de copiar link
-    const copyBtn = document.getElementById('copy-link-btn');
+    // Lógica para o botão de copiar link (já em português)
+    const copyBtn = document.getElementById('copy-link-btn'); 
     const linkInput = document.getElementById('certificate-link-input');
     const copyIcon = document.getElementById('copy-link-icon');
     const copyText = document.getElementById('copy-link-text');
@@ -960,21 +960,21 @@ function configurarModalAdicionarInscrito() {
     if (copyBtn && linkInput) {
         copyBtn.addEventListener('click', () => {
             navigator.clipboard.writeText(linkInput.value).then(() => {
-                // Feedback visual de sucesso
-                copyText.textContent = 'Copiado!';
+                // Feedback visual de sucesso (já em português)
+                copyText.textContent = 'Copiado!'; 
                 copyIcon.textContent = 'check';
                 setTimeout(() => {
-                    copyText.textContent = 'Copiar';
+                    copyText.textContent = 'Copiar'; 
                     copyIcon.textContent = 'content_copy';
                 }, 2000); // Volta ao normal após 2 segundos
             });
         });
     }
 
-    if (!openBtn || !modal || !form || !closeBtn || !cancelBtn) return;
+    if (!openBtn || !modal || !form || !closeBtn || !cancelBtn) return; // Verifica se os elementos existem
 
-    const showModal = () => modal.classList.replace('hidden', 'flex');
-    const hideModal = () => modal.classList.replace('flex', 'hidden');
+    const exibirModal = () => modal.classList.replace('hidden', 'flex'); // Função para exibir o modal
+    const esconderModal = () => modal.classList.replace('flex', 'hidden'); // Função para esconder o modal
 
     openBtn.addEventListener('click', showModal);
     closeBtn.addEventListener('click', hideModal);
@@ -1015,7 +1015,7 @@ function configurarModalAdicionarInscrito() {
             await mostrarModalErro(error.code === '23505' ? 'Este e-mail já está cadastrado.' : 'Ocorreu um erro ao salvar.');
             console.error('Erro ao adicionar inscrito:', error);
         } else {
-            hideModal();
+            esconderModal(); // Chama a função em português
             await mostrarModalSucesso('Sucesso!', 'Novo inscrito adicionado.');
             document.getElementById('success-btn-close').addEventListener('click', () => location.reload(), { once: true });
         }

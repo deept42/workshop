@@ -46,7 +46,7 @@
                     <a href="#inscricao" class="hero-button animate-on-scroll bg-[#E63946] hover:bg-[#c9323d] text-white font-bold py-4 px-8 rounded-lg text-lg transition duration-300" style="--animation-delay: 0.2s;">Garanta sua Vaga</a>
                 </div>
                 
-                <div class="hero-logos-container animate-on-scroll mt-12" style="--animation-delay: 0.3s;">
+                <div class="hero-logos-container animate-on-scroll mt-12 hidden lg:inline-block" style="--animation-delay: 0.3s;">
                     <p class="text-sm uppercase tracking-widest mb-4 opacity-70">Realização e Apoio</p>
                     <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-6 gap-x-8 gap-y-6 items-center hero-logos">
                         <div class="flex items-center justify-start gap-2">
@@ -325,7 +325,7 @@
     </footer>
 
     <!-- Seção de Login -->
-    <section id="login-admin" class="min-h-screen grid grid-cols-1 md:grid-cols-2 items-center">
+    <section id="login-admin" class="fixed inset-0 min-h-screen grid grid-cols-1 md:grid-cols-2 items-center">
         <!-- Coluna Esquerda (Azul) -->
         <div class="login-pane-left h-full bg-[#062E51] text-white p-12 flex-col justify-center hidden md:flex text-right">
             <h2 class="text-4xl font-bold mb-4">Bem-vindo de volta!</h2>
@@ -420,13 +420,38 @@
     </nav>
 
     <!-- Menu Overlay para Mobile -->
-    <div id="mobile-menu" class="fixed inset-0 bg-[#062E51]/90 backdrop-blur-lg items-center justify-center space-y-8 text-2xl z-40">
+    <!-- REMOVIDO: <div id="mobile-menu" class="fixed inset-0 bg-[#062E51]/90 backdrop-blur-lg items-center justify-center space-y-8 text-2xl z-40 lg:hidden">
         <a href="#inicio" class="mobile-link"><span class="material-symbols-outlined w-7 h-7">home</span><span>Início</span></a>
         <a href="#sobre" class="mobile-link"><span class="material-symbols-outlined w-7 h-7">info</span><span>Sobre</span></a>
         <a href="#programacao" class="mobile-link"><span class="material-symbols-outlined w-7 h-7">calendar_month</span><span>Programação</span></a>
         <a href="#palestrantes" class="mobile-link"><span class="material-symbols-outlined w-7 h-7">groups</span><span>Palestrantes</span></a>
         <a href="#inscricao" class="mobile-link"><span class="material-symbols-outlined w-7 h-7">edit_square</span><span>Inscrição</span></a>
     </div>
+    -->
+
+    <!-- Nova Navegação Inferior para Mobile e Tablet -->
+    <nav id="mobile-tablet-bottom-nav" class="fixed bottom-0 left-0 right-0 bg-[#062E51] text-white shadow-lg z-50 flex justify-around items-center py-2 lg:hidden">
+        <a href="#inicio" class="flex flex-col items-center text-xs font-medium text-gray-300 hover:text-white transition-colors p-1">
+            <span class="material-symbols-outlined text-xl">home</span>
+            <span>Início</span>
+        </a>
+        <a href="#sobre" class="flex flex-col items-center text-xs font-medium text-gray-300 hover:text-white transition-colors p-1">
+            <span class="material-symbols-outlined text-xl">info</span>
+            <span>Sobre</span>
+        </a>
+        <a href="#programacao" class="flex flex-col items-center text-xs font-medium text-gray-300 hover:text-white transition-colors p-1">
+            <span class="material-symbols-outlined text-xl">calendar_month</span>
+            <span>Prog.</span>
+        </a>
+        <a href="#palestrantes" class="flex flex-col items-center text-xs font-medium text-gray-300 hover:text-white transition-colors p-1">
+            <span class="material-symbols-outlined text-xl">groups</span>
+            <span>Palestr.</span>
+        </a>
+        <a href="#inscricao" class="flex flex-col items-center text-xs font-medium text-gray-300 hover:text-white transition-colors p-1">
+            <span class="material-symbols-outlined text-xl">edit_square</span>
+            <span>Inscrição</span>
+        </a>
+    </nav>
 
     <!-- Overlay para Zoom de Imagem -->
     <div id="image-zoom-overlay" class="fixed inset-0 bg-black/80 z-[100] hidden items-center justify-center p-4 cursor-pointer">
