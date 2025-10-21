@@ -976,9 +976,9 @@ function configurarModalAdicionarInscrito() {
     const exibirModal = () => modal.classList.replace('hidden', 'flex'); // Função para exibir o modal
     const esconderModal = () => modal.classList.replace('flex', 'hidden'); // Função para esconder o modal
 
-    openBtn.addEventListener('click', showModal);
-    closeBtn.addEventListener('click', hideModal);
-    cancelBtn.addEventListener('click', hideModal);
+    openBtn.addEventListener('click', exibirModal);
+    closeBtn.addEventListener('click', esconderModal);
+    cancelBtn.addEventListener('click', esconderModal);
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
