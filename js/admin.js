@@ -82,14 +82,20 @@ async function inicializarPainelAdministrativo() {
 
     // Configura o interruptor (toggle switch) da lixeira
     const toggleSwitch = document.getElementById('view-toggle-switch');
-    if (toggleSwitch) {
-        toggleSwitch.addEventListener('click', () => {
+    const labelAtivos = document.getElementById('toggle-label-ativos');
+    const labelLixeira = document.getElementById('toggle-label-lixeira');
+
+    if (toggleSwitch && labelAtivos && labelLixeira) {
+        // Adiciona cursor de ponteiro para indicar que os labels são clicáveis
+        labelAtivos.classList.add('cursor-pointer');
+        labelLixeira.classList.add('cursor-pointer');
+
+        // Função central para alternar a visualização
+        const alternarVisualizacao = () => {
             mostrandoLixeira = !mostrandoLixeira;
-            
+
             // Atualiza a aparência do interruptor
             const thumb = document.getElementById('toggle-thumb');
-            const labelAtivos = document.getElementById('toggle-label-ativos');
-            const labelLixeira = document.getElementById('toggle-label-lixeira');
 
             toggleSwitch.classList.toggle('bg-red-600', mostrandoLixeira);
             toggleSwitch.classList.toggle('bg-green-600', !mostrandoLixeira);
@@ -103,7 +109,12 @@ async function inicializarPainelAdministrativo() {
 
             // Renderiza a visualização correta (ativos ou lixeira)
             renderizarVisualizacao();
-        });
+        };
+
+        // Adiciona o evento de clique ao interruptor e aos labels
+        toggleSwitch.addEventListener('click', alternarVisualizacao);
+        labelAtivos.addEventListener('click', alternarVisualizacao);
+        labelLixeira.addEventListener('click', alternarVisualizacao);
     }
 
     function renderizarVisualizacao() {
@@ -178,7 +189,7 @@ function renderizarTabela(inscritos, naLixeira = false) {
                </button>`;
 
         return `
-            <tr>
+            <tr data-id="${inscrito.id}">
                 <td class="text-center">
                     <input type="checkbox" class="row-checkbox h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" data-id="${inscrito.id}">
                 </td>
@@ -505,8 +516,9 @@ async function atualizarStatusInscrito(id, isDeleted, callbackSucesso) {
         const mensagem = isDeleted
             ? 'Inscrito movido para a lixeira com sucesso.'
             : 'Inscrito restaurado com sucesso.';
+
         mostrarNotificacao(mensagem, 'sucesso');
-        callbackSucesso(); // Atualiza a UI sem recarregar
+        callbackSucesso(); // Atualiza a UI buscando os dados novamente.
     }
 }
 
@@ -521,7 +533,7 @@ async function deletarInscritoPermanentemente(id, callbackSucesso) {
         console.error('Erro na exclusão permanente:', error);
     } else {
         mostrarNotificacao('Inscrito excluído permanentemente.', 'sucesso');
-        callbackSucesso(); // Atualiza a UI sem recarregar
+        callbackSucesso(); // Atualiza a UI buscando os dados novamente.
     }
 }
 
