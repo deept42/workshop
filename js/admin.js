@@ -69,6 +69,7 @@ async function inicializarPainelAdministrativo() {
             atualizarUICompleta();
         });
         configurarNotificacoesDeCommit();
+        configurarBotaoGraficos();
     }
 
     // 3. Configurar o Botão de Logout
@@ -143,6 +144,32 @@ async function inicializarPainelAdministrativo() {
     } else {
         document.getElementById('lista-inscritos').innerHTML = `<tr><td colspan="8" class="px-6 py-4 text-center text-red-500">Falha ao carregar dados.</td></tr>`;
     }
+}
+
+/**
+ * Configura o botão para mostrar/ocultar a seção de gráficos.
+ */
+function configurarBotaoGraficos() {
+    const toggleBtn = document.getElementById('toggle-charts-btn');
+    const chartsSection = document.getElementById('charts-section');
+    const toggleIcon = document.getElementById('toggle-charts-icon');
+    const toggleText = document.getElementById('toggle-charts-text');
+
+    if (!toggleBtn || !chartsSection || !toggleIcon || !toggleText) return;
+
+    toggleBtn.addEventListener('click', () => {
+        const isHidden = chartsSection.classList.toggle('hidden');
+
+        if (isHidden) {
+            toggleIcon.textContent = 'expand_more';
+            toggleText.textContent = 'Mostrar Gráficos';
+        } else {
+            toggleIcon.textContent = 'expand_less';
+            toggleText.textContent = 'Ocultar Gráficos';
+            // Rola suavemente para a seção de gráficos quando ela é aberta
+            chartsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    });
 }
 
 /**

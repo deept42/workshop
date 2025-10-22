@@ -197,8 +197,14 @@
 
     <main class="space-y-8">
         <!-- Seção de Métricas Chave -->
-        <section>
-            <h2 class="text-xl font-bold text-gray-700 mb-4">Resumo do Evento</h2>
+        <section id="summary-section">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-gray-700">Resumo</h2>
+                <button id="toggle-charts-btn" class="flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors">
+                    <span id="toggle-charts-icon" class="material-symbols-outlined">expand_more</span>
+                    <span id="toggle-charts-text">Mostrar Gráficos</span>
+                </button>
+            </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Card Interativo de Empresas -->
                 <div id="card-empresas-wrapper" class="card-stack-wrapper">
@@ -353,8 +359,7 @@
         </section>
 
         <!-- Seção de Gráficos -->
-        <section>
-            <h2 class="text-xl font-bold text-gray-700 mb-4">Análise Detalhada</h2>
+        <section id="charts-section" class="hidden">
             <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 items-end">
                 <!-- Gráficos de Barras (Municípios e Empresas) -->
                 <div class="xl:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
