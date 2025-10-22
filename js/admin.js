@@ -219,7 +219,7 @@ function renderizarTabela(inscritos, naLixeira = false) {
     corpoTabela.innerHTML = linhasHtml;
 
     // Após renderizar, reconfigura a seleção para garantir que os listeners estejam nos novos elementos
-    configurarSelecaoEmMassa();
+    configurarSelecaoEmMassa(naLixeira);
 }
 
 
@@ -346,6 +346,8 @@ function configurarAcoesEmMassa(callbackSucesso) {
     const bulkCsvBtn = document.getElementById('bulk-export-csv-btn');
     const bulkPdfBtn = document.getElementById('bulk-export-pdf-btn');
     const bulkChecklistBtn = document.getElementById('bulk-export-checklist-btn');
+    const bulkRestoreBtn = document.getElementById('bulk-restore-btn');
+    const bulkDeletePermanentBtn = document.getElementById('bulk-delete-permanent-btn');
     if (bulkMoveBtn) {
         bulkMoveBtn.addEventListener('click', async () => {
             const idsParaMover = obterIdsSelecionados();
@@ -395,6 +397,47 @@ function configurarAcoesEmMassa(callbackSucesso) {
             gerarChecklist(linhasSelecionadas);
         });
     }
+
+    // Ação: Restaurar em massa da lixeira
+    if (bulkRestoreBtn) {
+        bulkRestoreBtn.addEventListener('click', async () => {
+            const idsParaRestaurar = obterIdsSelecionados();
+            if (idsParaRestaurar.length === 0) return;
+
+            // Não precisa de confirmação para restaurar
+            const { error } = await supabase.from('cadastro_workshop').update({ is_deleted: false }).in('id', idsParaRestaurar);
+            if (error) {
+                mostrarNotificacao('Ocorreu um erro ao restaurar os itens.', 'erro');
+            } else {
+                mostrarNotificacao(`${idsParaRestaurar.length} iten(s) restaurado(s) com sucesso.`, 'sucesso');
+                callbackSucesso();
+            }
+        });
+    }
+
+    // Ação: Excluir permanentemente em massa
+    if (bulkDeletePermanentBtn) {
+        bulkDeletePermanentBtn.addEventListener('click', async () => {
+            const idsParaDeletar = obterIdsSelecionados();
+            if (idsParaDeletar.length === 0) return;
+
+            const confirmado = await mostrarModalConfirmacaoDeletar(
+                `Excluir ${idsParaDeletar.length} Itens Permanentemente`,
+                `ATENÇÃO: Você tem certeza que deseja excluir permanentemente os ${idsParaDeletar.length} itens selecionados? Esta ação não pode ser desfeita.`,
+                `Sim, excluir permanentemente`
+            );
+
+            if (confirmado) {
+                const { error } = await supabase.from('cadastro_workshop').delete().in('id', idsParaDeletar);
+                if (error) {
+                    mostrarNotificacao('Ocorreu um erro ao excluir os itens permanentemente.', 'erro');
+                } else {
+                    mostrarNotificacao(`${idsParaDeletar.length} iten(s) excluído(s) permanentemente.`, 'sucesso');
+                    callbackSucesso();
+                }
+            }
+        });
+    }
 }
 
 /**
@@ -427,19 +470,21 @@ function obterLinhasParaExportacao() {
 /**
  * Configura a lógica para seleção em massa de itens na tabela.
  */
-function configurarSelecaoEmMassa() {
+function configurarSelecaoEmMassa(naLixeira = false) {
     const selectAllCheckbox = document.getElementById('select-all-checkbox');
     const rowCheckboxes = document.querySelectorAll('.row-checkbox');
     const bulkActionsBar = document.getElementById('bulk-actions-bar');
     const bulkActionsCount = document.getElementById('bulk-actions-count');
-    const bulkMoveBtn = document.getElementById('bulk-move-to-trash-btn');
+    const btnsAtivos = document.querySelectorAll('.bulk-action-ativos');
+    const btnsLixeira = document.querySelectorAll('.bulk-action-lixeira');
 
-    if (!selectAllCheckbox || !bulkActionsBar || !bulkActionsCount || !bulkMoveBtn) return;
+    if (!selectAllCheckbox || !bulkActionsBar || !bulkActionsCount) return;
 
     // Função para atualizar a barra de ações em massa
     const atualizarBarraDeAcoes = () => {
         const selecionados = document.querySelectorAll('.row-checkbox:checked');
         const totalSelecionado = selecionados.length;
+        const totalVisivel = Array.from(document.querySelectorAll('#lista-inscritos tr')).filter(linha => linha.style.display !== 'none').length;
 
         if (totalSelecionado > 0) {
             bulkActionsBar.classList.remove('hidden');
@@ -448,8 +493,16 @@ function configurarSelecaoEmMassa() {
             bulkActionsBar.classList.add('hidden');
         }
 
+        // Alterna a visibilidade dos botões de ação com base na visualização
+        btnsAtivos.forEach(btn => btn.classList.toggle('hidden', naLixeira));
+        btnsLixeira.forEach(btn => btn.classList.toggle('hidden', !naLixeira));
+
+        // Se não houver linhas visíveis (ex: filtro não encontrou nada), desmarca o "selecionar tudo"
+        if (totalVisivel === 0) {
+            selectAllCheckbox.checked = false;
+        }
+
         // Atualiza o estado do checkbox "selecionar tudo"
-        const totalVisivel = document.querySelectorAll('.row-checkbox').length;
         selectAllCheckbox.checked = totalVisivel > 0 && totalSelecionado === totalVisivel;
         selectAllCheckbox.indeterminate = totalSelecionado > 0 && totalSelecionado < totalVisivel;
     };

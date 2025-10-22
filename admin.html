@@ -421,10 +421,19 @@
             <div id="bulk-actions-bar" class="hidden bg-blue-50 border-l-4 border-blue-500 p-4 my-4 rounded-r-lg flex items-center justify-between">
                 <span id="bulk-actions-count" class="font-semibold text-blue-800">0 itens selecionados</span>
                 <div class="flex flex-wrap items-center gap-2">
-                    <button id="bulk-move-to-trash-btn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors border border-gray-300">
+                    <!-- Botões para a visão de ATIVOS -->
+                    <button id="bulk-move-to-trash-btn" class="bulk-action-btn bulk-action-ativos bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors border border-gray-300">
                         <span class="material-symbols-outlined">delete</span> Lixeira
                     </button>
-                    <button id="bulk-export-csv-btn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors border border-gray-300">
+                    <!-- Botões para a visão da LIXEIRA -->
+                    <button id="bulk-restore-btn" class="bulk-action-btn bulk-action-lixeira hidden bg-green-100 hover:bg-green-200 text-green-700 font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors border border-green-300">
+                        <span class="material-symbols-outlined">restore_from_trash</span> Restaurar
+                    </button>
+                    <button id="bulk-delete-permanent-btn" class="bulk-action-btn bulk-action-lixeira hidden bg-red-100 hover:bg-red-200 text-red-700 font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors border border-red-300">
+                        <span class="material-symbols-outlined">delete_forever</span> Excluir Perm.
+                    </button>
+                    <!-- Botões comuns de exportação -->
+                    <button id="bulk-export-csv-btn" class="bulk-action-btn bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors border border-gray-300">
                         <span class="material-symbols-outlined">download</span> CSV
                     </button>
                     <button id="bulk-export-pdf-btn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors border border-gray-300">
@@ -441,7 +450,7 @@
                     <thead>
                         <tr>
                             <th scope="col" class="w-12 text-center">
-                                <input type="checkbox" id="select-all-checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" title="Selecionar Tudo">
+                                <input type="checkbox" id="select-all-checkbox" class="h-5 w-5 rounded border-gray-400 text-indigo-600 focus:ring-indigo-500 cursor-pointer" title="Selecionar Tudo">
                             </th>
                             <th scope="col" data-column="nome_completo">
                                 <div class="flex items-center gap-2">Nome Completo <span class="material-symbols-outlined text-sm opacity-50">unfold_more</span></div>
