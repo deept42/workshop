@@ -1,0 +1,13 @@
+[
+	{
+		"name": "KingHost Deploy",
+		"host": "ftp.talentosbrasil.com.br",
+		"port": 21,
+		"type": "ftp",
+		"username": "talentosbrasil",
+		"password": "tb13579812",
+		"path": "/www/municipiosresilientes",
+		"autosave": true,
+		"confirm": true
+	}
+]
