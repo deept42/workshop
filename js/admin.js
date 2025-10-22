@@ -68,6 +68,7 @@ async function inicializarPainelAdministrativo() {
             todosInscritos = await buscarInscritos();
             atualizarUICompleta();
         });
+        configurarNotificacoesDeCommit();
     }
 
     // 3. Configurar o Botão de Logout
@@ -138,6 +139,7 @@ async function inicializarPainelAdministrativo() {
     if (todosInscritos) {
         atualizarUICompleta(); // Renderiza a UI pela primeira vez
         configurarTudo();      // Configura todos os eventos
+        
     } else {
         document.getElementById('lista-inscritos').innerHTML = `<tr><td colspan="8" class="px-6 py-4 text-center text-red-500">Falha ao carregar dados.</td></tr>`;
     }
@@ -1303,6 +1305,100 @@ function configurarExclusaoDuplicados() {
                 // Atualiza a UI para refletir a mudança
                 document.location.reload(); // A forma mais simples de garantir que tudo seja recarregado
             }
+        }
+    });
+}
+
+/**
+ * Configura a busca e exibição de commits recentes do GitHub.
+ */
+async function configurarNotificacoesDeCommit() {
+    const GITHUB_REPO = 'deept42/workshop'; // Repositório público do projeto
+    const LAST_SEEN_COMMIT_KEY = 'lastSeenCommitSha';
+
+    const commitBtn = document.getElementById('github-commits-btn');
+    const commitDropdown = document.getElementById('commits-dropdown');
+    const commitList = document.getElementById('commits-list');
+    const commitBadge = document.getElementById('commit-count-badge');
+
+    if (!commitBtn || !commitDropdown || !commitList || !commitBadge) return;
+
+    /**
+     * Busca os 5 commits mais recentes do repositório.
+     * @returns {Promise<Array|null>}
+     */
+    async function buscarCommitsRecentes() {
+        try {
+            const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/commits?per_page=5`);
+            if (!response.ok) {
+                console.error('Erro ao buscar commits do GitHub:', response.statusText);
+                return null;
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Falha na requisição para a API do GitHub:', error);
+            return null;
+        }
+    }
+
+    const commits = await buscarCommitsRecentes();
+    if (!commits || commits.length === 0) return;
+
+    const lastSeenSha = localStorage.getItem(LAST_SEEN_COMMIT_KEY);
+    const latestSha = commits[0].sha;
+
+    // Calcula o número de commits novos
+    let newCommitsCount = 0;
+    if (lastSeenSha) {
+        const lastSeenIndex = commits.findIndex(c => c.sha === lastSeenSha);
+        newCommitsCount = lastSeenIndex === -1 ? commits.length : lastSeenIndex;
+    } else {
+        newCommitsCount = commits.length; // Se nunca viu, todos são novos
+    }
+
+    // Atualiza o badge se houver commits novos
+    if (newCommitsCount > 0) {
+        commitBadge.textContent = newCommitsCount > 5 ? '5+' : newCommitsCount;
+        commitBadge.classList.remove('hidden');
+        commitBadge.classList.add('pulse-once');
+    }
+
+    // Renderiza a lista de commits no dropdown
+    commitList.innerHTML = commits.map(item => {
+        const commitData = item.commit;
+        const commitDate = new Date(commitData.author.date).toLocaleDateString('pt-BR', {
+            day: '2-digit', month: 'short', year: 'numeric'
+        });
+        return `
+            <a href="${item.html_url}" target="_blank" rel="noopener noreferrer" class="block p-3 hover:bg-gray-100 rounded-md transition-colors">
+                <p class="font-semibold text-gray-800 text-sm truncate">${commitData.message.split('\n')[0]}</p>
+                <div class="flex items-center justify-between text-xs text-gray-500 mt-1">
+                    <span>${commitData.author.name}</span>
+                    <span>${commitDate}</span>
+                </div>
+            </a>
+        `;
+    }).join('') || '<p class="p-4 text-center text-gray-500">Nenhum commit encontrado.</p>';
+
+    // Lógica para abrir/fechar o dropdown
+    commitBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isHidden = commitDropdown.classList.contains('hidden');
+        
+        if (isHidden) {
+            commitDropdown.classList.remove('hidden');
+            // Ao abrir, marca os commits como vistos
+            localStorage.setItem(LAST_SEEN_COMMIT_KEY, latestSha);
+            commitBadge.classList.add('hidden'); // Esconde o badge
+        } else {
+            commitDropdown.classList.add('hidden');
+        }
+    });
+
+    // Fecha o dropdown se clicar fora dele
+    document.addEventListener('click', (e) => {
+        if (!commitDropdown.contains(e.target)) {
+            commitDropdown.classList.add('hidden');
         }
     });
 }

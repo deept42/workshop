@@ -150,6 +150,11 @@
         .is-front .card-progress-bar {
             transition: width 10s linear; /* Animação de 10 segundos */
         }
+        /* Animação de pulso para o indicador de commit */
+        .pulse-once {
+            animation: pulse-red 1.5s ease-out;
+        }
+        @keyframes pulse-red { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); } }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -166,6 +171,22 @@
             <div class="text-right">
                 <p class="text-sm text-gray-500">Logado como:</p>
                 <p id="admin-email" class="font-semibold text-[#062E51]">carregando...</p>
+            </div>
+            <!-- Notificações de Commit do GitHub -->
+            <div class="relative">
+                <button id="github-commits-btn" class="relative text-gray-500 hover:text-[#062E51] transition-colors">
+                    <span class="material-symbols-outlined text-3xl">notifications</span>
+                    <span id="commit-count-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                </button>
+                <!-- Dropdown de Commits -->
+                <div id="commits-dropdown" class="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl z-50 hidden origin-top-right">
+                    <div class="p-4 border-b border-gray-200">
+                        <h4 class="font-bold text-gray-800">Últimas Atualizações do Projeto</h4>
+                    </div>
+                    <div id="commits-list" class="p-2 max-h-96 overflow-y-auto">
+                        <!-- Commits serão inseridos aqui -->
+                    </div>
+                </div>
             </div>
             <button id="admin-logout-btn" class="bg-[#E63946] hover:bg-[#c9323d] text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors">
                 <span class="material-symbols-outlined">logout</span>
