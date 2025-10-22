@@ -25,6 +25,20 @@ export function mostrarNotificacao(mensagem, tipo = 'info', duracao = 4000) {
     const container = document.getElementById('notification-container');
     if (!container) return;
 
+    const LIMITE_NOTIFICACOES = 3;
+
+    // Se o número de notificações atingir o limite, remove a mais antiga.
+    if (container.children.length >= LIMITE_NOTIFICACOES) {
+        const notificacaoAntiga = container.firstChild;
+        if (notificacaoAntiga) {
+            // Adiciona classes para a animação de saída
+            notificacaoAntiga.classList.add('opacity-0', 'translate-y-4');
+            // Remove o elemento do DOM após a transição
+            notificacaoAntiga.addEventListener('transitionend', () => notificacaoAntiga.remove(), { once: true });
+        }
+    }
+
+
     const config = TIPOS_NOTIFICACAO[tipo] || TIPOS_NOTIFICACAO.info;
 
     // Cria o elemento da notificação

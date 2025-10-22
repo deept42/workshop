@@ -1467,12 +1467,13 @@ async function configurarNotificacoesDeCommit() {
     if (!commitBtn || !commitDropdown || !commitList || !commitBadge) return;
 
     /**
-     * Busca os 5 commits mais recentes do repositório.
+     * Busca os 3 commits mais recentes do repositório.
      * @returns {Promise<Array|null>}
      */
     async function buscarCommitsRecentes() {
         try {
-            const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/commits?per_page=5`);
+            // Alterado de per_page=5 para per_page=3 para buscar apenas os 3 últimos commits.
+            const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/commits?per_page=3`);
             if (!response.ok) {
                 console.error('Erro ao buscar commits do GitHub:', response.statusText);
                 return null;
@@ -1501,7 +1502,7 @@ async function configurarNotificacoesDeCommit() {
 
     // Atualiza o badge se houver commits novos
     if (newCommitsCount > 0) {
-        commitBadge.textContent = newCommitsCount > 5 ? '5+' : newCommitsCount;
+        commitBadge.textContent = newCommitsCount > 3 ? '3+' : newCommitsCount;
         commitBadge.classList.remove('hidden');
         commitBadge.classList.add('pulse-once');
     }
