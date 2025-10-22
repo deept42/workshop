@@ -3,6 +3,19 @@
  */
 
 import { supabase } from './supabaseClient.js';
+import { mostrarNotificacao } from './notificacoes.js';
+
+/**
+ * Formata uma string para o formato "Título", tratando preposições comuns em português.
+ * Ex: "JOÃO DA SILVA" -> "João da Silva".
+ * @param {string} str A string para formatar.
+ * @returns {string} A string formatada.
+ */
+function formatarParaTitulo(str) {
+    if (!str) return '';
+    // Capitaliza a primeira letra de TODAS as palavras.
+    return str.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+}
 
 function exibirMensagem(mensagem, tipo) {
     const mensagensForm = document.getElementById('form-messages');
@@ -130,7 +143,7 @@ export function configurarValidacaoFormulario() {
 
         // Se algum campo for inválido, mostra o modal e para a execução.
         if (!isFormValid) {
-            await mostrarModalErro('Por favor, corrija os campos destacados em vermelho.');
+            mostrarNotificacao('Por favor, corrija os campos destacados em vermelho.', 'aviso');
             botaoSubmit.disabled = false;
             botaoSubmit.textContent = 'Inscrever-se Agora';
             return;
@@ -141,11 +154,11 @@ export function configurarValidacaoFormulario() {
         const { data, error } = await supabase
             .from('cadastro_workshop')
             .insert([{
-                nome_completo: nome,
-                empresa: empresa,
-                email: email,
+                nome_completo: formatarParaTitulo(nome),
+                empresa: formatarParaTitulo(empresa),
+                email: email.toLowerCase(), // E-mail sempre em minúsculas
                 telefone: telefone,
-                municipio: municipio,
+                municipio: formatarParaTitulo(municipio),
                 participa_dia_13: participaDia13,
                 participa_dia_14: participaDia14,
                 concorda_comunicacoes: consentimento,
@@ -157,14 +170,15 @@ export function configurarValidacaoFormulario() {
         if (error) {
             console.error('Objeto completo do erro do Supabase:', error);
             if (error.code === '23505') { // Código de violação de chave única (e-mail duplicado)
-                await mostrarModalErro('Este e-mail já foi cadastrado. Por favor, utilize outro.');
+                mostrarNotificacao('Este e-mail já foi cadastrado. Por favor, utilize outro.', 'erro');
             } else {
-                await mostrarModalErro('Ocorreu um erro inesperado na inscrição. Por favor, tente novamente.');
+                mostrarNotificacao('Ocorreu um erro inesperado na inscrição. Tente novamente.', 'erro');
             }
             botaoSubmit.disabled = false;
             botaoSubmit.textContent = 'Inscrever-se Agora';
         } else {
-            mostrarFeedbackSucessoTopo();
+            mostrarNotificacao('Inscrição confirmada! Verifique as opções de certificado.', 'sucesso');
+            mostrarFeedbackSucessoTopo(); // Reativando a barra de sucesso no topo
             form.reset();
 
             const idNovoRegistro = data ? data[0].id : null;
@@ -184,12 +198,17 @@ export function configurarValidacaoFormulario() {
         const subtitle = topBar.querySelector('.top-bar-subtitle');
 
         if (!topBar || !title || !countdown || !subtitle) return;
-
-        // Aplica o estado de sucesso permanentemente na sessão atual
+        
+        // Esconde os elementos que não são necessários na mensagem de sucesso
+        title.style.display = 'none';
+        countdown.style.display = 'none';
+        
+        // Aplica o estado de sucesso
         topBar.style.background = 'linear-gradient(to right, #16A34A, #15803D, #16A34A)'; // Gradiente verde
         topBar.style.color = 'white'; // Garante que o texto fique legível no fundo verde
         subtitle.textContent = 'INSCRIÇÃO CONFIRMADA COM SUCESSO!';
         subtitle.style.fontWeight = 'bold';
+        subtitle.style.display = 'block'; // Garante que o subtítulo esteja visível
     }
 
     function validarCampo(input) {
@@ -431,7 +450,7 @@ export async function configurarAutocompletarComDadosSalvos() {
                     // Dispara o evento 'input' para que a máscara de telefone seja aplicada
                     inputTelefone.dispatchEvent(new Event('input', { bubbles: true }));
                 }
-                exibirMensagem('Detectamos um cadastro anterior e preenchemos alguns campos para você!', 'success');
+                mostrarNotificacao('Detectamos um cadastro anterior e preenchemos alguns campos para você!', 'aviso');
             }
         }
     });

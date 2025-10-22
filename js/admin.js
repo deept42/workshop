@@ -5,6 +5,7 @@
 
 import { supabase } from './supabaseClient.js';
 import { configurarControlesAcessibilidade } from './acessibilidade.js';
+import { mostrarNotificacao } from './notificacoes.js';
 
 /**
  * Função principal que inicializa o painel de administração.
@@ -14,48 +15,58 @@ async function inicializarPainelAdministrativo() {
     let todosInscritos = [];
     let mostrandoLixeira = false;
 
-    // 1. Proteger a Rota: Verifica se o usuário está logado
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
-        // Se não houver sessão, redireciona para a página inicial
         alert('Acesso negado. Por favor, faça o login como administrador.');
         window.location.replace('index.html');
-        return; // Interrompe a execução
+        return;
     }
 
-    // Se chegou aqui, o usuário está logado.
     const adminEmailEl = document.getElementById('admin-email');
-    if (adminEmailEl) {
-        adminEmailEl.textContent = session.user.email;
+    if (adminEmailEl) adminEmailEl.textContent = session.user.email;
+
+    /**
+     * Atualiza todas as partes da UI que dependem dos dados dos inscritos.
+     */
+    function atualizarUICompleta() {
+        const inscritosAtivos = todosInscritos.filter(i => !i.is_deleted);
+        
+        renderizarVisualizacao();
+        
+        configurarCardEmpresasInterativo(inscritosAtivos);
+        configurarCardMunicipiosInterativo(inscritosAtivos);
+        configurarCardCertificadoInterativo(inscritosAtivos);
+        preencherMetricas(inscritosAtivos);
+        configurarCardParticipantesInterativo(inscritosAtivos);
+        criarGraficos(inscritosAtivos);
+
+        const bulkActionsBar = document.getElementById('bulk-actions-bar');
+        if (bulkActionsBar) bulkActionsBar.classList.add('hidden');
     }
 
-    // 2. Buscar todos os inscritos (ativos e na lixeira)
-    todosInscritos = await buscarInscritos();
-
-    if (todosInscritos) {
-        // Inicialmente, renderiza apenas os ativos
-        renderizarVisualizacao();
-
+    /**
+     * Configura todos os listeners de eventos que só precisam ser configurados uma vez.
+     */
+    function configurarTudo() {
         configurarFiltroDeBusca();
         configurarOrdenacaoTabela(todosInscritos, renderizarVisualizacao);
-        configurarAcoesTabela();
-        configurarAcoesEmMassa(todosInscritos);
-        configurarSelecaoEmMassa();
+        configurarAcoesTabela(async () => {
+            todosInscritos = await buscarInscritos();
+            atualizarUICompleta();
+        });
+        configurarAcoesEmMassa(async () => {
+            todosInscritos = await buscarInscritos();
+            atualizarUICompleta();
+        });
         configurarExportacaoCSV();
-        configurarCardEmpresasInterativo(todosInscritos.filter(i => !i.is_deleted));
-        configurarCardMunicipiosInterativo(todosInscritos.filter(i => !i.is_deleted));
-        configurarCardCertificadoInterativo(todosInscritos.filter(i => !i.is_deleted)); // Novo card interativo
-        preencherMetricas(todosInscritos.filter(i => !i.is_deleted)); // Métricas apenas com ativos
-        configurarCardParticipantesInterativo(todosInscritos.filter(i => !i.is_deleted));
         configurarExportacaoPDF();
         configurarExportacaoChecklist();
         configurarControlesAcessibilidade();
-        configurarModalAdicionarInscrito();
-        criarGraficos(todosInscritos.filter(i => !i.is_deleted));
-    } else {
-        const corpoTabela = document.getElementById('lista-inscritos');
-        corpoTabela.innerHTML = `<tr><td colspan="8" class="px-6 py-4 text-center text-red-500">Falha ao carregar dados.</td></tr>`;
+        configurarModalAdicionarInscrito(async () => {
+            todosInscritos = await buscarInscritos();
+            atualizarUICompleta();
+        });
     }
 
     // 3. Configurar o Botão de Logout
@@ -108,6 +119,15 @@ async function inicializarPainelAdministrativo() {
             trashCountBadge.textContent = count;
             trashCountBadge.style.display = count > 0 ? 'flex' : 'none';
         }
+    }
+
+    // --- PONTO DE ENTRADA ---
+    todosInscritos = await buscarInscritos();
+    if (todosInscritos) {
+        atualizarUICompleta(); // Renderiza a UI pela primeira vez
+        configurarTudo();      // Configura todos os eventos
+    } else {
+        document.getElementById('lista-inscritos').innerHTML = `<tr><td colspan="8" class="px-6 py-4 text-center text-red-500">Falha ao carregar dados.</td></tr>`;
     }
 }
 
@@ -162,11 +182,11 @@ function renderizarTabela(inscritos, naLixeira = false) {
                 <td class="text-center">
                     <input type="checkbox" class="row-checkbox h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" data-id="${inscrito.id}">
                 </td>
-                <td class="whitespace-nowrap font-medium">${inscrito.nome_completo}</td>
+                <td class="whitespace-nowrap font-medium">${formatarParaTitulo(inscrito.nome_completo)}</td>
                 <td class="whitespace-nowrap">${inscrito.email}</td>
                 <td class="whitespace-nowrap">${inscrito.telefone}</td>
-                <td class="whitespace-nowrap">${inscrito.empresa}</td>
-                <td class="whitespace-nowrap">${inscrito.municipio}</td>
+                <td class="whitespace-nowrap">${formatarParaTitulo(inscrito.empresa)}</td>
+                <td class="whitespace-nowrap">${formatarParaTitulo(inscrito.municipio)}</td>
                 <td class="whitespace-nowrap">${dias}</td>
                 <td class="whitespace-nowrap">
                     ${botaoAcao}
@@ -293,14 +313,13 @@ function configurarOrdenacaoTabela(inscritos, callbackRender) {
 /**
  * Configura os botões e a lógica da barra de ações em massa.
  * @param {Array} todosInscritos - A lista completa de todos os inscritos.
+ * @param {Function} callbackSucesso - Função a ser chamada após uma ação bem-sucedida.
  */
-function configurarAcoesEmMassa(todosInscritos) {
+function configurarAcoesEmMassa(callbackSucesso) {
     const bulkMoveBtn = document.getElementById('bulk-move-to-trash-btn');
     const bulkCsvBtn = document.getElementById('bulk-export-csv-btn');
     const bulkPdfBtn = document.getElementById('bulk-export-pdf-btn');
     const bulkChecklistBtn = document.getElementById('bulk-export-checklist-btn');
-
-    // Ação: Mover para a lixeira em massa
     if (bulkMoveBtn) {
         bulkMoveBtn.addEventListener('click', async () => {
             const idsParaMover = obterIdsSelecionados();
@@ -314,8 +333,12 @@ function configurarAcoesEmMassa(todosInscritos) {
 
             if (confirmado) {
                 const { error } = await supabase.from('cadastro_workshop').update({ is_deleted: true }).in('id', idsParaMover);
-                if (error) await mostrarModalErro('Ocorreu um erro ao mover os itens.');
-                else location.reload();
+                if (error) {
+                    mostrarNotificacao('Ocorreu um erro ao mover os itens.', 'erro');
+                } else {
+                    mostrarNotificacao(`${idsParaMover.length} iten(s) movido(s) para a lixeira.`, 'sucesso');
+                    callbackSucesso();
+                }
             }
         });
     }
@@ -427,8 +450,9 @@ function configurarSelecaoEmMassa() {
 
 /**
  * Configura os ouvintes de eventos para as ações da tabela (ex: deletar).
+ * @param {Function} callbackSucesso - Função a ser chamada após uma ação bem-sucedida.
  */
-function configurarAcoesTabela() {
+function configurarAcoesTabela(callbackSucesso) {
     const corpoTabela = document.getElementById('lista-inscritos');
     if (!corpoTabela) return;
 
@@ -448,11 +472,11 @@ function configurarAcoesTabela() {
             );
 
             if (confirmado) {
-                await atualizarStatusInscrito(inscritoId, true);
+                await atualizarStatusInscrito(inscritoId, true, callbackSucesso);
             }
         } else if (targetButton.classList.contains('btn-restaurar')) {
             // Restaurando da lixeira (não precisa de confirmação)
-            await atualizarStatusInscrito(inscritoId, false);
+            await atualizarStatusInscrito(inscritoId, false, callbackSucesso);
         } else if (targetButton.classList.contains('btn-deletar-permanente')) {
             // Abre o modal de confirmação para exclusão permanente
             const confirmado = await mostrarModalConfirmacaoDeletar(
@@ -462,39 +486,42 @@ function configurarAcoesTabela() {
             );
 
             if (confirmado) {
-                await deletarInscritoPermanentemente(inscritoId);
+                await deletarInscritoPermanentemente(inscritoId, callbackSucesso);
             }
         }
     });
 }
 
-async function atualizarStatusInscrito(id, isDeleted) {
+async function atualizarStatusInscrito(id, isDeleted, callbackSucesso) {
     const { error } = await supabase
         .from('cadastro_workshop')
         .update({ is_deleted: isDeleted })
         .eq('id', id);
 
     if (error) {
-        await mostrarModalErro('Ocorreu um erro ao atualizar o status do inscrito.');
+        mostrarNotificacao('Ocorreu um erro ao atualizar o status do inscrito.', 'erro');
         console.error('Erro ao atualizar:', error);
     } else {
-        // Recarrega a página para atualizar tudo de forma simples e garantida.
-        location.reload();
+        const mensagem = isDeleted
+            ? 'Inscrito movido para a lixeira com sucesso.'
+            : 'Inscrito restaurado com sucesso.';
+        mostrarNotificacao(mensagem, 'sucesso');
+        callbackSucesso(); // Atualiza a UI sem recarregar
     }
 }
 
-async function deletarInscritoPermanentemente(id) {
+async function deletarInscritoPermanentemente(id, callbackSucesso) {
     const { error } = await supabase
         .from('cadastro_workshop')
         .delete()
         .eq('id', id);
 
     if (error) {
-        await mostrarModalErro('Ocorreu um erro ao excluir o inscrito permanentemente.');
+        mostrarNotificacao('Ocorreu um erro ao excluir o inscrito permanentemente.', 'erro');
         console.error('Erro na exclusão permanente:', error);
     } else {
-        // Recarrega a página para atualizar tudo
-        location.reload();
+        mostrarNotificacao('Inscrito excluído permanentemente.', 'sucesso');
+        callbackSucesso(); // Atualiza a UI sem recarregar
     }
 }
 
@@ -1195,9 +1222,22 @@ function criarGraficos(inscritos) {
 document.addEventListener('DOMContentLoaded', inicializarPainelAdministrativo);
 
 /**
- * Configura o modal para adicionar um novo inscrito manualmente.
+ * Formata uma string para o formato "Título", tratando preposições comuns em português.
+ * Ex: "JOÃO DA SILVA" -> "João da Silva".
+ * @param {string} str A string para formatar.
+ * @returns {string} A string formatada.
  */
-function configurarModalAdicionarInscrito() {
+function formatarParaTitulo(str) {
+    if (!str) return '';
+    // Capitaliza a primeira letra de TODAS as palavras.
+    return str.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+}
+
+/**
+ * Configura o modal para adicionar um novo inscrito manualmente.
+ * @param {Function} callbackSucesso - Função a ser chamada após adicionar com sucesso.
+ */
+function configurarModalAdicionarInscrito(callbackSucesso) {
     const openBtn = document.getElementById('add-inscrito-btn');
     const modal = document.getElementById('add-inscrito-modal');
     const form = document.getElementById('add-inscrito-form');
@@ -1241,11 +1281,11 @@ function configurarModalAdicionarInscrito() {
 
         const formData = new FormData(form);
         const novoInscrito = {
-            nome_completo: formData.get('nome'),
-            email: formData.get('email'),
-            empresa: formData.get('empresa'),
+            nome_completo: formatarParaTitulo(formData.get('nome')),
+            email: formData.get('email').toLowerCase(),
+            empresa: formatarParaTitulo(formData.get('empresa')),
             telefone: formData.get('telefone'),
-            municipio: formData.get('municipio'),
+            municipio: formatarParaTitulo(formData.get('municipio')),
             participa_dia_13: formData.has('dia13'),
             participa_dia_14: formData.has('dia14'),
             is_deleted: false, // Garante que o novo inscrito seja ativo
@@ -1256,7 +1296,7 @@ function configurarModalAdicionarInscrito() {
 
         // Validação simples
         if (!novoInscrito.nome_completo || !novoInscrito.email || !novoInscrito.empresa || !novoInscrito.municipio) {
-            await mostrarModalErro('Por favor, preencha todos os campos obrigatórios (*).');
+            mostrarNotificacao('Por favor, preencha todos os campos obrigatórios (*).', 'aviso');
             submitButton.disabled = false;
             submitButton.textContent = 'Salvar Inscrito';
             return;
@@ -1265,12 +1305,12 @@ function configurarModalAdicionarInscrito() {
         const { error } = await supabase.from('cadastro_workshop').insert([novoInscrito]);
 
         if (error) {
-            await mostrarModalErro(error.code === '23505' ? 'Este e-mail já está cadastrado.' : 'Ocorreu um erro ao salvar.');
+            mostrarNotificacao(error.code === '23505' ? 'Este e-mail já está cadastrado.' : 'Ocorreu um erro ao salvar.', 'erro');
             console.error('Erro ao adicionar inscrito:', error);
         } else {
             esconderModal(); // Chama a função em português
-            await mostrarModalSucesso('Sucesso!', 'Novo inscrito adicionado.');
-            document.getElementById('success-btn-close').addEventListener('click', () => location.reload(), { once: true });
+            mostrarNotificacao('Novo inscrito adicionado com sucesso!', 'sucesso');
+            callbackSucesso(); // Atualiza a UI sem recarregar a página
         }
 
         submitButton.disabled = false;

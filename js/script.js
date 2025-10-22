@@ -10,6 +10,7 @@ import { configurarRolagemSuave, configurarNavegacaoMouseMeio, configurarMenuMob
 import { configurarContagemRegressiva, configurarZoomImagem } from './ui.js';
 import { configurarLoginAdmin, fazerLogout } from './auth.js';
 import { configurarPlayersYoutube } from './video.js';
+import './notificacoes.js'; // Importa para registrar a função globalmente, se necessário
 import { supabase } from './supabaseClient.js';
 
 // Aguarda o carregamento completo do HTML antes de executar os scripts.

@@ -3,6 +3,7 @@
  */
 
 import { supabase } from './supabaseClient.js';
+import { mostrarNotificacao } from './notificacoes.js';
 import { mostrarModalErro, mostrarModalSucesso, mostrarModalSucessoLogin } from './formulario.js';
 
 /**
@@ -30,14 +31,14 @@ export function configurarLoginAdmin() {
 
         if (error) {
             // Se houver erro, mostra o modal de erro personalizado.
-            await mostrarModalErro('Usuário ou senha inválidos.');
+            mostrarNotificacao('Usuário ou senha inválidos.', 'erro');
             console.error('Erro de autenticação:', error.message);
             botaoEntrar.disabled = false;
             botaoEntrar.textContent = 'Entrar';
         } else {
             // Se o login for bem-sucedido, mostra o modal de sucesso.
             // A UI será atualizada pelo 'onAuthStateChange'.
-            await mostrarModalSucessoLogin(`Login realizado com sucesso! Bem-vindo, ${data.user.email}.`);
+            mostrarNotificacao(`Login realizado com sucesso! Bem-vindo, ${data.user.email}.`, 'sucesso');
             // Redireciona para o painel de administração após um breve delay
             setTimeout(() => {
                 window.location.href = 'admin.html';
@@ -54,9 +55,9 @@ export async function fazerLogout() {
 
     if (error) {
         console.error('Erro ao fazer logout:', error.message);
-        await mostrarModalErro('Ocorreu um erro ao tentar sair. Por favor, tente novamente.');
+        mostrarNotificacao('Ocorreu um erro ao tentar sair. Por favor, tente novamente.', 'erro');
     } else {
         // Apenas exibimos a confirmação de sucesso. O onAuthStateChange cuidará de atualizar a UI.
-        await mostrarModalSucesso('Sessão Encerrada', 'Você saiu da sua conta com sucesso.');
+        mostrarNotificacao('Você saiu da sua conta com sucesso.', 'info');
     }
 }
