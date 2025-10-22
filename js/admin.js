@@ -62,6 +62,7 @@ async function inicializarPainelAdministrativo() {
         configurarExportacaoCSV();
         configurarExportacaoPDF();
         configurarExportacaoChecklist();
+        configurarExclusaoDuplicados();
         configurarControlesAcessibilidade();
         configurarModalAdicionarInscrito(async () => {
             todosInscritos = await buscarInscritos();
@@ -169,7 +170,7 @@ function renderizarTabela(inscritos, naLixeira = false) {
     if (!corpoTabela) return;
 
     if (inscritos.length === 0) {
-        corpoTabela.innerHTML = `<tr><td colspan="8" class="px-6 py-4 text-center text-gray-500">Nenhum inscrito encontrado.</td></tr>`;
+        corpoTabela.innerHTML = `<tr><td colspan="9" class="px-6 py-4 text-center text-gray-500">Nenhum inscrito encontrado.</td></tr>`;
         return;
     }
 
@@ -185,8 +186,14 @@ function renderizarTabela(inscritos, naLixeira = false) {
                    </button>
                </div>`
             : `<button class="btn-mover-lixeira text-gray-500 hover:text-red-600 transition-colors" data-id="${inscrito.id}" data-nome="${inscrito.nome_completo}" title="Mover para a lixeira">
-                   <span class="material-symbols-outlined">archive</span>
+                   <span class="material-symbols-outlined">delete</span>
                </button>`;
+        
+        // Formata a data para o padrão brasileiro
+        const dataInscricao = new Date(inscrito.created_at).toLocaleString('pt-BR', {
+            day: '2-digit', month: '2-digit', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
 
         return `
             <tr data-id="${inscrito.id}">
@@ -199,6 +206,7 @@ function renderizarTabela(inscritos, naLixeira = false) {
                 <td class="whitespace-nowrap">${formatarParaTitulo(inscrito.empresa)}</td>
                 <td class="whitespace-nowrap">${formatarParaTitulo(inscrito.municipio)}</td>
                 <td class="whitespace-nowrap">${dias}</td>
+                <td class="whitespace-nowrap text-sm text-gray-600">${dataInscricao}</td>
                 <td class="whitespace-nowrap">
                     ${botaoAcao}
                 </td>
@@ -236,7 +244,8 @@ function configurarFiltroDeBusca() {
             'telefone': 3,
             'empresa': 4,
             'municipio': 5,
-            'dias': 6
+            'dias': 6,
+            'created_at': 7
         };
 
         linhasTabela.forEach(linha => {
@@ -290,6 +299,10 @@ function configurarOrdenacaoTabela(inscritos, callbackRender) {
                 if (colunaSelecionada === 'dias') {
                     valorA = `${a.participa_dia_13 ? '13' : ''}${a.participa_dia_13 && a.participa_dia_14 ? ', ' : ''}${a.participa_dia_14 ? '14' : ''}`;
                     valorB = `${b.participa_dia_13 ? '13' : ''}${b.participa_dia_13 && b.participa_dia_14 ? ', ' : ''}${b.participa_dia_14 ? '14' : ''}`;
+                } else if (colunaSelecionada === 'created_at') {
+                    // Para datas, compara os objetos Date diretamente
+                    valorA = new Date(a.created_at);
+                    valorB = new Date(b.created_at);
                 } else {
                     valorA = a[colunaSelecionada];
                     valorB = b[colunaSelecionada];
@@ -1023,7 +1036,7 @@ function gerarCSV(linhasTabela) {
                 return `"${dado}"`; // Envolve em aspas
             });
             // Pula a primeira coluna (checkbox) e a última (ações)
-            csvContent += dadosLinha.slice(1, -1).join(";") + "\r\n";
+            csvContent += dadosLinha.slice(1, -2).join(";") + "\r\n";
         });
 
         // Cria o link para download
@@ -1076,7 +1089,7 @@ function gerarPDF(linhasTabela) {
 
         linhasTabela.forEach(linha => {
             const colunas = linha.querySelectorAll('td');
-            const dadosLinha = Array.from(colunas).slice(1, -1).map(c => c.innerText);
+            const dadosLinha = Array.from(colunas).slice(1, -2).map(c => c.innerText);
             body.push(dadosLinha);
         });
 
@@ -1228,6 +1241,70 @@ function criarGraficos(inscritos) {
             options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
         });
     }
+}
+
+/**
+ * Configura o botão e a lógica para excluir inscritos duplicados.
+ * A duplicidade é baseada no e-mail. O inscrito mais recente é mantido.
+ */
+function configurarExclusaoDuplicados() {
+    const deleteBtn = document.getElementById('delete-duplicates-btn');
+    if (!deleteBtn) return;
+
+    deleteBtn.addEventListener('click', async () => {
+        // Busca os dados mais recentes para garantir que estamos trabalhando com a lista atual.
+        const todosInscritos = await buscarInscritos();
+        if (!todosInscritos) {
+            mostrarNotificacao('Não foi possível buscar os inscritos para verificar duplicados.', 'erro');
+            return;
+        }
+
+        // 1. Agrupa inscritos por e-mail
+        const inscritosPorEmail = todosInscritos.reduce((acc, inscrito) => {
+            const email = inscrito.email.toLowerCase();
+            if (!acc[email]) {
+                acc[email] = [];
+            }
+            acc[email].push(inscrito);
+            return acc;
+        }, {});
+
+        // 2. Encontra os IDs para deletar (todos exceto o mais recente de cada grupo de duplicados)
+        const idsParaDeletar = [];
+        Object.values(inscritosPorEmail).forEach(grupo => {
+            if (grupo.length > 1) {
+                // Ordena por data de criação, do mais novo para o mais antigo
+                grupo.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                // Adiciona todos, exceto o primeiro (o mais novo), à lista de exclusão
+                const paraDeletar = grupo.slice(1).map(i => i.id);
+                idsParaDeletar.push(...paraDeletar);
+            }
+        });
+
+        if (idsParaDeletar.length === 0) {
+            mostrarNotificacao('Nenhum inscrito duplicado encontrado.', 'sucesso');
+            return;
+        }
+
+        // 3. Pede confirmação ao usuário
+        const confirmado = await mostrarModalConfirmacaoDeletar(
+            `Excluir ${idsParaDeletar.length} Duplicados`,
+            `Foram encontrados ${idsParaDeletar.length} inscritos duplicados (baseado no e-mail). Deseja mover os registros mais antigos para a lixeira, mantendo apenas o mais recente de cada?`,
+            `Sim, mover para lixeira`
+        );
+
+        // 4. Executa a exclusão (movendo para a lixeira)
+        if (confirmado) {
+            const { error } = await supabase.from('cadastro_workshop').update({ is_deleted: true }).in('id', idsParaDeletar);
+            if (error) {
+                mostrarNotificacao('Ocorreu um erro ao excluir os duplicados.', 'erro');
+            } else {
+                mostrarNotificacao(`${idsParaDeletar.length} registro(s) duplicado(s) movido(s) para a lixeira.`, 'sucesso');
+                // Atualiza a UI para refletir a mudança
+                document.location.reload(); // A forma mais simples de garantir que tudo seja recarregado
+            }
+        }
+    });
 }
 
 // Inicia a execução do script da página.
