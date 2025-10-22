@@ -43,7 +43,9 @@ async function inicializarPainelAdministrativo() {
         configurarAcoesEmMassa(todosInscritos);
         configurarSelecaoEmMassa();
         configurarExportacaoCSV();
-        configurarCardCertificadoInterativo(todosInscritos.filter(i => !i.is_deleted));
+        configurarCardEmpresasInterativo(todosInscritos.filter(i => !i.is_deleted));
+        configurarCardMunicipiosInterativo(todosInscritos.filter(i => !i.is_deleted));
+        configurarCardCertificadoInterativo(todosInscritos.filter(i => !i.is_deleted)); // Novo card interativo
         preencherMetricas(todosInscritos.filter(i => !i.is_deleted)); // Métricas apenas com ativos
         configurarCardParticipantesInterativo(todosInscritos.filter(i => !i.is_deleted));
         configurarExportacaoPDF();
@@ -120,7 +122,7 @@ async function buscarInscritos() {
         .order('nome_completo', { ascending: true });
     
     if (error) {
-        console.error('Erro ao buscar inscritos:', error);
+        console.error('Erro ao buscar inscritos:', error.message, error); // Loga a mensagem e o objeto completo
         return null;
     }
     return inscritos;
@@ -600,52 +602,270 @@ function atualizarIconesOrdenacao(headers, colunaAtiva, direcao) {
  * @param {Array} inscritos - A lista de objetos de inscritos.
  */
 function preencherMetricas(inscritos) {
-    const totalInscritosEl = document.getElementById('total-inscritos');
-    const totalMunicipiosEl = document.getElementById('total-municipios');
-
-    const totalInscritos = inscritos.length;
-
-    if (totalInscritosEl) {
-        totalInscritosEl.textContent = totalInscritos;
-    }
-
-    if (totalMunicipiosEl) {
-        const municipiosUnicos = new Set(inscritos.map(i => i.municipio).filter(Boolean));
-        totalMunicipiosEl.textContent = municipiosUnicos.size;
-    }
+    // Esta função agora pode ser usada para outras métricas estáticas no futuro.
+    // A métrica "Total de Inscritos" foi movida para o card interativo de "Participantes".
 }
 
 /**
- * Configura o card interativo de Adesão ao Certificado para alternar entre % e valor absoluto.
- * @param {Array} inscritos - A lista de objetos de inscritos ativos.
+ * Configura o card interativo de Empresas.
+ * @param {Array} inscritos - A lista de objetos de inscritos.
  */
-function configurarCardCertificadoInterativo(inscritos) {
-    const card = document.getElementById('card-adesao-certificado');
-    const valorEl = document.getElementById('card-certificado-valor');
+function configurarCardEmpresasInterativo(inscritos) {
+    const wrapper = document.getElementById('card-empresas-wrapper');
+    const cards = [
+        document.getElementById('card-empresas-total'),
+        document.getElementById('card-empresas-mais-inscritos'),
+        document.getElementById('card-empresas-menos-inscritos')
+    ];
+    const valores = [
+        document.getElementById('card-empresas-total-valor'),
+        document.getElementById('card-empresas-mais-inscritos-valor'),
+        document.getElementById('card-empresas-menos-inscritos-valor')
+    ];
+    const indicators = wrapper ? wrapper.querySelectorAll('.indicator-dot') : [];
 
-    if (!card || !valorEl) return;
+    if (!wrapper || cards.some(c => !c) || valores.some(v => !v) || indicators.length === 0) return;
+    
+    let isAnimating = false;
+    let estadoAtual = 0; // 0: Total, 1: Mais inscritos, 2: Menos inscritos
+    let autoRotateTimeout;
+    const progressBar = wrapper.querySelector('.card-progress-bar');
+    const autoRotateDelay = 10000;
 
-    let mostrandoPorcentagem = true;
+    const preencherDados = () => {
+        const empresasUnicas = new Set(inscritos.map(i => i.empresa).filter(Boolean));
+        valores[0].textContent = empresasUnicas.size;
 
-    const atualizarCard = () => {
-        const totalInscritos = inscritos.length;
-        const comCertificado = inscritos.filter(i => i.quer_certificado).length;
+        const contagemEmpresas = inscritos.reduce((acc, { empresa }) => {
+            if (empresa) acc[empresa] = (acc[empresa] || 0) + 1;
+            return acc;
+        }, {});
 
-        if (mostrandoPorcentagem) {
-            const taxa = totalInscritos > 0 ? (comCertificado / totalInscritos) * 100 : 0;
-            valorEl.textContent = `${taxa.toFixed(0)}%`;
-        } else {
-            valorEl.textContent = comCertificado;
-        }
+        const sortedEmpresas = Object.entries(contagemEmpresas).sort(([,a],[,b]) => b-a);
+
+        const maisInscritos = sortedEmpresas.length > 0 ? sortedEmpresas[0][0] : 'N/A';
+        valores[1].textContent = maisInscritos;
+
+        const menosInscritos = sortedEmpresas.length > 0 ? sortedEmpresas[sortedEmpresas.length - 1][0] : 'N/A';
+        valores[2].textContent = menosInscritos;
     };
 
-    card.addEventListener('click', () => {
-        mostrandoPorcentagem = !mostrandoPorcentagem;
-        atualizarCard();
-    });
+    const atualizarIndicadores = () => {
+        indicators.forEach((dot, index) => dot.classList.toggle('active', index === estadoAtual));
+    };
+
+    const resetProgressBar = () => {
+        progressBar.style.transition = 'width 0s';
+        progressBar.style.width = '0%';
+        void progressBar.offsetWidth;
+    };
+
+    const startProgressBar = () => {
+        progressBar.style.transition = `width ${autoRotateDelay / 1000}s linear`;
+        progressBar.style.width = '100%';
+    };
+
+    const avancarCard = () => {
+        if (isAnimating) return;
+        isAnimating = true;
+        clearTimeout(autoRotateTimeout);
+        resetProgressBar();
+
+        const cardAnterior = cards[estadoAtual];
+        const proximoCardVisivel = cards[(estadoAtual + 2) % cards.length];
+        estadoAtual = (estadoAtual + 1) % cards.length;
+
+        cardAnterior.classList.replace('is-front', 'is-hidden');
+        cards[estadoAtual].classList.replace('is-back', 'is-front');
+        proximoCardVisivel.classList.replace('is-hidden', 'is-back');
+
+        setTimeout(() => {
+            atualizarIndicadores();
+            startProgressBar();
+            autoRotateTimeout = setTimeout(avancarCard, autoRotateDelay);
+            isAnimating = false;
+        }, 500);
+    };
+
+    wrapper.addEventListener('click', avancarCard);
+    preencherDados();
+    atualizarIndicadores();
+    startProgressBar();
+    autoRotateTimeout = setTimeout(avancarCard, autoRotateDelay);
+}
+
+/**
+ * Configura o card interativo de Municípios.
+ * @param {Array} inscritos - A lista de objetos de inscritos.
+ */
+function configurarCardMunicipiosInterativo(inscritos) {
+    const wrapper = document.getElementById('card-municipios-wrapper');
+    const cards = [
+        document.getElementById('card-municipios-total'),
+        document.getElementById('card-municipios-mais-inscritos'),
+        document.getElementById('card-municipios-menos-inscritos')
+    ];
+    const valores = [
+        document.getElementById('card-municipios-total-valor'),
+        document.getElementById('card-municipios-mais-inscritos-valor'),
+        document.getElementById('card-municipios-menos-inscritos-valor')
+    ];
+    const indicators = wrapper ? wrapper.querySelectorAll('.indicator-dot') : [];
+
+    if (!wrapper || cards.some(c => !c) || valores.some(v => !v) || indicators.length === 0) return;
+    
+    let isAnimating = false;
+    let estadoAtual = 0; // 0: Total, 1: Mais inscritos, 2: Menos inscritos
+    let autoRotateTimeout;
+    const progressBar = wrapper.querySelector('.card-progress-bar');
+    const autoRotateDelay = 10000;
+
+    const preencherDados = () => {
+        const municipiosUnicos = new Set(inscritos.map(i => i.municipio).filter(Boolean));
+        valores[0].textContent = municipiosUnicos.size; // Total de Municípios Diferentes
+
+        const contagemMunicipios = inscritos.reduce((acc, { municipio }) => {
+            if (municipio) acc[municipio] = (acc[municipio] || 0) + 1;
+            return acc;
+        }, {});
+
+        const sortedMunicipios = Object.entries(contagemMunicipios).sort(([,a],[,b]) => b-a);
+
+        // Município com mais inscritos
+        const maisInscritos = sortedMunicipios.length > 0 ? sortedMunicipios[0][0] : 'N/A';
+        valores[1].textContent = maisInscritos;
+
+        // Município com menos inscritos
+        const menosInscritos = sortedMunicipios.length > 0 ? sortedMunicipios[sortedMunicipios.length - 1][0] : 'N/A';
+        valores[2].textContent = menosInscritos;
+    };
+
+    const atualizarIndicadores = () => {
+        indicators.forEach((dot, index) => {
+            dot.classList.toggle('active', index === estadoAtual);
+        });
+    };
+
+    const resetProgressBar = () => {
+        progressBar.style.transition = 'width 0s';
+        progressBar.style.width = '0%';
+        void progressBar.offsetWidth;
+    };
+
+    const startProgressBar = () => {
+        progressBar.style.transition = `width ${autoRotateDelay / 1000}s linear`;
+        progressBar.style.width = '100%';
+    };
+
+    const avancarCard = () => {
+        if (isAnimating) return;
+        isAnimating = true;
+        clearTimeout(autoRotateTimeout);
+        resetProgressBar();
+
+        const cardAnterior = cards[estadoAtual];
+        const proximoCardVisivel = cards[(estadoAtual + 2) % cards.length];
+        estadoAtual = (estadoAtual + 1) % cards.length;
+
+        cardAnterior.classList.replace('is-front', 'is-hidden');
+        cards[estadoAtual].classList.replace('is-back', 'is-front');
+        proximoCardVisivel.classList.replace('is-hidden', 'is-back');
+
+        setTimeout(() => {
+            atualizarIndicadores();
+            startProgressBar();
+            autoRotateTimeout = setTimeout(avancarCard, autoRotateDelay);
+            isAnimating = false;
+        }, 500);
+    };
+
+    wrapper.addEventListener('click', avancarCard);
+    preencherDados();
+    atualizarIndicadores();
+    startProgressBar();
+    autoRotateTimeout = setTimeout(avancarCard, autoRotateDelay);
+}
+
+function configurarCardCertificadoInterativo(inscritos) {
+    const wrapper = document.getElementById('card-adesao-wrapper');
+    const cards = [
+        document.getElementById('card-adesao-percent'),
+        document.getElementById('card-adesao-count'),
+        document.getElementById('card-adesao-receita')
+    ];
+    const valores = [
+        document.getElementById('card-certificado-percent-valor'),
+        document.getElementById('card-certificado-count-valor'),
+        document.getElementById('card-certificado-receita-valor')
+    ];
+    const indicators = wrapper ? wrapper.querySelectorAll('.indicator-dot') : [];
+
+    if (!wrapper || cards.some(c => !c) || valores.some(v => !v) || indicators.length === 0) return;
+
+    let isAnimating = false;
+    let estadoAtual = 0; // 0: Percentual, 1: Contagem, 2: Receita
+    let autoRotateTimeout; // Variável para controlar o setTimeout
+    const progressBar = wrapper.querySelector('.card-progress-bar');
+    const autoRotateDelay = 10000; // 10 segundos
+
+    // Função para preencher os dados nos dois cards
+    const preencherDados = () => {
+        const totalInscritos = inscritos.length;
+        const comCertificado = inscritos.filter(i => i.quer_certificado).length;
+        const taxa = totalInscritos > 0 ? (comCertificado / totalInscritos) * 100 : 0;
+        const receita = comCertificado * 20;
+
+        valores[0].textContent = `${taxa.toFixed(0)}%`;
+        valores[1].textContent = comCertificado;
+        valores[2].textContent = `R$ ${receita.toFixed(2).replace('.', ',')}`;
+    };
+
+    const atualizarIndicadores = () => {
+        indicators.forEach((dot, index) => dot.classList.toggle('active', index === estadoAtual));
+    };
+
+    const resetProgressBar = () => {
+        progressBar.style.transition = 'width 0s'; // Remove a transição para resetar instantaneamente
+        progressBar.style.width = '0%';
+        // Força o navegador a aplicar a mudança antes de reativar a transição
+        void progressBar.offsetWidth; 
+    };
+
+    const startProgressBar = () => {
+        progressBar.style.transition = `width ${autoRotateDelay / 1000}s linear`;
+        progressBar.style.width = '100%';
+    };
+
+    const avancarCard = () => {
+        if (isAnimating) return; // Impede cliques múltiplos durante a animação
+        isAnimating = true;
+        clearTimeout(autoRotateTimeout); // Cancela a rotação automática anterior
+        resetProgressBar();
+        
+        const cardAnterior = cards[estadoAtual];
+        const proximoCardVisivel = cards[(estadoAtual + 2) % cards.length];
+        estadoAtual = (estadoAtual + 1) % cards.length;
+
+        cardAnterior.classList.replace('is-front', 'is-hidden');
+        cards[estadoAtual].classList.replace('is-back', 'is-front');
+        proximoCardVisivel.classList.replace('is-hidden', 'is-back');
+
+        setTimeout(() => {
+            atualizarIndicadores();
+            startProgressBar(); // Inicia a barra de progresso no novo card
+            autoRotateTimeout = setTimeout(avancarCard, autoRotateDelay); // Agenda a próxima rotação
+            isAnimating = false;
+        }, 500); // Duração da transição no CSS
+    };
+
+    // Adiciona o listener de clique no wrapper
+    wrapper.addEventListener('click', avancarCard);
 
     // Inicializa o card com o primeiro estado
-    atualizarCard();
+    preencherDados();
+    atualizarIndicadores();
+    startProgressBar();
+    autoRotateTimeout = setTimeout(avancarCard, autoRotateDelay);
 }
 
 /**
@@ -653,52 +873,85 @@ function configurarCardCertificadoInterativo(inscritos) {
  * @param {Array} inscritos - A lista de objetos de inscritos.
  */
 function configurarCardParticipantesInterativo(inscritos) {
-    const card = document.getElementById('card-participantes-dia');
-    const tituloEl = document.getElementById('card-participantes-titulo');
-    const valorEl = document.getElementById('card-participantes-valor');
-    const iconEl = document.getElementById('card-participantes-icon');
-    if (!card || !tituloEl || !valorEl || !iconEl) return;
-    
-    const estados = [
-        {
-            titulo: 'Participantes Dia 13',
-            filtro: (i) => i.participa_dia_13,
-            icon: 'today', // Ícone para o dia 13
-            cardColor: 'bg-orange-500' // Cor principal do card
-        },
-        {
-            titulo: 'Participantes Dia 14',
-            filtro: (i) => i.participa_dia_14,
-            icon: 'event',
-            cardColor: 'bg-teal-500'
-        },
-        {
-            titulo: 'Participam de Ambos',
-            filtro: (i) => i.participa_dia_13 && i.participa_dia_14,
-            icon: 'calendar_month',
-            cardColor: 'bg-indigo-500'
-        }
+    const wrapper = document.getElementById('card-participantes-wrapper');
+    const cards = [
+        document.getElementById('card-participantes-total'),
+        document.getElementById('card-participantes-dia13'),
+        document.getElementById('card-participantes-dia14'),
+        document.getElementById('card-participantes-ambos')
     ];
+    const valores = [
+        document.getElementById('card-participantes-total-valor'),
+        document.getElementById('card-participantes-dia13-valor'),
+        document.getElementById('card-participantes-dia14-valor'),
+        document.getElementById('card-participantes-ambos-valor')
+    ];
+    const indicators = wrapper ? wrapper.querySelectorAll('.indicator-dot') : [];
 
-    let estadoAtual = 0;
+    if (!wrapper || cards.some(c => !c) || valores.some(v => !v) || indicators.length === 0) return;
+    
+    let isAnimating = false;
+    let estadoAtual = 0; // 0: Total, 1: Dia 13, 2: Dia 14, 3: Ambos
+    let autoRotateTimeout; // Variável para controlar o setTimeout
+    const progressBar = wrapper.querySelector('.card-progress-bar');
+    const autoRotateDelay = 10000; // 10 segundos
 
-    const atualizarCard = () => {
-        const estado = estados[estadoAtual];
-        const contagem = inscritos.filter(estado.filtro).length;
-
-        tituloEl.innerHTML = `${estado.titulo} <span class="material-symbols-outlined text-base ml-1 opacity-70">sync_alt</span>`;
-        valorEl.textContent = contagem; 
-        iconEl.textContent = estado.icon;
-
-        // Remove classes de cor antigas e adiciona as novas
-        card.className = `text-white p-6 rounded-lg shadow-lg flex items-center gap-5 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ${estado.cardColor}`;
+    // Função para preencher os dados nos dois cards
+    const preencherDados = () => {
+        valores[0].textContent = inscritos.length; // Total
+        valores[1].textContent = inscritos.filter(i => i.participa_dia_13).length; // Dia 13
+        valores[2].textContent = inscritos.filter(i => i.participa_dia_14).length; // Dia 14
+        valores[3].textContent = inscritos.filter(i => i.participa_dia_13 && i.participa_dia_14).length; // Ambos
     };
 
-    card.addEventListener('click', () => {
-        estadoAtual = (estadoAtual + 1) % estados.length;
-        atualizarCard();
-    });
-    atualizarCard();
+    const atualizarIndicadores = () => {
+        indicators.forEach((dot, index) => {
+            dot.classList.toggle('active', index === estadoAtual);
+        });
+    };
+
+    const resetProgressBar = () => {
+        progressBar.style.transition = 'width 0s';
+        progressBar.style.width = '0%';
+        void progressBar.offsetWidth;
+    };
+
+    const startProgressBar = () => {
+        progressBar.style.transition = `width ${autoRotateDelay / 1000}s linear`;
+        progressBar.style.width = '100%';
+    };
+
+    const avancarCard = () => {
+        if (isAnimating) return; // Impede cliques múltiplos durante a animação
+        isAnimating = true;
+        clearTimeout(autoRotateTimeout); // Cancela a rotação automática anterior
+        resetProgressBar();
+
+        const cardAnterior = cards[estadoAtual];
+        const proximoCardVisivel = cards[(estadoAtual + 2) % cards.length];
+
+        estadoAtual = (estadoAtual + 1) % cards.length;
+
+        cardAnterior.classList.replace('is-front', 'is-hidden');
+        cards[estadoAtual].classList.replace('is-back', 'is-front');
+        proximoCardVisivel.classList.replace('is-hidden', 'is-back');
+
+        setTimeout(() => {
+            atualizarIndicadores();
+            startProgressBar(); // Inicia a barra de progresso no novo card
+            autoRotateTimeout = setTimeout(avancarCard, autoRotateDelay); // Agenda a próxima rotação
+            isAnimating = false;
+        }, 500); // Duração da transição no CSS
+    };
+
+    // Adiciona o listener de clique no wrapper
+    wrapper.addEventListener('click', avancarCard);
+
+    // Inicializa os cards com os dados
+    preencherDados();
+    atualizarIndicadores();
+    startProgressBar();
+    autoRotateTimeout = setTimeout(avancarCard, autoRotateDelay);
 }
 
 /**
@@ -939,7 +1192,7 @@ function criarGraficos(inscritos) {
 }
 
 // Inicia a execução do script da página.
-document.addEventListener('DOMContentLoaded', inicializarPainelAdmin);
+document.addEventListener('DOMContentLoaded', inicializarPainelAdministrativo);
 
 /**
  * Configura o modal para adicionar um novo inscrito manualmente.

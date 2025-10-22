@@ -78,6 +78,78 @@
         #side-nav-right:hover .nav-link-text { opacity: 1; }
         #side-nav-right:hover .icon-menu { display: none; }
         #side-nav-right:hover .text-menu { display: block; }
+
+        /* --- Estilos para Animação de Pilha de Cartas --- */
+        .card-stack-wrapper {
+            position: relative;
+            min-height: 140px; /* Garante altura consistente */
+            cursor: pointer;
+        }
+        .stack-card {
+            position: absolute;
+            width: 100%; height: 100%; top: 0; left: 0;
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s ease;
+            /* Estilos base dos cards */
+            padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex; align-items: center; gap: 1.25rem; color: white;
+        }
+        /* Estado do card de trás (espiando) */
+        .stack-card.is-back {
+            transform: scale(0.95) translateY(15px) translateX(0) rotateZ(0);
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .stack-card.is-hidden {
+            /* O card mais ao fundo */
+            transform: scale(0.9) translateY(30px) translateX(0) rotateZ(0);
+            z-index: 0;
+            opacity: 1; /* Garante que ele fique visível */
+            filter: brightness(0.9); /* Escurece um pouco para dar profundidade */
+        }
+        /* Estado do card da frente */
+        .stack-card.is-front {
+            transform: scale(1) translateY(0) translateX(0) rotateZ(0);
+            z-index: 20;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        /* --- Estilos para os Indicadores de Slide nos Cards --- */
+        .card-indicators {
+            display: flex;
+            gap: 0.5rem; /* 8px */
+        }
+        .indicator-dot {
+            width: 0.5rem; /* 8px */
+            height: 0.5rem; /* 8px */
+            border-radius: 9999px;
+            background-color: rgba(255, 255, 255, 0.4);
+            transition: background-color 0.3s ease;
+        }
+        .indicator-dot.active {
+            background-color: white;
+        }
+
+        /* --- Estilos para a Barra de Progresso nos Cards --- */
+        .card-progress-bar-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: rgba(0, 0, 0, 0.15);
+            border-radius: 0 0 0.5rem 0.5rem; /* Match card border-radius */
+            overflow: hidden;
+            z-index: 25; /* Acima dos cards, mas abaixo dos indicadores */
+        }
+        .card-progress-bar {
+            height: 100%;
+            width: 0; /* Começa sem preenchimento */
+            background-color: rgba(255, 255, 255, 0.8);
+            transition: width 0.1s linear; /* Transição suave para o reset */
+        }
+        .is-front .card-progress-bar {
+            transition: width 10s linear; /* Animação de 10 segundos */
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -107,36 +179,153 @@
         <section>
             <h2 class="text-xl font-bold text-gray-700 mb-4">Resumo do Evento</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Card Total de Inscritos -->
-                <div class="bg-blue-600 text-white p-6 rounded-lg shadow-lg flex items-center gap-5">
-                    <span class="material-symbols-outlined text-5xl opacity-80">groups</span>
-                    <div>
-                        <p class="text-xl font-bold">Total de Inscritos</p>
-                        <p id="total-inscritos" class="text-2xl font-semibold opacity-90">0</p>
+                <!-- Card Interativo de Empresas -->
+                <div id="card-empresas-wrapper" class="card-stack-wrapper">
+                    <!-- Card Escondido (Empresa com Menos Inscritos) -->
+                    <div id="card-empresas-menos-inscritos" class="stack-card is-hidden bg-sky-800">
+                        <span class="material-symbols-outlined text-5xl opacity-80">trending_down</span>
+                        <div>
+                            <p class="text-xl font-bold">Empresa com menos inscritos</p>
+                            <p id="card-empresas-menos-inscritos-valor" class="text-2xl font-semibold opacity-90">N/A</p>
+                        </div>
+                    </div>
+                    <!-- Card de Trás (Empresa com Mais Inscritos) -->
+                    <div id="card-empresas-mais-inscritos" class="stack-card is-back bg-sky-700">
+                        <span class="material-symbols-outlined text-5xl opacity-80">leaderboard</span>
+                        <div>
+                            <p class="text-xl font-bold">Empresa com mais inscritos</p>
+                            <p id="card-empresas-mais-inscritos-valor" class="text-2xl font-semibold opacity-90">N/A</p>
+                        </div>
+                    </div>
+                    <!-- Card da Frente (Total de Empresas Diferentes) -->
+                    <div id="card-empresas-total" class="stack-card is-front bg-sky-600">
+                        <span class="material-symbols-outlined text-5xl opacity-80">business_center</span>
+                        <div>
+                            <p class="text-xl font-bold">Empresas Diferentes</p>
+                            <p id="card-empresas-total-valor" class="text-2xl font-semibold opacity-90">0</p>
+                        </div>
+                    </div>
+                    <div class="card-indicators absolute bottom-4 left-1/2 -translate-x-1/2 z-30">
+                        <span class="indicator-dot active"></span>
+                        <span class="indicator-dot"></span>
+                        <span class="indicator-dot"></span>
+                    </div>
+                    <div class="card-progress-bar-container">
+                        <div class="card-progress-bar"></div>
                     </div>
                 </div>
-                <!-- Card Municípios -->
-                <div class="bg-green-600 text-white p-6 rounded-lg shadow-lg flex items-center gap-5">
-                    <span class="material-symbols-outlined text-5xl opacity-80">location_city</span>
-                    <div>
-                        <p class="text-xl font-bold">Municípios Diferentes</p>
-                        <p id="total-municipios" class="text-2xl font-semibold opacity-90">0</p>
+                <!-- Card Interativo de Municípios -->
+                <div id="card-municipios-wrapper" class="card-stack-wrapper">
+                    <!-- Card Escondido (Município com Menos Inscritos) -->
+                    <div id="card-municipios-menos-inscritos" class="stack-card is-hidden bg-green-800">
+                        <span class="material-symbols-outlined text-5xl opacity-80">trending_down</span>
+                        <div>
+                            <p class="text-xl font-bold">Município com menos inscritos</p>
+                            <p id="card-municipios-menos-inscritos-valor" class="text-2xl font-semibold opacity-90">N/A</p>
+                        </div>
+                    </div>
+                    <!-- Card de Trás (Município com Mais Inscritos) -->
+                    <div id="card-municipios-mais-inscritos" class="stack-card is-back bg-green-700">
+                        <span class="material-symbols-outlined text-5xl opacity-80">leaderboard</span>
+                        <div>
+                            <p class="text-xl font-bold">Município com mais inscritos</p>
+                            <p id="card-municipios-mais-inscritos-valor" class="text-2xl font-semibold opacity-90">N/A</p>
+                        </div>
+                    </div>
+                    <!-- Card da Frente (Total de Municípios Diferentes) -->
+                    <div id="card-municipios-total" class="stack-card is-front bg-green-600">
+                        <span class="material-symbols-outlined text-5xl opacity-80">location_city</span>
+                        <div>
+                            <p class="text-xl font-bold">Municípios Diferentes</p>
+                            <p id="card-municipios-total-valor" class="text-2xl font-semibold opacity-90">0</p>
+                        </div>
+                    </div>
+                    <div class="card-indicators absolute bottom-4 left-1/2 -translate-x-1/2 z-30">
+                        <span class="indicator-dot active"></span>
+                        <span class="indicator-dot"></span>
+                        <span class="indicator-dot"></span>
+                    </div>
+                    <div class="card-progress-bar-container">
+                        <div class="card-progress-bar"></div>
                     </div>
                 </div>
-                <!-- Card Adesão ao Certificado -->
-                <div id="card-adesao-certificado" class="bg-yellow-500 text-white p-6 rounded-lg shadow-lg flex items-center gap-5 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                    <span class="material-symbols-outlined text-5xl opacity-80">workspace_premium</span>
-                    <div>
-                        <p id="card-certificado-titulo" class="text-xl font-bold flex items-center">Adesão ao Certificado <span class="material-symbols-outlined text-base ml-1 opacity-70">sync_alt</span></p>
-                        <p id="card-certificado-valor" class="text-2xl font-semibold opacity-90">0%</p>
+                <!-- Card Adesão ao Certificado (COM ANIMAÇÃO DE PILHA) -->
+                <div id="card-adesao-wrapper" class="card-stack-wrapper">
+                    <!-- Card Escondido (Receita Gerada) -->
+                    <div id="card-adesao-receita" class="stack-card is-hidden bg-amber-600">
+                        <span class="material-symbols-outlined text-5xl opacity-80">monetization_on</span>
+                        <div>
+                            <p class="text-xl font-bold">Receita (estimativa)</p>
+                            <p id="card-certificado-receita-valor" class="text-2xl font-semibold opacity-90">R$ 0,00</p>
+                        </div>
+                    </div>
+                    <!-- Card de Trás (Contagem) -->
+                    <div id="card-adesao-count" class="stack-card is-back bg-amber-500">
+                        <span class="material-symbols-outlined text-5xl opacity-80">workspace_premium</span>
+                        <div>
+                            <p class="text-xl font-bold">Adesão ao Certificado</p>
+                            <p id="card-certificado-count-valor" class="text-2xl font-semibold opacity-90">0</p>
+                        </div>
+                    </div>
+                    <!-- Card da Frente (Percentual) -->
+                    <div id="card-adesao-percent" class="stack-card is-front bg-yellow-500">
+                        <span class="material-symbols-outlined text-5xl opacity-80">workspace_premium</span>
+                        <div>
+                            <p class="text-xl font-bold">Adesão ao Certificado</p>
+                            <p id="card-certificado-percent-valor" class="text-2xl font-semibold opacity-90">0%</p>
+                        </div>
+                    </div>
+                    <div class="card-indicators absolute bottom-4 left-1/2 -translate-x-1/2 z-30">
+                        <span class="indicator-dot active"></span>
+                        <span class="indicator-dot"></span>
+                        <span class="indicator-dot"></span>
+                    </div>
+                    <div class="card-progress-bar-container">
+                        <div class="card-progress-bar"></div>
                     </div>
                 </div>
                 <!-- Card Interativo de Participantes por Dia -->
-                <div id="card-participantes-dia" class="text-white p-6 rounded-lg shadow-lg flex items-center gap-5 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                    <span id="card-participantes-icon" class="material-symbols-outlined text-5xl opacity-80 transition-transform duration-300">today</span>
-                    <div>
-                        <p id="card-participantes-titulo" class="text-xl font-bold flex items-center">Participantes Dia 13 <span class="material-symbols-outlined text-base ml-1 opacity-70">sync_alt</span></p>
-                        <p id="card-participantes-valor" class="text-2xl font-semibold opacity-90">0</p>
+                <div id="card-participantes-wrapper" class="card-stack-wrapper">
+                    <!-- Card Escondido 3 (Ambos os Dias) - Tom mais escuro de azul -->
+                    <div id="card-participantes-ambos" class="stack-card is-hidden bg-blue-900">
+                        <span class="material-symbols-outlined text-5xl opacity-80">calendar_month</span>
+                        <div>
+                            <p class="text-xl font-bold">Participam de Ambos</p>
+                            <p id="card-participantes-ambos-valor" class="text-2xl font-semibold opacity-90">0</p>
+                        </div>
+                    </div>
+                    <!-- Card Escondido 2 (Participantes Dia 14) - Tom escuro de azul -->
+                    <div id="card-participantes-dia14" class="stack-card is-hidden bg-blue-800">
+                        <span class="material-symbols-outlined text-5xl opacity-80">event</span>
+                        <div>
+                            <p class="text-xl font-bold">Participantes Dia 14</p>
+                            <p id="card-participantes-dia14-valor" class="text-2xl font-semibold opacity-90">0</p>
+                        </div>
+                    </div>
+                    <!-- Card de Trás (Participantes Dia 13) - Tom médio de azul -->
+                    <div id="card-participantes-dia13" class="stack-card is-back bg-blue-700">
+                        <span class="material-symbols-outlined text-5xl opacity-80">today</span>
+                        <div>
+                            <p class="text-xl font-bold">Participantes Dia 13</p>
+                            <p id="card-participantes-dia13-valor" class="text-2xl font-semibold opacity-90">0</p>
+                        </div>
+                    </div>
+                    <!-- Card da Frente (Total de Participantes) -->
+                    <div id="card-participantes-total" class="stack-card is-front bg-blue-600">
+                        <span class="material-symbols-outlined text-5xl opacity-80">groups</span>
+                        <div>
+                            <p class="text-xl font-bold">Total de Participantes</p>
+                            <p id="card-participantes-total-valor" class="text-2xl font-semibold opacity-90">0</p>
+                        </div>
+                    </div>
+                    <div class="card-indicators absolute bottom-4 left-1/2 -translate-x-1/2 z-30">
+                        <span class="indicator-dot active"></span>
+                        <span class="indicator-dot"></span>
+                        <span class="indicator-dot"></span>
+                        <span class="indicator-dot"></span>
+                    </div>
+                    <div class="card-progress-bar-container">
+                        <div class="card-progress-bar"></div>
                     </div>
                 </div>
             </div>

@@ -133,54 +133,9 @@ Para rodar este projeto localmente, você precisará configurar o Supabase.
 
 ## 🚀 Publicação (Deploy)
 
-O site é estático e pode ser publicado em qualquer serviço de hospedagem que suporte arquivos HTML, CSS e JS.
+O site é estático e pode ser publicado em qualquer serviço de hospedagem que suporte arquivos HTML, CSS e JS, como Netlify, Vercel ou GitHub Pages.
 
-- **Hospedagem Tradicional (KingHost):** Envie todos os arquivos e pastas para o diretório `public_html` do seu servidor via FTP ou Gerenciador de Arquivos.
-
-- **Hospedagem Moderna (GitHub Pages, Netlify):** Conecte seu repositório GitHub à plataforma para ter deploys automáticos a cada `git push`.
-
-### Automatizando o Deploy para a KingHost com GitHub Actions
-
-Para evitar o envio manual de arquivos a cada atualização, você pode configurar um fluxo de trabalho (workflow) que faz o deploy automático do seu repositório GitHub para a KingHost via FTP.
-
-1.  **Obtenha suas credenciais de FTP** no painel da KingHost (servidor, usuário e senha).
-
-2.  **Adicione as credenciais como "Secrets" no GitHub:**
-    - No seu repositório, vá em `Settings` > `Secrets and variables` > `Actions`.
-    - Crie três novos "repository secrets":
-      - `FTP_SERVER`: com o endereço do seu servidor FTP.
-      - `FTP_USERNAME`: com seu nome de usuário FTP.
-      - `FTP_PASSWORD`: com sua senha de FTP.
-
-3.  **Crie o arquivo de workflow:**
-    - Na raiz do seu projeto, crie a pasta `.github/workflows/`.
-    - Dentro dela, crie um arquivo chamado `deploy.yml` com o seguinte conteúdo:
-
-    ```yaml
-    name: Deploy to KingHost via FTP
-
-    on:
-      push:
-        branches:
-          - main # Altere para 'master' se for o nome da sua branch principal
-
-    jobs:
-      deploy:
-        name: Deploy Job
-        runs-on: ubuntu-latest
-        steps:
-        - name: Get latest code
-          uses: actions/checkout@v3
-        - name: Sync files to KingHost
-          uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-          with:
-            server: ${{ secrets.FTP_SERVER }}
-            username: ${{ secrets.FTP_USERNAME }}
-            password: ${{ secrets.FTP_PASSWORD }}
-            server-dir: public_html/ # Pasta de destino na KingHost
-    ```
-
-4.  Envie essas alterações para o GitHub. A partir de agora, todo `git push` na branch `main` irá atualizar seu site automaticamente.
+A forma mais recomendada é conectar seu repositório do GitHub a uma dessas plataformas para ter deploys automáticos a cada `git push` na sua branch principal.
 
 ---
 *Documentação gerada por Gemini Code Assist.*
