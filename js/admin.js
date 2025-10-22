@@ -1194,8 +1194,75 @@ function gerarChecklist(linhasTabela) {
  * @param {Array} inscritos - A lista de objetos de inscritos.
  */
 function criarGraficos(inscritos) {
-    // 1. Gráfico de Participação por Dia
-    const ctxDias = document.getElementById('grafico-dias');
+    // Destrói gráficos antigos para evitar sobreposição de tooltips e dados
+    ['grafico-top-municipios', 'grafico-top-empresas', 'grafico-distribuicao-dias'].forEach(id => {
+        const chartInstance = Chart.getChart(id);
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+    });
+
+    const criarGraficoBarras = (canvasId, dados, titulo, corBarra) => {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const top5 = Object.entries(dados).sort(([,a],[,b]) => b-a).slice(0, 5);
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: top5.map(([label]) => formatarParaTitulo(label)),
+                datasets: [{
+                    label: 'Nº de Inscritos',
+                    data: top5.map(([, count]) => count),
+                    backgroundColor: corBarra,
+                    borderRadius: 4,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: { display: false },
+                        ticks: { precision: 0 }
+                    },
+                    y: {
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: titulo,
+                        font: { size: 16, weight: 'bold' },
+                        color: '#475569'
+                    }
+                }
+            }
+        });
+    };
+
+    // 1. Gráfico de Top 5 Municípios
+    const contagemMunicipios = inscritos.reduce((acc, { municipio }) => {
+        if (municipio) acc[municipio] = (acc[municipio] || 0) + 1;
+        return acc;
+    }, {});
+    criarGraficoBarras('grafico-top-municipios', contagemMunicipios, 'Top 5 Municípios', '#22c55e'); // green-500
+
+    // 2. Gráfico de Top 5 Empresas
+    const contagemEmpresas = inscritos.reduce((acc, { empresa }) => {
+        if (empresa) acc[empresa] = (acc[empresa] || 0) + 1;
+        return acc;
+    }, {});
+    criarGraficoBarras('grafico-top-empresas', contagemEmpresas, 'Top 5 Empresas', '#3b82f6'); // blue-500
+
+    // 3. Gráfico de Distribuição por Dia
+    const ctxDias = document.getElementById('grafico-distribuicao-dias');
     if (ctxDias) {
         const contagemDias = inscritos.reduce((acc, inscrito) => {
             if (inscrito.participa_dia_13 && inscrito.participa_dia_14) acc.ambos++;
@@ -1203,44 +1270,40 @@ function criarGraficos(inscritos) {
             else if (inscrito.participa_dia_14) acc.dia14++;
             return acc;
         }, { dia13: 0, dia14: 0, ambos: 0 });
-
+        
         new Chart(ctxDias, {
             type: 'doughnut',
             data: {
                 labels: ['Apenas Dia 13', 'Apenas Dia 14', 'Ambos os Dias'],
                 datasets: [{
-                    label: 'Participantes',
                     data: [contagemDias.dia13, contagemDias.dia14, contagemDias.ambos],
-                    backgroundColor: ['#3B82F6', '#10B981', '#F59E0B'],
+                    backgroundColor: ['#8b5cf6', '#ef4444', '#f97316'], // purple, red, orange
+                    borderColor: '#f3f4f6', // Cor de fundo do body
+                    borderWidth: 4,
+                    hoverOffset: 8
                 }]
             },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
-    }
-
-    // 2. Gráfico de Top 5 Municípios
-    const ctxMunicipios = document.getElementById('grafico-municipios');
-    if (ctxMunicipios) {
-        const contagemMunicipios = inscritos.reduce((acc, { municipio }) => {
-            if (municipio) {
-                acc[municipio] = (acc[municipio] || 0) + 1;
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            font: { size: 12 }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Distribuição por Dia',
+                        font: { size: 16, weight: 'bold' },
+                        color: '#475569',
+                        padding: { bottom: 10 }
+                    }
+                }
             }
-            return acc;
-        }, {});
-
-        const top5 = Object.entries(contagemMunicipios).sort(([,a],[,b]) => b-a).slice(0, 5);
-
-        new Chart(ctxMunicipios, {
-            type: 'bar',
-            data: {
-                labels: top5.map(([municipio]) => municipio),
-                datasets: [{
-                    label: 'Nº de Inscritos',
-                    data: top5.map(([, count]) => count),
-                    backgroundColor: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'],
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
         });
     }
 }

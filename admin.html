@@ -353,19 +353,17 @@
         </section>
 
         <!-- Seção de Gráficos -->
-        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Gráfico de Participação por Dia -->
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h2 class="text-xl font-bold text-[#062E51] mb-4">Participação por Dia</h2>
-                <div class="h-64 flex items-center justify-center">
-                    <canvas id="grafico-dias"></canvas>
+        <section>
+            <h2 class="text-xl font-bold text-gray-700 mb-4">Análise Detalhada</h2>
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 items-end">
+                <!-- Gráficos de Barras (Municípios e Empresas) -->
+                <div class="xl:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="h-80"><canvas id="grafico-top-municipios"></canvas></div>
+                    <div class="h-80"><canvas id="grafico-top-empresas"></canvas></div>
                 </div>
-            </div>
-            <!-- Gráfico de Top 5 Municípios -->
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h2 class="text-xl font-bold text-[#062E51] mb-4">Top 5 Municípios por Inscrição</h2>
-                <div class="h-64 flex items-center justify-center">
-                    <canvas id="grafico-municipios"></canvas>
+                <!-- Gráfico de Rosca (Dias) -->
+                <div class="h-80 flex justify-center">
+                    <canvas id="grafico-distribuicao-dias"></canvas>
                 </div>
             </div>
         </section>
