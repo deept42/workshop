@@ -1679,6 +1679,7 @@ function configurarModalAdicionarInscrito(callbackSucesso) {
     const form = document.getElementById('add-inscrito-form');
     const closeBtn = document.getElementById('add-modal-close-btn');
     const cancelBtn = document.getElementById('add-modal-cancel-btn');
+    const tituloModal = modal.querySelector('h3');
 
     // Lógica para o botão de copiar link (já em português)
     const copyBtn = document.getElementById('copy-link-btn'); 
@@ -1702,10 +1703,16 @@ function configurarModalAdicionarInscrito(callbackSucesso) {
 
     if (!openBtn || !modal || !form || !closeBtn || !cancelBtn) return; // Verifica se os elementos existem
 
-    const exibirModal = () => modal.classList.replace('hidden', 'flex'); // Função para exibir o modal
     const esconderModal = () => modal.classList.replace('flex', 'hidden'); // Função para esconder o modal
 
-    openBtn.addEventListener('click', exibirModal);
+    openBtn.addEventListener('click', () => {
+        // Garante que o formulário esteja limpo e o título correto ao abrir
+        form.reset();
+        if (tituloModal) tituloModal.textContent = 'Adicionar Novo Inscrito';
+        
+        modal.classList.replace('hidden', 'flex');
+    });
+
     closeBtn.addEventListener('click', esconderModal);
     cancelBtn.addEventListener('click', esconderModal);
 
