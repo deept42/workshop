@@ -204,7 +204,18 @@ function renderizarTabela(inscritos, naLixeira = false) {
     }
 
     const linhasHtml = inscritos.map(inscrito => {
-        const dias = `${inscrito.participa_dia_13 ? '13' : ''}${inscrito.participa_dia_13 && inscrito.participa_dia_14 ? ', ' : ''}${inscrito.participa_dia_14 ? '14' : ''}`;
+        // Cria os marcadores coloridos para os dias de participação
+        let diasHtml = '';
+        if (inscrito.participa_dia_13 && inscrito.participa_dia_14) {
+            diasHtml = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-500 text-white">Ambos</span>`;
+        } else if (inscrito.participa_dia_13) {
+            diasHtml = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-500 text-white">Dia 13</span>`;
+        } else if (inscrito.participa_dia_14) {
+            diasHtml = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-500 text-white">Dia 14</span>`;
+        } else {
+            diasHtml = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-400 text-white">Nenhum</span>`;
+        }
+
         const botaoAcao = naLixeira
             ? `<div class="flex gap-2">
                    <button class="btn-restaurar text-green-600 hover:text-green-800 transition-colors" data-id="${inscrito.id}" title="Restaurar inscrito">
@@ -234,7 +245,7 @@ function renderizarTabela(inscritos, naLixeira = false) {
                 <td class="whitespace-nowrap">${inscrito.telefone}</td>
                 <td class="whitespace-nowrap">${formatarParaTitulo(inscrito.empresa)}</td>
                 <td class="whitespace-nowrap">${formatarParaTitulo(inscrito.municipio)}</td>
-                <td class="whitespace-nowrap">${dias}</td>
+                <td class="whitespace-nowrap">${diasHtml}</td>
                 <td class="whitespace-nowrap text-sm text-gray-600">${dataInscricao}</td>
                 <td class="whitespace-nowrap">
                     ${botaoAcao}
