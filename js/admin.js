@@ -560,13 +560,20 @@ function configurarSelecaoEmMassa(naLixeira = false) {
 
     // Adiciona o evento ao novo checkbox
     newSelectAllCheckbox.addEventListener('change', () => {
+        // Se o checkbox estiver no estado indeterminado, o primeiro clique deve selecionar todos.
+        // Caso contrário, ele alterna normalmente.
+        const deveSelecionarTodos = newSelectAllCheckbox.indeterminate || newSelectAllCheckbox.checked;
+
         const currentRowCheckboxes = document.querySelectorAll('.row-checkbox');
         currentRowCheckboxes.forEach(checkbox => {
              // Seleciona apenas as linhas visíveis
              if (checkbox.closest('tr').style.display !== 'none') {
-                checkbox.checked = newSelectAllCheckbox.checked;
+                checkbox.checked = deveSelecionarTodos;
             }
         });
+        // Garante que o estado visual do checkbox principal seja atualizado corretamente após a ação.
+        newSelectAllCheckbox.checked = deveSelecionarTodos;
+        newSelectAllCheckbox.indeterminate = false;
         atualizarBarraDeAcoes(); // Atualiza a barra após a ação
     });
 
@@ -1657,8 +1664,8 @@ function configurarModalAdicionarInscrito(callbackSucesso) {
         };
 
         // Validação simples
-        if (!novoInscrito.nome_completo || !novoInscrito.email || !novoInscrito.empresa || !novoInscrito.municipio) {
-            mostrarNotificacao('Por favor, preencha todos os campos obrigatórios (*).', 'aviso');
+        if (!novoInscrito.nome_completo || !novoInscrito.email || !novoInscrito.empresa || !novoInscrito.municipio || !novoInscrito.telefone || (!novoInscrito.participa_dia_13 && !novoInscrito.participa_dia_14)) {
+            mostrarNotificacao('Por favor, preencha todos os campos, incluindo o telefone e pelo menos um dia de participação.', 'aviso');
             submitButton.disabled = false;
             submitButton.textContent = 'Salvar Inscrito';
             return;
