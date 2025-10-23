@@ -1914,18 +1914,18 @@ function configurarTutorialGuiado() {
     if (!startBtn || !overlay || !highlightBox || !tutorialBox) return;
 
     const passos = [
-        { element: '#summary-section', title: 'Resumo Geral', text: 'Aqui você tem uma visão rápida das métricas mais importantes do evento, como total de inscritos, municípios e adesão ao certificado. Clique nos cards para ver mais detalhes.' },
-        { element: '#toggle-charts-btn', title: 'Gráficos Detalhados', text: 'Clique aqui para expandir ou ocultar os gráficos que mostram a distribuição de inscritos por dia, município e empresa.' },        
-        { element: '#filtro-busca', title: 'Busca e Filtro', text: 'Use este campo para encontrar rapidamente um inscrito. Você pode escolher em qual coluna buscar (nome, e-mail, etc.) para refinar sua pesquisa.' },
-        { element: '#add-inscrito-btn', title: 'Adicionar Inscrito', text: 'Use este botão para abrir um formulário e cadastrar um novo participante manualmente. Ideal para inscrições feitas no local ou por telefone.' },
-        { element: '#export-csv-btn', title: 'Exportar para CSV', text: 'Gera um arquivo CSV (compatível com Excel e Planilhas Google) com os dados de todos os inscritos visíveis na tabela.' },
-        { element: '#export-pdf-btn', title: 'Exportar para PDF', text: 'Cria um relatório em PDF com a lista de inscritos, formatado para visualização e impressão profissional.' },
-        { element: '#export-checklist-btn', title: 'Exportar Checklist', text: 'Gera uma lista de chamada em PDF, pronta para ser impressa e usada no credenciamento do evento.' },
-        { element: '#delete-duplicates-btn', title: 'Excluir Duplicados', text: 'Esta função inteligente verifica todos os inscritos com o mesmo nome completo e move os registros mais antigos para a lixeira, mantendo apenas o mais recente.' },
-        { element: '#view-toggle-switch', title: 'Ativos e Lixeira', text: 'Alterne entre a visualização de inscritos ativos e os que foram movidos para a lixeira. O número na lixeira indica quantos itens foram removidos.' },
-        { element: '.admin-table', title: 'Tabela de Inscritos', text: 'Esta é a lista principal de inscritos. Você pode ordenar as colunas clicando nos títulos e realizar ações individuais como editar, duplicar ou mover para a lixeira.' },
-        { element: '#select-all-checkbox', title: 'Ações em Massa', text: 'Use este checkbox para selecionar todos os inscritos visíveis na tabela e realizar ações em massa, como exportar ou mover para a lixeira.' },
-        { element: '#fab-container', title: 'Menu de Ajuda', text: 'Este é o menu que você acabou de usar! Por aqui, você pode iniciar este tutorial novamente ou entrar em contato com o suporte técnico via WhatsApp.' }
+        { element: '#summary-section', title: 'Resumo Geral', text: 'Aqui você tem uma visão rápida das métricas mais importantes do evento. Clique nos cards para ver mais detalhes.', proTip: 'Os cards são interativos! Clique neles para alternar entre diferentes métricas, como o total de empresas e o município com mais inscritos.' },
+        { element: '#toggle-charts-btn', title: 'Gráficos Detalhados', text: 'Clique aqui para expandir ou ocultar os gráficos que mostram a distribuição de inscritos por dia, município e empresa.', proTip: 'Use os gráficos para identificar tendências visuais rapidamente, como a adesão por empresa ou a proporção de participantes por dia.' },
+        { element: '#filtro-busca', title: 'Busca e Filtro', text: 'Use este campo para encontrar rapidamente um inscrito. Você pode escolher em qual coluna buscar para refinar sua pesquisa.', proTip: 'Para buscar por um dia específico, selecione a coluna "Dia" e digite "13" ou "14". Para buscar por data, use o formato DD/MM/AAAA.' },
+        { element: '#add-inscrito-btn', title: 'Adicionar Inscrito', text: 'Use este botão para cadastrar um novo participante manualmente. Ideal para inscrições feitas no local ou por telefone.', proTip: 'Utilize o botão "Salvar e Novo" para cadastrar rapidamente várias pessoas da mesma empresa, mantendo os dados em comum.' },
+        { element: '#export-csv-btn', title: 'Exportar para CSV', text: 'Gera um arquivo CSV (compatível com Excel) com os dados dos inscritos visíveis na tabela.', proTip: 'O CSV é ideal para análises de dados mais profundas ou para importar a lista em outras ferramentas de gerenciamento.' },
+        { element: '#export-pdf-btn', title: 'Exportar Relatório PDF', text: 'Cria um relatório completo em PDF com todos os dados dos inscritos, ideal para arquivamento e análise.', proTip: 'Este PDF é perfeito para gerar um documento oficial do evento, com uma formatação profissional e todos os detalhes dos participantes.' },
+        { element: '#export-checklist-btn', title: 'Exportar Checklist de Presença', text: 'Gera uma lista de chamada simplificada em PDF, pronta para ser impressa e usada no credenciamento do evento.', proTip: 'No dia do evento, imprima uma lista para cada dia. Use o filtro de "Dias" antes de exportar para gerar uma checklist específica para o Dia 13 e outra para o Dia 14.' },
+        { element: '#delete-duplicates-btn', title: 'Excluir Duplicados', text: 'Esta função inteligente verifica todos os inscritos com o mesmo nome completo e move os registros mais antigos para a lixeira.', proTip: 'Use esta função após importar ou adicionar muitos inscritos para garantir que sua lista esteja limpa e sem entradas repetidas.' },
+        { element: '#view-toggle-switch', title: 'Ativos e Lixeira', text: 'Alterne entre a visualização de inscritos ativos e os que foram movidos para a lixeira. O número na lixeira indica quantos itens foram removidos.', proTip: 'A lixeira é uma camada de segurança. Itens aqui podem ser restaurados ou excluídos permanentemente, evitando perdas acidentais.' },
+        { element: '.admin-table', title: 'Tabela de Inscritos', text: 'Esta é a lista principal de inscritos. Você pode ordenar as colunas clicando nos títulos e realizar ações individuais.', proTip: 'Clique no cabeçalho de uma coluna (como "Nome Completo" ou "Data Inscrição") para ordenar a lista em ordem crescente ou decrescente.' },
+        { element: '#select-all-checkbox', title: 'Ações em Massa', text: 'Use este checkbox para selecionar todos os inscritos visíveis e realizar ações em massa, como exportar ou mover para a lixeira.', proTip: 'Combine esta função com o filtro. Por exemplo, filtre por um município e depois use "Selecionar Tudo" para exportar apenas os inscritos daquela cidade.' },
+        { element: '#fab-container', title: 'Menu de Ajuda', text: 'Este é o menu que você acabou de usar! Por aqui, você pode iniciar este tutorial novamente ou entrar em contato com o suporte técnico.', proTip: 'Se encontrar qualquer comportamento inesperado (um "bug"), use o botão de WhatsApp para reportar diretamente ao desenvolvedor.' }
     ];
 
     let passoAtual = 0;
@@ -1953,9 +1953,17 @@ function configurarTutorialGuiado() {
         highlightBox.style.left = `${rect.left - 8 + window.scrollX}px`;
 
         // Cria e posiciona a caixa de texto
+        const proTipHtml = passo.proTip 
+            ? `<div class="mt-4 pt-3 border-t border-gray-200">
+                   <p class="text-xs font-bold text-amber-600 uppercase mb-1">Dica do Desenvolvedor</p>
+                   <p class="text-xs text-gray-600">${passo.proTip}</p>
+               </div>`
+            : '';
+
         tutorialBox.innerHTML = `
             <h4 class="font-bold text-lg text-[#062E51] mb-2">${passo.title}</h4>
-            <p class="text-gray-700 text-sm mb-4">${passo.text}</p>
+            <p class="text-gray-700 text-sm">${passo.text}</p>
+            ${proTipHtml}
             <div class="flex justify-between items-center">
                 <span class="text-xs font-semibold text-gray-500">${index + 1} / ${passos.length}</span>
                 <div>
