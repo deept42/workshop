@@ -89,12 +89,17 @@ body {
     height: 100%;
 }
 
-/* Estilo para o container do vídeo na seção "Sobre" */
-#planning-video-player {
-    aspect-ratio: 16 / 9; /* Garante a proporção correta do vídeo */
-    overflow: hidden;
-    border-radius: 0.5rem; /* 8px */
-    position: relative; /* Necessário para o iframe absoluto */
+/* Estilos para o elemento de vídeo de fundo */
+.hero-video-element {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Garante que o vídeo cubra a área sem distorcer */
+    /* Aumenta a escala do vídeo em 10% para esconder a marca d'água nas bordas */
+    transform: translate(-50%, -50%) scale(1.2); /* Aumentado para 1.2 para cobrir a marca d'água */
+    z-index: 0;
 }
 
 /* Fundos para as outras seções com sobreposição para legibilidade */
@@ -978,8 +983,7 @@ body {
 
 /* --- Animação da Tela de Login --- */
 #login-admin {
-    overflow-x: hidden; /* Impede barras de rolagem durante a animação */
-    position: relative; /* Necessário para o posicionamento absoluto do botão 'Voltar' */
+    overflow-x: hidden; /* Impede barras de rolagem durante a animação */    
 }
 
 .login-pane-left,

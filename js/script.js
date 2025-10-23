@@ -7,7 +7,7 @@ import { configurarControlesAcessibilidade } from './acessibilidade.js';
 import { atualizarLinkNavegacaoAtivo, configurarRecalculoIndicadorAoRedimensionar } from './animacoes.js';
 import { configurarValidacaoFormulario, configurarAutocompletar, configurarMascaraTelefone, configurarAutocompletarComDadosSalvos } from './formulario.js';
 import { configurarRolagemSuave, configurarNavegacaoMouseMeio, configurarMenuMobile, configurarBarraProgressoRolagem, configurarBotaoLogout } from './navegacao.js';
-import { configurarContagemRegressiva, configurarZoomImagem } from './ui.js';
+import { configurarContagemRegressiva, configurarZoomImagem, configurarPlayerCustomizado } from './ui.js';
 import { configurarLoginAdmin, fazerLogout } from './auth.js';
 import { configurarPlayersYoutube } from './video.js';
 import './notificacoes.js'; // Importa para registrar a função globalmente, se necessário
@@ -130,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Componentes de UI
         configurarContagemRegressiva();
         configurarZoomImagem();
+        configurarPlayerCustomizado();
         configurarPlayersYoutube();
         configurarLoginAdmin();
         configurarBotaoLogout(fazerLogout);

@@ -11,9 +11,12 @@ export function configurarRolagemSuave() {
 
     linksAncora.forEach(link => {
         link.addEventListener('click', function(evento) {
-            evento.preventDefault();
+            const href = this.getAttribute('href');
             // Ignora links que são apenas âncoras vazias (usados em botões de acessibilidade, etc.)
-            if (this.getAttribute('href') === '#') return;
+            // ou que não têm um alvo válido no documento.
+            if (href === '#' || !document.querySelector(href)) return;
+
+            evento.preventDefault();
 
             const idAlvo = this.getAttribute('href');
             const painelAlvo = document.querySelector(idAlvo);

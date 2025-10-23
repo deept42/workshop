@@ -24,35 +24,5 @@ export function configurarPlayersYoutube() {
             });
         };
 
-        // Player para o vídeo de fundo da seção de início.
-        const playerFundo = criarPlayer('youtube-player', '9lJSGvqRjUc', {
-            autoplay: 1,
-            start: 50,
-            end: 112
-        });
-        if (playerFundo) {
-            playerFundo.addEventListener('onReady', (evento) => evento.target.playVideo());
-        }
-
-        // Player para o vídeo da seção "Sobre".
-        const playerSobre = criarPlayer('planning-video-player', 'IhK0ju7oE_U', {
-            autoplay: 0, // Não inicia automaticamente.
-            mute: 0,     // Inicia com som.
-            rel: 0       // Não mostra vídeos relacionados no final.
-        });
-
-        const botaoPlayCustom = document.getElementById('custom-play-button');
-
-        if (playerSobre && botaoPlayCustom) {
-            botaoPlayCustom.addEventListener('click', () => {
-                playerSobre.playVideo();
-            });
-
-            playerSobre.addEventListener('onStateChange', (evento) => {
-                // Esconde o botão de play quando o vídeo está tocando.
-                const estaTocando = evento.data === YT.PlayerState.PLAYING;
-                botaoPlayCustom.classList.toggle('hidden', estaTocando);
-            });
-        }
     };
 }

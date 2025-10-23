@@ -36,7 +36,10 @@
         <section id="inicio" class="folder-panel text-white">
             <div class="video-background">
                 <div class="video-overlay"></div>
-                <div id="youtube-player"></div>
+                <video autoplay muted loop playsinline id="hero-video" class="hero-video-element">
+                    <source src="https://raw.githubusercontent.com/deept42/workshop/main/hero_KAVAkneR.mp4" type="video/mp4">
+                    Seu navegador não suporta o elemento de vídeo.
+                </video>
             </div>
             <div class="panel-content text-center">
                 <div class="hero-content relative">
@@ -74,12 +77,17 @@
                 <div class="w-full md:w-4/5 lg:w-3/4 mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12 bg-white/90 md:bg-transparent p-6 md:p-0 rounded-lg md:rounded-none shadow-lg md:shadow-none">
                     <!-- Coluna da Esquerda (Vídeo) - ocupa 50% do container pai -->
                     <div class="w-full md:w-1/2 flex justify-center">
-                        <div id="planning-video-player" class="animate-on-scroll w-full shadow-xl" style="--animation-delay: 0s;">
-                        <!-- O vídeo será injetado aqui, e o botão de play ficará sobre ele -->
-                        <button id="custom-play-button" aria-label="Tocar vídeo" class="text-white/80 hover:text-white transition-colors">
-                            <span class="material-symbols-outlined text-9xl">play_circle</span>
-                        </button>
-                    </div>
+                        <div id="planning-video-container" class="animate-on-scroll w-full shadow-xl rounded-lg overflow-hidden relative" style="--animation-delay: 0s;">                            
+                            <video id="sobre-video" class="w-full h-full object-cover" preload="metadata">
+                                <source src="https://raw.githubusercontent.com/deept42/workshop/main/sobre_Qkv9GOIk.mp4" type="video/mp4">
+                                Seu navegador não suporta o elemento de vídeo.
+                            </video>
+                            <!-- Sobreposição com botão de play -->
+                            <div id="video-sobre-overlay" class="absolute inset-0 bg-red-600/70 flex flex-col items-center justify-center cursor-pointer transition-opacity duration-300 group">
+                                <span class="material-symbols-outlined text-white text-8xl transition-transform group-hover:scale-110">play_circle</span>
+                                <p class="text-white font-semibold mt-2">Aperte play para reproduzir</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="w-full md:w-1/2 animate-on-scroll text-center md:text-left" style="--animation-delay: 0.1s;">
                         <!-- Elemento decorativo para o título -->
