@@ -498,10 +498,10 @@ function obterLinhasParaExportacao() {
  * Configura a lógica para seleção em massa de itens na tabela.
  */
 function configurarSelecaoEmMassa(naLixeira = false) {
-    const selectAllCheckbox = document.getElementById('select-all-checkbox');
-    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
     const bulkActionsBar = document.getElementById('bulk-actions-bar');
     const bulkActionsCount = document.getElementById('bulk-actions-count');
+    const selectAllCheckbox = document.getElementById('select-all-checkbox');
+    
     const btnsAtivos = document.querySelectorAll('.bulk-action-ativos');
     const btnsLixeira = document.querySelectorAll('.bulk-action-lixeira');
 
@@ -509,6 +509,7 @@ function configurarSelecaoEmMassa(naLixeira = false) {
 
     // Função para atualizar a barra de ações em massa
     const atualizarBarraDeAcoes = () => {
+        const rowCheckboxes = document.querySelectorAll('.row-checkbox'); // Busca os checkboxes atuais
         const selecionados = document.querySelectorAll('.row-checkbox:checked');
         const totalSelecionado = selecionados.length;
         const totalVisivel = Array.from(document.querySelectorAll('#lista-inscritos tr')).filter(linha => linha.style.display !== 'none').length;
@@ -534,18 +535,24 @@ function configurarSelecaoEmMassa(naLixeira = false) {
         selectAllCheckbox.indeterminate = totalSelecionado > 0 && totalSelecionado < totalVisivel;
     };
 
-    // Evento para o checkbox "selecionar tudo"
-    selectAllCheckbox.addEventListener('change', () => {
-        rowCheckboxes.forEach(checkbox => {
-            // Seleciona apenas as linhas visíveis
-            if (checkbox.closest('tr').style.display !== 'none') {
-                checkbox.checked = selectAllCheckbox.checked;
+    // Clona o checkbox "selecionar tudo" para remover listeners antigos e evitar duplicação
+    const newSelectAllCheckbox = selectAllCheckbox.cloneNode(true);
+    selectAllCheckbox.parentNode.replaceChild(newSelectAllCheckbox, selectAllCheckbox);
+
+    // Adiciona o evento ao novo checkbox
+    newSelectAllCheckbox.addEventListener('change', () => {
+        const currentRowCheckboxes = document.querySelectorAll('.row-checkbox');
+        currentRowCheckboxes.forEach(checkbox => {
+             // Seleciona apenas as linhas visíveis
+             if (checkbox.closest('tr').style.display !== 'none') {
+                checkbox.checked = newSelectAllCheckbox.checked;
             }
         });
-        atualizarBarraDeAcoes();
+        atualizarBarraDeAcoes(); // Atualiza a barra após a ação
     });
 
     // Evento para os checkboxes de cada linha
+    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
     rowCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', atualizarBarraDeAcoes);
     });
