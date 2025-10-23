@@ -580,6 +580,47 @@
         </div>
     </div>
 
+    <!-- Modal para Editar Inscrito -->
+    <div id="edit-inscrito-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-lg w-full">
+            <div class="flex justify-between items-start mb-6">
+                <h3 class="text-2xl font-bold text-[#062E51]">Editar Inscrito</h3>
+                <button id="edit-modal-close-btn" class="text-gray-400 hover:text-gray-600">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <form id="edit-inscrito-form" class="space-y-4">
+                <input type="hidden" name="id">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" name="nome" class="form-input-admin" placeholder="Nome Completo *" required>
+                    <input type="email" name="email" class="form-input-admin" placeholder="E-mail *" required>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" name="empresa" class="form-input-admin" placeholder="Empresa / Instituição *" required>
+                    <input type="text" name="telefone" class="form-input-admin" placeholder="Telefone">
+                </div>
+                <input type="text" name="municipio" class="form-input-admin" placeholder="Município *" required>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Dias de participação:</label>
+                    <div class="flex gap-4">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="dia13" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                            <span>Dia 13</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="dia14" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                            <span>Dia 14</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-4 pt-4">
+                    <button type="button" id="edit-modal-cancel-btn" class="px-6 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold transition-colors">Cancelar</button>
+                    <button type="submit" class="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold transition-colors">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Modal Customizado para Sucesso Genérico -->
     <div id="success-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full text-center">

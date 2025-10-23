@@ -68,6 +68,10 @@ async function inicializarPainelAdministrativo() {
             todosInscritos = await buscarInscritos();
             atualizarUICompleta();
         });
+        configurarModalEditarInscrito(async () => {
+            todosInscritos = await buscarInscritos();
+            atualizarUICompleta();
+        });
         configurarNotificacoesDeCommit();
         configurarBotaoGraficos();
     }
@@ -227,7 +231,11 @@ function renderizarTabela(inscritos, naLixeira = false) {
                </div>`
             : `<button class="btn-mover-lixeira text-gray-500 hover:text-red-600 transition-colors" data-id="${inscrito.id}" data-nome="${inscrito.nome_completo}" title="Mover para a lixeira">
                    <span class="material-symbols-outlined">delete</span>
-               </button>`;
+               </button>
+               <button class="btn-editar text-gray-500 hover:text-blue-600 transition-colors" data-id="${inscrito.id}" title="Editar inscrito">
+                    <span class="material-symbols-outlined">edit</span>
+               </button>
+               `;
         
         // Formata a data para o padrão brasileiro
         const dataInscricao = new Date(inscrito.created_at).toLocaleString('pt-BR', {
@@ -247,7 +255,7 @@ function renderizarTabela(inscritos, naLixeira = false) {
                 <td class="whitespace-nowrap">${formatarParaTitulo(inscrito.municipio)}</td>
                 <td class="whitespace-nowrap">${diasHtml}</td>
                 <td class="whitespace-nowrap text-sm text-gray-600">${dataInscricao}</td>
-                <td class="whitespace-nowrap">
+                <td class="whitespace-nowrap flex items-center gap-2">
                     ${botaoAcao}
                 </td>
             </tr>
@@ -581,12 +589,12 @@ function configurarAcoesTabela(callbackSucesso) {
     if (!corpoTabela) return;
 
     corpoTabela.addEventListener('click', async (e) => {
-        const targetButton = e.target.closest('.btn-mover-lixeira, .btn-restaurar, .btn-deletar-permanente');
+        const targetButton = e.target.closest('.btn-mover-lixeira, .btn-restaurar, .btn-deletar-permanente, .btn-editar');
         if (!targetButton) return;
 
         const inscritoId = targetButton.dataset.id;
         const inscritoNome = targetButton.dataset.nome; // Captura o nome para usar nos modais
-
+        
         if (targetButton.classList.contains('btn-mover-lixeira')) {
             // Abre o modal de confirmação para mover para a lixeira
             const confirmado = await mostrarModalConfirmacaoDeletar(
@@ -611,6 +619,13 @@ function configurarAcoesTabela(callbackSucesso) {
 
             if (confirmado) {
                 await deletarInscritoPermanentemente(inscritoId, callbackSucesso);
+            }
+        } else if (targetButton.classList.contains('btn-editar')) {
+            const { data, error } = await supabase.from('cadastro_workshop').select('*').eq('id', inscritoId).single();
+            if (error) {
+                mostrarNotificacao('Erro ao buscar dados do inscrito para edição.', 'erro');
+            } else {
+                abrirModalEdicao(data);
             }
         }
     });
@@ -1663,4 +1678,79 @@ function configurarModalAdicionarInscrito(callbackSucesso) {
         submitButton.disabled = false;
         submitButton.textContent = 'Salvar Inscrito';
     });
+}
+
+/**
+ * Configura o modal para editar um inscrito existente.
+ * @param {Function} callbackSucesso - Função a ser chamada após editar com sucesso.
+ */
+function configurarModalEditarInscrito(callbackSucesso) {
+    const modal = document.getElementById('edit-inscrito-modal');
+    const form = document.getElementById('edit-inscrito-form');
+    const closeBtn = document.getElementById('edit-modal-close-btn');
+    const cancelBtn = document.getElementById('edit-modal-cancel-btn');
+
+    if (!modal || !form || !closeBtn || !cancelBtn) return;
+
+    const esconderModal = () => modal.classList.replace('flex', 'hidden');
+
+    closeBtn.addEventListener('click', esconderModal);
+    cancelBtn.addEventListener('click', esconderModal);
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submitButton = form.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.textContent = 'Salvando...';
+
+        const formData = new FormData(form);
+        const id = formData.get('id');
+        const dadosAtualizados = {
+            nome_completo: formatarParaTitulo(formData.get('nome')),
+            email: formData.get('email').toLowerCase(),
+            empresa: formatarParaTitulo(formData.get('empresa')),
+            telefone: formData.get('telefone'),
+            municipio: formatarParaTitulo(formData.get('municipio')),
+            participa_dia_13: formData.has('dia13'),
+            participa_dia_14: formData.has('dia14'),
+        };
+
+        const { error } = await supabase.from('cadastro_workshop').update(dadosAtualizados).eq('id', id);
+
+        if (error) {
+            mostrarNotificacao('Ocorreu um erro ao salvar as alterações.', 'erro');
+            console.error('Erro ao editar inscrito:', error);
+        } else {
+            esconderModal();
+            mostrarNotificacao('Inscrito atualizado com sucesso!', 'sucesso');
+            callbackSucesso();
+        }
+
+        submitButton.disabled = false;
+        submitButton.textContent = 'Salvar Alterações';
+    });
+}
+
+/**
+ * Abre o modal de edição e preenche com os dados do inscrito.
+ * @param {object} inscrito - O objeto com os dados do inscrito.
+ */
+function abrirModalEdicao(inscrito) {
+    const modal = document.getElementById('edit-inscrito-modal');
+    const form = document.getElementById('edit-inscrito-form');
+
+    if (!modal || !form) return;
+
+    // Preenche o formulário
+    form.elements['id'].value = inscrito.id;
+    form.elements['nome'].value = inscrito.nome_completo;
+    form.elements['email'].value = inscrito.email;
+    form.elements['empresa'].value = inscrito.empresa;
+    form.elements['telefone'].value = inscrito.telefone;
+    form.elements['municipio'].value = inscrito.municipio;
+    form.elements['dia13'].checked = inscrito.participa_dia_13;
+    form.elements['dia14'].checked = inscrito.participa_dia_14;
+
+    // Exibe o modal
+    modal.classList.replace('hidden', 'flex');
 }
