@@ -194,6 +194,71 @@ async function buscarInscritos() {
 }
 
 /**
+ * Gera o HTML para uma única linha da tabela de inscritos.
+ * @param {object} inscrito - O objeto do inscrito.
+ * @param {boolean} naLixeira - Flag para saber se a visualização é da lixeira.
+ * @returns {string} O HTML da tag <tr>.
+ */
+function gerarHtmlLinha(inscrito, naLixeira = false) {
+    // Cria os marcadores coloridos para os dias de participação
+    let diasHtml = '';
+    if (inscrito.participa_dia_13 && inscrito.participa_dia_14) {
+        diasHtml = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-500 text-white">Ambos</span>`;
+    } else if (inscrito.participa_dia_13) {
+        diasHtml = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-500 text-white">Dia 13</span>`;
+    } else if (inscrito.participa_dia_14) {
+        diasHtml = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-500 text-white">Dia 14</span>`;
+    } else {
+        diasHtml = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-400 text-white">Nenhum</span>`;
+    }
+
+    const botaoAcao = naLixeira
+        ? `<div class="flex gap-2">...</div>` // Lógica da lixeira mantida
+        : `<button class="btn-mover-lixeira text-gray-500 hover:text-red-600 transition-colors" data-id="${inscrito.id}" data-nome="${inscrito.nome_completo}" title="Mover para a lixeira">
+               <span class="material-symbols-outlined">delete</span>
+           </button>
+           <button class="btn-editar text-gray-500 hover:text-blue-600 transition-colors" data-id="${inscrito.id}" title="Editar inscrito">
+                <span class="material-symbols-outlined">edit</span>
+           </button>
+           <button class="btn-duplicar text-gray-500 hover:text-amber-600 transition-colors" data-id="${inscrito.id}" title="Duplicar inscrito">
+                <span class="material-symbols-outlined">content_copy</span>
+           </button>`;
+
+    // Lógica para formatar o nome com a tag "Cópia"
+    let nomeHtml;
+    const nomeCompletoFormatado = formatarParaTitulo(inscrito.nome_completo);
+    const copiaRegex = /^(Cópia \d+ - )(.+)/i;
+    const match = nomeCompletoFormatado.match(copiaRegex);
+
+    if (match) {
+        const tagText = match[1].replace(' -', '').trim(); // "Cópia 1"
+        const nomeOriginal = match[2];
+        nomeHtml = `<div class="flex items-center gap-2">
+                        <span>${nomeOriginal}</span>
+                        <span class="px-2 py-0.5 inline-flex text-xs leading-4 font-semibold rounded-md bg-amber-100 text-amber-800">${tagText}</span>
+                    </div>`;
+    } else {
+        nomeHtml = `<span>${nomeCompletoFormatado}</span>`;
+    }
+
+    const dataInscricao = new Date(inscrito.created_at).toLocaleString('pt-BR', {
+        day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+
+    return `<tr data-id="${inscrito.id}">
+        <td class="text-center"><input type="checkbox" class="row-checkbox h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" data-id="${inscrito.id}"></td>
+        <td class="whitespace-nowrap font-medium">${nomeHtml}</td>
+        <td class="whitespace-nowrap">${inscrito.email}</td>
+        <td class="whitespace-nowrap">${inscrito.telefone}</td>
+        <td class="whitespace-nowrap">${formatarParaTitulo(inscrito.empresa)}</td>
+        <td class="whitespace-nowrap">${formatarParaTitulo(inscrito.municipio)}</td>
+        <td class="whitespace-nowrap">${diasHtml}</td>
+        <td class="whitespace-nowrap text-sm text-gray-600">${dataInscricao}</td>
+        <td class="whitespace-nowrap flex items-center gap-2">${botaoAcao}</td>
+    </tr>`;
+}
+
+/**
  * Renderiza os dados dos inscritos na tabela HTML.
  * @param {Array} inscritos - A lista de objetos de inscritos a serem exibidos.
  * @param {boolean} naLixeira - Flag para saber se a visualização é da lixeira.
@@ -207,60 +272,7 @@ function renderizarTabela(inscritos, naLixeira = false) {
         return;
     }
 
-    const linhasHtml = inscritos.map(inscrito => {
-        // Cria os marcadores coloridos para os dias de participação
-        let diasHtml = '';
-        if (inscrito.participa_dia_13 && inscrito.participa_dia_14) {
-            diasHtml = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-500 text-white">Ambos</span>`;
-        } else if (inscrito.participa_dia_13) {
-            diasHtml = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-500 text-white">Dia 13</span>`;
-        } else if (inscrito.participa_dia_14) {
-            diasHtml = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-500 text-white">Dia 14</span>`;
-        } else {
-            diasHtml = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-400 text-white">Nenhum</span>`;
-        }
-
-        const botaoAcao = naLixeira
-            ? `<div class="flex gap-2">
-                   <button class="btn-restaurar text-green-600 hover:text-green-800 transition-colors" data-id="${inscrito.id}" title="Restaurar inscrito">
-                       <span class="material-symbols-outlined">restore_from_trash</span>
-                   </button>
-                   <button class="btn-deletar-permanente text-red-600 hover:text-red-800 transition-colors" data-id="${inscrito.id}" data-nome="${inscrito.nome_completo}" title="Excluir permanentemente">
-                       <span class="material-symbols-outlined">delete_forever</span>
-                   </button>
-               </div>`
-            : `<button class="btn-mover-lixeira text-gray-500 hover:text-red-600 transition-colors" data-id="${inscrito.id}" data-nome="${inscrito.nome_completo}" title="Mover para a lixeira">
-                   <span class="material-symbols-outlined">delete</span>
-               </button>
-               <button class="btn-editar text-gray-500 hover:text-blue-600 transition-colors" data-id="${inscrito.id}" title="Editar inscrito">
-                    <span class="material-symbols-outlined">edit</span>
-               </button>
-               `;
-        
-        // Formata a data para o padrão brasileiro
-        const dataInscricao = new Date(inscrito.created_at).toLocaleString('pt-BR', {
-            day: '2-digit', month: '2-digit', year: 'numeric',
-            hour: '2-digit', minute: '2-digit'
-        });
-
-        return `
-            <tr data-id="${inscrito.id}">
-                <td class="text-center">
-                    <input type="checkbox" class="row-checkbox h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" data-id="${inscrito.id}">
-                </td>
-                <td class="whitespace-nowrap font-medium">${formatarParaTitulo(inscrito.nome_completo)}</td>
-                <td class="whitespace-nowrap">${inscrito.email}</td>
-                <td class="whitespace-nowrap">${inscrito.telefone}</td>
-                <td class="whitespace-nowrap">${formatarParaTitulo(inscrito.empresa)}</td>
-                <td class="whitespace-nowrap">${formatarParaTitulo(inscrito.municipio)}</td>
-                <td class="whitespace-nowrap">${diasHtml}</td>
-                <td class="whitespace-nowrap text-sm text-gray-600">${dataInscricao}</td>
-                <td class="whitespace-nowrap flex items-center gap-2">
-                    ${botaoAcao}
-                </td>
-            </tr>
-        `;
-    }).join('');
+    const linhasHtml = inscritos.map(inscrito => gerarHtmlLinha(inscrito, naLixeira)).join('');
 
     corpoTabela.innerHTML = linhasHtml;
 
@@ -596,7 +608,7 @@ function configurarAcoesTabela(callbackSucesso) {
     if (!corpoTabela) return;
 
     corpoTabela.addEventListener('click', async (e) => {
-        const targetButton = e.target.closest('.btn-mover-lixeira, .btn-restaurar, .btn-deletar-permanente, .btn-editar');
+        const targetButton = e.target.closest('.btn-mover-lixeira, .btn-restaurar, .btn-deletar-permanente, .btn-editar, .btn-duplicar');
         if (!targetButton) return;
 
         const inscritoId = targetButton.dataset.id;
@@ -634,6 +646,21 @@ function configurarAcoesTabela(callbackSucesso) {
             } else {
                 abrirModalEdicao(data);
             }
+        } else if (targetButton.classList.contains('btn-duplicar')) {
+            const novoInscrito = await duplicarInscrito(inscritoId);
+            if (novoInscrito) {
+                // Encontra a linha original e insere a nova linha logo abaixo
+                const linhaOriginal = targetButton.closest('tr');
+                const htmlNovaLinha = gerarHtmlLinha(novoInscrito, false);
+                linhaOriginal.insertAdjacentHTML('afterend', htmlNovaLinha);
+
+                // Atualiza o array em memória para manter a consistência
+                const indexOriginal = todosInscritos.findIndex(i => i.id === inscritoId);
+                if (indexOriginal !== -1) {
+                    todosInscritos.splice(indexOriginal + 1, 0, novoInscrito);
+                }
+                mostrarNotificacao(`Inscrito duplicado com sucesso. Lembre-se de editar o nome e o e-mail.`, 'sucesso');
+            }
         }
     });
 }
@@ -669,6 +696,72 @@ async function deletarInscritoPermanentemente(id, callbackSucesso) {
     } else {
         mostrarNotificacao('Inscrito excluído permanentemente.', 'sucesso');
         callbackSucesso(); // Atualiza a UI buscando os dados novamente.
+    }
+}
+
+/**
+ * Duplica um inscrito, criando um novo registro com dados semelhantes.
+ * @param {string} id - O ID do inscrito a ser duplicado.
+ * @param {Function} callbackSucesso - Função a ser chamada após a duplicação.
+ */
+async function duplicarInscrito(id) {
+    // 1. Busca os dados do inscrito original
+    const { data: original, error: fetchError } = await supabase
+        .from('cadastro_workshop')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (fetchError) {
+        mostrarNotificacao('Erro ao buscar dados para duplicação.', 'erro');
+        console.error('Erro na busca para duplicar:', fetchError);
+        return null;
+    }
+
+    // 2. Prepara o novo objeto, modificando nome e e-mail para evitar conflitos
+    const novoInscrito = { ...original };
+    delete novoInscrito.id; // Remove o ID antigo
+    delete novoInscrito.created_at; // Deixa o Supabase gerar um novo timestamp
+
+    // Lógica para numeração sequencial das cópias
+    const baseName = original.nome_completo.replace(/^Cópia (\d+)?\s?-\s?/, '');
+    const { data: existentes, error: searchError } = await supabase
+        .from('cadastro_workshop')
+        .select('nome_completo')
+        .like('nome_completo', `%${baseName}`);
+
+    if (searchError) {
+        mostrarNotificacao('Erro ao verificar cópias existentes.', 'erro');
+        return null;
+    }
+
+    const regex = /^Cópia (\d+)\s?-\s?/;
+    let maxCopyNum = 0;
+    existentes.forEach(item => {
+        const match = item.nome_completo.match(regex);
+        if (match) {
+            const num = match[1] ? parseInt(match[1], 10) : 1;
+            if (num > maxCopyNum) maxCopyNum = num;
+        }
+    });
+
+    novoInscrito.nome_completo = `Cópia ${maxCopyNum + 1} - ${baseName}`; // Mantém o formato para o regex funcionar
+    // Cria um e-mail temporário e único para a cópia
+    novoInscrito.email = `duplicado-${Date.now()}@workshop.com`;
+
+    // 3. Insere o novo registro no banco de dados
+    const { data: inserido, error: insertError } = await supabase
+        .from('cadastro_workshop')
+        .insert([novoInscrito])
+        .select()
+        .single();
+
+    if (insertError) {
+        mostrarNotificacao('Ocorreu um erro ao duplicar o inscrito.', 'erro');
+        console.error('Erro na inserção da duplicata:', insertError);
+        return null;
+    } else {
+        return inserido; // Retorna o objeto do novo inscrito
     }
 }
 
