@@ -70,23 +70,22 @@ export function configurarZoomImagem() {
 
 /**
  * Configura um player de vídeo customizado com uma sobreposição de "play".
- * Ao clicar na sobreposição, o vídeo inicia e os controles nativos são exibidos.
+ * Agora, inicializa o player de vídeo da Cloudinary.
  */
 export function configurarPlayerCustomizado() {
-    const container = document.getElementById('planning-video-container');
-    if (!container) return;
-
-    const video = container.querySelector('#sobre-video');
-    const overlay = container.querySelector('#video-sobre-overlay');
-
-    if (!video || !overlay) return;
-
-    overlay.addEventListener('click', () => {
-        // Esconde a sobreposição
-        overlay.classList.add('opacity-0', 'pointer-events-none');
-        // Adiciona os controles nativos ao vídeo
-        video.controls = true;
-        // Inicia a reprodução do vídeo
-        video.play();
+    // Verifica se o SDK da Cloudinary está disponível
+    if (typeof cloudinary === 'undefined') {
+        console.error('SDK do player da Cloudinary não foi carregado.');
+        return;
+    }
+    
+    // Inicializa o player da Cloudinary
+    const cld = cloudinary.Cloudinary.new({ cloud_name: 'dto462zj6' });
+    cld.videoPlayer('sobre-player', {
+        publicId: 'sobre_fftc7h',
+        fluid: true, // Torna o player responsivo
+        controls: true,
+        // Define as novas cores para o player
+        colors: { base: '#FF0000', accent: '#FF0007' }
     });
 }

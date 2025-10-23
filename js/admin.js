@@ -1224,7 +1224,7 @@ function gerarCSV(linhasTabela) {
         
         // Define o nome do arquivo
         const dataAtual = new Date().toISOString().slice(0, 10);
-        link.setAttribute("download", `inscritos_workshop_${dataAtual}.csv`);
+        link.setAttribute("download", `inscritos_WORKSHOP_${dataAtual}.csv`);
         
         // Adiciona o link ao corpo, clica e remove
         document.body.appendChild(link);
@@ -1255,7 +1255,7 @@ function gerarPDF(linhasTabela) {
         // Define o cabeçalho do documento
         doc.setFontSize(18);
         doc.setTextColor('#062E51');
-        doc.text("Lista de Inscritos - Workshop", 14, 22);
+        doc.text("Lista de Inscritos - WORKSHOP", 14, 22);
         doc.setFontSize(11);
         doc.setTextColor(100);
         doc.text(`Gerado em: ${dataAtual}`, 14, 28);
@@ -1293,7 +1293,7 @@ function gerarPDF(linhasTabela) {
             }
         });
 
-        doc.save(`inscritos_workshop_${new Date().toISOString().slice(0, 10)}.pdf`);
+        doc.save(`inscritos_WORKSHOP_${new Date().toISOString().slice(0, 10)}.pdf`);
 }
 
 /**
@@ -1318,7 +1318,7 @@ function gerarChecklist(linhasTabela) {
         // Define o cabeçalho do documento
         doc.setFontSize(18);
         doc.setTextColor('#062E51');
-        doc.text("Lista de Chamada - Workshop", 14, 22);
+        doc.text("Lista de Chamada - WORKSHOP", 14, 22);
         doc.setFontSize(11);
         doc.setTextColor(100);
         doc.text(`Gerado em: ${dataAtual}`, 14, 28);
@@ -1361,7 +1361,7 @@ function gerarChecklist(linhasTabela) {
             }
         });
 
-        doc.save(`lista_chamada_workshop_${new Date().toISOString().slice(0, 10)}.pdf`);
+        doc.save(`lista_chamada_WORKSHOP_${new Date().toISOString().slice(0, 10)}.pdf`);
 }
 
 /**

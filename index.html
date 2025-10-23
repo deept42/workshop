@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workshop: Municípios Resilientes - Litoral do Paraná</title>
+    <title>WORKSHOP: Municípios Resilientes - Litoral do Paraná</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     <!-- Link para os Ícones do Google (Material Symbols) -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <!-- SDK do Player de Vídeo da Cloudinary -->
+    <link href="https://unpkg.com/cloudinary-video-player@1.10.0/dist/cld-video-player.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/cloudinary-video-player@1.10.0/dist/cld-video-player.min.js" type="text/javascript"></script>
     <!-- Caminho para o arquivo CSS dentro da pasta 'css' -->
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -36,14 +39,14 @@
         <section id="inicio" class="folder-panel text-white">
             <div class="video-background">
                 <div class="video-overlay"></div>
-                <video autoplay muted loop playsinline id="hero-video" class="hero-video-element">
-                    <source src="https://raw.githubusercontent.com/deept42/workshop/main/hero_KAVAkneR.mp4" type="video/mp4">
+                <video autoplay muted loop playsinline id="hero-video" class="hero-video-element" preload="auto">
+                    <source src="https://res.cloudinary.com/dto462zj6/video/upload/v1761233930/hero_xdmw1r.mp4" type="video/mp4">
                     Seu navegador não suporta o elemento de vídeo.
                 </video>
             </div>
             <div class="panel-content text-center">
                 <div class="hero-content relative">
-                    <h1 class="animate-on-scroll font-extrabold leading-tight mb-4" style="--animation-delay: 0s;"><span class="animated-gradient">Workshop</span>: Municípios Mais Resilientes em Desastres</h1>
+                    <h1 class="animate-on-scroll font-extrabold leading-tight mb-4" style="--animation-delay: 0s;"><span class="animated-gradient">WORKSHOP</span>: Municípios Mais Resilientes em Desastres</h1>
                 <p class="animate-on-scroll text-lg md:text-xl font-light mb-8 max-w-3xl mx-auto" style="--animation-delay: 0.1s;">Capacitando gestores e comunidades do Litoral do Paraná para um futuro mais seguro.</p>
                 <div class="mb-8">
                     <a href="#inscricao" class="hero-button animate-on-scroll bg-[#E63946] hover:bg-[#c9323d] text-white font-bold py-4 px-8 rounded-lg text-lg transition duration-300" style="--animation-delay: 0.2s;">Garanta sua Vaga</a>
@@ -77,16 +80,9 @@
                 <div class="w-full md:w-4/5 lg:w-3/4 mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12 bg-white/90 md:bg-transparent p-6 md:p-0 rounded-lg md:rounded-none shadow-lg md:shadow-none">
                     <!-- Coluna da Esquerda (Vídeo) - ocupa 50% do container pai -->
                     <div class="w-full md:w-1/2 flex justify-center">
-                        <div id="planning-video-container" class="animate-on-scroll w-full shadow-xl rounded-lg overflow-hidden relative" style="--animation-delay: 0s;">                            
-                            <video id="sobre-video" class="w-full h-full object-cover" preload="metadata">
-                                <source src="https://raw.githubusercontent.com/deept42/workshop/main/sobre_Qkv9GOIk.mp4" type="video/mp4">
-                                Seu navegador não suporta o elemento de vídeo.
-                            </video>
-                            <!-- Sobreposição com botão de play -->
-                            <div id="video-sobre-overlay" class="absolute inset-0 bg-red-600/70 flex flex-col items-center justify-center cursor-pointer transition-opacity duration-300 group">
-                                <span class="material-symbols-outlined text-white text-8xl transition-transform group-hover:scale-110">play_circle</span>
-                                <p class="text-white font-semibold mt-2">Aperte play para reproduzir</p>
-                            </div>
+                        <div id="planning-video-container" class="animate-on-scroll w-full shadow-xl rounded-lg overflow-hidden" style="--animation-delay: 0s;">
+                            <!-- O player da Cloudinary será injetado aqui -->
+                            <video id="sobre-player" class="cld-video-player cld-fluid"></video>
                         </div>
                     </div>
                     <div class="w-full md:w-1/2 animate-on-scroll text-center md:text-left" style="--animation-delay: 0.1s;">
@@ -118,7 +114,7 @@
                     <!-- Elemento decorativo para o título -->
                     <div class="w-16 h-1 bg-[#E63946] mb-4 mx-auto md:mx-0"></div>
 
-                    <h2 class="animate-on-scroll section-title font-bold mb-10" style="--animation-delay: 0s;">Programação do Workshop</h2>
+                    <h2 class="animate-on-scroll section-title font-bold mb-10" style="--animation-delay: 0s;">Programação do WORKSHOP</h2>
                     <div class="grid lg:grid-cols-2 gap-8">
                        <!-- Dia 1 -->
                        <div class="animate-on-scroll bg-white p-6 rounded-lg shadow-lg" style="--animation-delay: 0.1s;">
@@ -231,7 +227,7 @@
                         <!-- Elemento decorativo para o título -->
                         <div class="w-16 h-1 bg-[#E63946] mb-4 mx-auto md:mx-0"></div>
 
-                        <h2 class="text-3xl font-bold text-[#062E51] mb-2">Garanta sua Vaga no Workshop</h2>
+                        <h2 class="text-3xl font-bold text-[#062E51] mb-2">Garanta sua Vaga no WORKSHOP</h2>
                         <p class="text-center text-gray-600 mb-6">Preencha o formulário abaixo para confirmar sua participação.</p>
                         <form id="lead-form" class="space-y-6" novalidate>
                             <div class="form-group">
@@ -312,6 +308,7 @@
                             <img src="https://web.celepar.pr.gov.br/drupal/images/seil/portos/logo_portos_300x86.png" alt="Logo Portos do Paraná" class="logo-apoio">
                             <img src="https://portal.isulpar.edu.br/wp-content/uploads/2024/10/logo-texto-1024x378.png" alt="Logo ISULPAR" class="logo-apoio">
                             <img src="https://maximizados.com.br/_next/image?url=%2Fimages%2FLogo.png&w=128&q=75" alt="Logo Maximizados" class="logo-apoio logo-to-black">
+                            <img src="https://talentosbrasil.com.br/img/logotipo/logotipo.png" alt="Logo Talentos Brasil" class="logo-apoio">
                         </div>
                     </div>
                 </div>
