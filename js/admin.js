@@ -74,6 +74,8 @@ async function inicializarPainelAdministrativo() {
         });
         configurarNotificacoesDeCommit();
         configurarBotaoGraficos();
+        configurarMenuFlutuante();
+        configurarTutorialGuiado();
     }
 
     // 3. Configurar o Botão de Logout
@@ -1867,4 +1869,149 @@ function abrirModalEdicao(inscrito) {
 
     // Exibe o modal
     modal.classList.replace('hidden', 'flex');
+}
+
+/**
+ * Configura o menu de ações flutuante (FAB).
+ */
+function configurarMenuFlutuante() {
+    const fabContainer = document.getElementById('fab-container');
+    const fabMainBtn = document.getElementById('fab-main-btn');
+
+    if (!fabContainer || !fabMainBtn) return;
+
+    fabMainBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        fabContainer.classList.toggle('open');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!fabContainer.contains(e.target)) {
+            fabContainer.classList.remove('open');
+        }
+    });
+}
+
+/**
+ * Configura a lógica para o tutorial guiado da página.
+ */
+function configurarTutorialGuiado() {
+    const startBtn = document.getElementById('start-tutorial-btn');
+    const overlay = document.getElementById('tutorial-overlay');
+    const highlightBox = document.getElementById('tutorial-highlight');
+    const tutorialBox = document.getElementById('tutorial-box');
+
+    if (!startBtn || !overlay || !highlightBox || !tutorialBox) return;
+
+    const passos = [
+        { element: '#summary-section', title: 'Resumo Geral', text: 'Aqui você tem uma visão rápida das métricas mais importantes do evento, como total de inscritos, municípios e adesão ao certificado. Clique nos cards para ver mais detalhes.' },
+        { element: '#toggle-charts-btn', title: 'Gráficos Detalhados', text: 'Clique aqui para expandir ou ocultar os gráficos que mostram a distribuição de inscritos por dia, município e empresa.' },        
+        { element: '#filtro-busca', title: 'Busca e Filtro', text: 'Use este campo para encontrar rapidamente um inscrito. Você pode escolher em qual coluna buscar (nome, e-mail, etc.) para refinar sua pesquisa.' },
+        { element: '#add-inscrito-btn', title: 'Adicionar Inscrito', text: 'Use este botão para abrir um formulário e cadastrar um novo participante manualmente. Ideal para inscrições feitas no local ou por telefone.' },
+        { element: '#export-csv-btn', title: 'Exportar para CSV', text: 'Gera um arquivo CSV (compatível com Excel e Planilhas Google) com os dados de todos os inscritos visíveis na tabela.' },
+        { element: '#export-pdf-btn', title: 'Exportar para PDF', text: 'Cria um relatório em PDF com a lista de inscritos, formatado para visualização e impressão profissional.' },
+        { element: '#export-checklist-btn', title: 'Exportar Checklist', text: 'Gera uma lista de chamada em PDF, pronta para ser impressa e usada no credenciamento do evento.' },
+        { element: '#delete-duplicates-btn', title: 'Excluir Duplicados', text: 'Esta função inteligente verifica todos os inscritos com o mesmo nome completo e move os registros mais antigos para a lixeira, mantendo apenas o mais recente.' },
+        { element: '#view-toggle-switch', title: 'Ativos e Lixeira', text: 'Alterne entre a visualização de inscritos ativos e os que foram movidos para a lixeira. O número na lixeira indica quantos itens foram removidos.' },
+        { element: '.admin-table', title: 'Tabela de Inscritos', text: 'Esta é a lista principal de inscritos. Você pode ordenar as colunas clicando nos títulos e realizar ações individuais como editar, duplicar ou mover para a lixeira.' },
+        { element: '#select-all-checkbox', title: 'Ações em Massa', text: 'Use este checkbox para selecionar todos os inscritos visíveis na tabela e realizar ações em massa, como exportar ou mover para a lixeira.' },
+        { element: '#fab-container', title: 'Menu de Ajuda', text: 'Este é o menu que você acabou de usar! Por aqui, você pode iniciar este tutorial novamente ou entrar em contato com o suporte técnico via WhatsApp.' }
+    ];
+
+    let passoAtual = 0;
+
+    function mostrarPasso(index) {
+        if (index < 0 || index >= passos.length) {
+            finalizarTutorial();
+            return;
+        }
+        passoAtual = index;
+        const passo = passos[index];
+        const elementoAlvo = document.querySelector(passo.element);
+
+        if (!elementoAlvo) {
+            console.warn(`Elemento do tutorial não encontrado: ${passo.element}`);
+            mostrarPasso(index + 1); // Pula para o próximo passo
+            return;
+        }
+
+        // Posiciona a área de destaque
+        const rect = elementoAlvo.getBoundingClientRect();
+        highlightBox.style.width = `${rect.width + 16}px`;
+        highlightBox.style.height = `${rect.height + 16}px`;
+        highlightBox.style.top = `${rect.top - 8 + window.scrollY}px`;
+        highlightBox.style.left = `${rect.left - 8 + window.scrollX}px`;
+
+        // Cria e posiciona a caixa de texto
+        tutorialBox.innerHTML = `
+            <h4 class="font-bold text-lg text-[#062E51] mb-2">${passo.title}</h4>
+            <p class="text-gray-700 text-sm mb-4">${passo.text}</p>
+            <div class="flex justify-between items-center">
+                <span class="text-xs font-semibold text-gray-500">${index + 1} / ${passos.length}</span>
+                <div>
+                    <button id="tutorial-prev-btn" class="px-3 py-1 text-sm rounded-md bg-gray-200 hover:bg-gray-300 transition-colors ${index === 0 ? 'hidden' : ''}">Anterior</button>
+                    <button id="tutorial-next-btn" class="px-3 py-1 text-sm rounded-md bg-blue-600 hover:bg-blue-700 text-white transition-colors">${index === passos.length - 1 ? 'Finalizar' : 'Próximo'}</button>
+                </div>
+            </div>
+        `;
+        tutorialBox.classList.remove('hidden');
+
+        // Posiciona a caixa de texto
+        const boxRect = tutorialBox.getBoundingClientRect();
+        let top = rect.bottom + 15 + window.scrollY;
+        let left = rect.left + (rect.width / 2) - (boxRect.width / 2) + window.scrollX;
+
+        // Ajusta para não sair da tela
+        if (left < 10) left = 10;
+        if (left + boxRect.width > window.innerWidth - 10) left = window.innerWidth - boxRect.width - 10;
+        if (top + boxRect.height > window.innerHeight + window.scrollY - 10) {
+            top = rect.top - boxRect.height - 15 + window.scrollY;
+        }
+
+        tutorialBox.style.top = `${top}px`;
+        tutorialBox.style.left = `${left}px`;
+
+        // Rola a tela para que o elemento destacado fique visível
+        elementoAlvo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // Configura os botões de navegação do tutorial
+        document.getElementById('tutorial-next-btn').addEventListener('click', () => mostrarPasso(passoAtual + 1));
+        const prevBtn = document.getElementById('tutorial-prev-btn');
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => mostrarPasso(passoAtual - 1));
+        }
+    }
+
+    function iniciarTutorial() {
+        overlay.classList.remove('hidden');
+        passoAtual = 0;
+        mostrarPasso(passoAtual);
+    }
+
+    function finalizarTutorial() {
+        overlay.classList.add('hidden');
+        tutorialBox.classList.add('hidden');
+        highlightBox.style.width = '0px'; // Recolhe a caixa de destaque
+    }
+
+    startBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const fabContainer = document.getElementById('fab-container');
+        if (fabContainer) fabContainer.classList.remove('open'); // Fecha o menu
+        iniciarTutorial();
+    });
+
+    // Permite fechar o tutorial clicando fora da caixa de texto
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            finalizarTutorial();
+        }
+    });
+
+    // Permite fechar com a tecla 'Esc'
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !overlay.classList.contains('hidden')) {
+            finalizarTutorial();
+        }
+    });
 }

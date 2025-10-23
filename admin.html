@@ -158,51 +158,67 @@
     </style>
 </head>
 <style>
-    /* --- Estilos para o Botão Flutuante do WhatsApp --- */
-    #whatsapp-fab-admin {
-        position: fixed;
-        bottom: 1.5rem; /* 24px */
-        right: 1.5rem; /* 24px */
-        width: 3.75rem; /* 60px */
-        height: 3.75rem; /* 60px */
-        background-color: #25D366; /* Cor oficial do WhatsApp */
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        z-index: 90; /* Abaixo dos modais, mas acima do resto */
-        transition: transform 0.3s ease, background-color 0.3s ease;
+    /* --- Estilos para o Menu de Ações Flutuante (FAB) --- */
+    #fab-container.open #fab-main-btn {
+        transform: rotate(45deg);
     }
-
-    #whatsapp-fab-admin:hover {
-        transform: scale(1.1);
-        background-color: #128C7E; /* Cor mais escura do WhatsApp no hover */
+    .fab-options {
+        transition: opacity 0.3s ease, transform 0.3s ease;
     }
-
-    #whatsapp-fab-admin .material-symbols-outlined {
-        font-size: 2rem; /* 32px */
+    #fab-container:not(.open) .fab-options {
+        opacity: 0;
+        transform: translateY(10px);
+        pointer-events: none;
     }
-
-    .whatsapp-tooltip-admin {
+    .fab-action-btn {
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        transition: background-color 0.2s;
+    }
+    .fab-tooltip {
         position: absolute;
-        right: 110%; /* Posiciona à esquerda do botão */
-        top: 50%;
-        transform: translateY(-50%);
-        background-color: #128C7E;
+        right: 100%;
+        margin-right: 0.75rem;
+        background-color: #1f2937;
         color: white;
-        padding: 0.5rem 1rem;
+        padding: 0.25rem 0.75rem;
         border-radius: 0.5rem;
         white-space: nowrap;
         font-weight: 600;
+        font-size: 0.875rem;
         opacity: 0;
         transition: opacity 0.3s ease;
-        pointer-events: none; /* Não interfere com o clique no botão */
+        pointer-events: none;
     }
-
-    #whatsapp-fab-admin:hover .whatsapp-tooltip-admin {
+    .fab-action-btn:hover .fab-tooltip {
         opacity: 1;
+    }
+    /* --- Estilos para o Tutorial Guiado --- */
+    #tutorial-overlay {
+        /* O fundo agora é controlado pelo box-shadow do highlight */
+        z-index: 200;
+    }
+    #tutorial-highlight {
+        position: absolute;
+        border-radius: 0.5rem;
+        box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7);
+        transition: all 0.4s ease-in-out;
+        pointer-events: none;
+    }
+    #tutorial-box {
+        position: absolute;
+        background-color: white;
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        max-width: 350px;
+        z-index: 201;
+        transition: all 0.4s ease-in-out;
+    }
+    #tutorial-box::before { /* Seta indicadora */
+        content: '';
+        position: absolute;
+        width: 0; height: 0;
+        border-style: solid;
     }
 </style>
 <body class="p-4 md:p-8">
@@ -704,11 +720,32 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
     <script src="js/admin.js" type="module"></script>
 
-    <!-- Botão Flutuante do WhatsApp para Suporte -->
-    <a href="https://wa.me/5541997207243?text=Ol%C3%A1!%20Preciso%20de%20ajuda%20com%20o%20painel%20de%20administra%C3%A7%C3%A3o%20do%20Workshop." target="_blank" rel="noopener noreferrer" id="whatsapp-fab-admin" title="Precisa de ajuda ou encontrou um bug? Fale conosco." class="group">
-        <span class="material-symbols-outlined">support_agent</span>
-        <span class="whatsapp-tooltip-admin">Ajuda / Reportar Bug</span>
-    </a>
+    <!-- Menu de Ações Flutuante (FAB) -->
+    <div id="fab-container" class="fixed bottom-6 right-6 z-[90]">
+        <!-- Opções que aparecem ao clicar -->
+        <div class="fab-options absolute bottom-full right-0 mb-4 space-y-2">
+            <!-- Botão Tutorial -->
+            <button id="start-tutorial-btn" class="fab-action-btn relative w-14 h-14 bg-purple-600 hover:bg-purple-700 rounded-full flex items-center justify-center text-white">
+                <span class="material-symbols-outlined">school</span>
+                <span class="fab-tooltip">Iniciar Tutorial</span>
+            </button>
+            <!-- Botão WhatsApp -->
+            <a href="https://wa.me/5541997207243?text=Ol%C3%A1!%20Preciso%20de%20ajuda%20com%20o%20painel%20de%20administra%C3%A7%C3%A3o%20do%20Workshop." target="_blank" rel="noopener noreferrer" class="fab-action-btn relative w-14 h-14 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center text-white">
+                <span class="material-symbols-outlined">support_agent</span>
+                <span class="fab-tooltip">Ajuda / Reportar Bug</span>
+            </a>
+        </div>
+        <!-- Botão Principal -->
+        <button id="fab-main-btn" class="w-16 h-16 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center text-white shadow-lg transition-transform">
+            <span class="material-symbols-outlined text-3xl">add</span>
+        </button>
+    </div>
+
+    <!-- Overlay e Caixa do Tutorial -->
+    <div id="tutorial-overlay" class="fixed inset-0 hidden">
+        <div id="tutorial-highlight"></div>
+        <div id="tutorial-box" class="hidden"></div>
+    </div>
 
 </body>
 </html>
