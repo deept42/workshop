@@ -647,20 +647,7 @@ function configurarAcoesTabela(callbackSucesso) {
                 abrirModalEdicao(data);
             }
         } else if (targetButton.classList.contains('btn-duplicar')) {
-            const novoInscrito = await duplicarInscrito(inscritoId);
-            if (novoInscrito) {
-                // Encontra a linha original e insere a nova linha logo abaixo
-                const linhaOriginal = targetButton.closest('tr');
-                const htmlNovaLinha = gerarHtmlLinha(novoInscrito, false);
-                linhaOriginal.insertAdjacentHTML('afterend', htmlNovaLinha);
-
-                // Atualiza o array em memória para manter a consistência
-                const indexOriginal = todosInscritos.findIndex(i => i.id === inscritoId);
-                if (indexOriginal !== -1) {
-                    todosInscritos.splice(indexOriginal + 1, 0, novoInscrito);
-                }
-                mostrarNotificacao(`Inscrito duplicado com sucesso. Lembre-se de editar o nome e o e-mail.`, 'sucesso');
-            }
+            await iniciarDuplicacao(inscritoId);
         }
     });
 }
@@ -704,7 +691,7 @@ async function deletarInscritoPermanentemente(id, callbackSucesso) {
  * @param {string} id - O ID do inscrito a ser duplicado.
  * @param {Function} callbackSucesso - Função a ser chamada após a duplicação.
  */
-async function duplicarInscrito(id) {
+async function iniciarDuplicacao(id) {
     // 1. Busca os dados do inscrito original
     const { data: original, error: fetchError } = await supabase
         .from('cadastro_workshop')
@@ -715,7 +702,7 @@ async function duplicarInscrito(id) {
     if (fetchError) {
         mostrarNotificacao('Erro ao buscar dados para duplicação.', 'erro');
         console.error('Erro na busca para duplicar:', fetchError);
-        return null;
+        return;
     }
 
     // 2. Prepara o novo objeto, modificando nome e e-mail para evitar conflitos
@@ -732,7 +719,7 @@ async function duplicarInscrito(id) {
 
     if (searchError) {
         mostrarNotificacao('Erro ao verificar cópias existentes.', 'erro');
-        return null;
+        return;
     }
 
     const regex = /^Cópia (\d+)\s?-\s?/;
@@ -745,24 +732,11 @@ async function duplicarInscrito(id) {
         }
     });
 
-    novoInscrito.nome_completo = `Cópia ${maxCopyNum + 1} - ${baseName}`; // Mantém o formato para o regex funcionar
-    // Cria um e-mail temporário e único para a cópia
-    novoInscrito.email = `duplicado-${Date.now()}@workshop.com`;
+    novoInscrito.nome_completo = `Cópia ${maxCopyNum + 1} - ${baseName}`;
+    // Mantém o e-mail original para o usuário editar.
 
-    // 3. Insere o novo registro no banco de dados
-    const { data: inserido, error: insertError } = await supabase
-        .from('cadastro_workshop')
-        .insert([novoInscrito])
-        .select()
-        .single();
-
-    if (insertError) {
-        mostrarNotificacao('Ocorreu um erro ao duplicar o inscrito.', 'erro');
-        console.error('Erro na inserção da duplicata:', insertError);
-        return null;
-    } else {
-        return inserido; // Retorna o objeto do novo inscrito
-    }
+    // 3. Abre o modal de "Adicionar" com os dados pré-preenchidos
+    abrirModalAdicionarComDados(novoInscrito);
 }
 
 /**
@@ -1778,6 +1752,30 @@ function configurarModalAdicionarInscrito(callbackSucesso) {
         submitButton.disabled = false;
         submitButton.textContent = 'Salvar Inscrito';
     });
+}
+
+/**
+ * Abre o modal de "Adicionar Inscrito" com os campos já preenchidos.
+ * @param {object} dados - Os dados para preencher o formulário.
+ */
+function abrirModalAdicionarComDados(dados) {
+    const modal = document.getElementById('add-inscrito-modal');
+    const form = document.getElementById('add-inscrito-form');
+    const tituloModal = modal.querySelector('h3');
+
+    if (!modal || !form || !tituloModal) return;
+
+    // Preenche o formulário
+    form.elements['nome'].value = dados.nome_completo;
+    form.elements['email'].value = dados.email;
+    form.elements['empresa'].value = dados.empresa;
+    form.elements['telefone'].value = dados.telefone;
+    form.elements['municipio'].value = dados.municipio;
+    form.elements['dia13'].checked = dados.participa_dia_13;
+    form.elements['dia14'].checked = dados.participa_dia_14;
+
+    tituloModal.textContent = 'Duplicar Inscrito';
+    modal.classList.replace('hidden', 'flex');
 }
 
 /**
