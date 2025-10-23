@@ -1877,17 +1877,27 @@ function abrirModalEdicao(inscrito) {
 function configurarMenuFlutuante() {
     const fabContainer = document.getElementById('fab-container');
     const fabMainBtn = document.getElementById('fab-main-btn');
+    const fabIcon = fabMainBtn ? fabMainBtn.querySelector('.material-symbols-outlined') : null;
 
-    if (!fabContainer || !fabMainBtn) return;
+    if (!fabContainer || !fabMainBtn || !fabIcon) return;
 
     fabMainBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         fabContainer.classList.toggle('open');
+        // Troca o ícone com base no estado do menu
+        const isOpen = fabContainer.classList.contains('open');
+        fabIcon.textContent = isOpen ? 'close' : 'help';
     });
 
     document.addEventListener('click', (e) => {
         if (!fabContainer.contains(e.target)) {
             fabContainer.classList.remove('open');
+        }
+    });
+    // Garante que o ícone volte ao normal se o menu for fechado clicando fora
+    fabContainer.addEventListener('transitionend', () => {
+        if (!fabContainer.classList.contains('open')) {
+            fabIcon.textContent = 'help';
         }
     });
 }

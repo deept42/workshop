@@ -159,9 +159,7 @@
 </head>
 <style>
     /* --- Estilos para o Menu de Ações Flutuante (FAB) --- */
-    #fab-container.open #fab-main-btn {
-        transform: rotate(45deg);
-    }
+    /* A rotação foi removida e será controlada por JS para trocar o ícone */
     .fab-options {
         transition: opacity 0.3s ease, transform 0.3s ease;
     }
@@ -189,7 +187,8 @@
         transition: opacity 0.3s ease;
         pointer-events: none;
     }
-    .fab-action-btn:hover .fab-tooltip {
+    /* Mostra o tooltip ao passar o mouse sobre o botão de ação OU o botão principal */
+    .fab-action-btn:hover .fab-tooltip, #fab-main-btn:hover .fab-tooltip {
         opacity: 1;
     }
     /* --- Estilos para o Tutorial Guiado --- */
@@ -736,8 +735,10 @@
             </a>
         </div>
         <!-- Botão Principal -->
-        <button id="fab-main-btn" class="w-16 h-16 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center text-white shadow-lg transition-transform">
-            <span class="material-symbols-outlined text-3xl">add</span>
+        <button id="fab-main-btn" class="relative w-16 h-16 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center text-white shadow-lg transition-colors duration-300">
+            <!-- O ícone será trocado dinamicamente via JavaScript -->
+            <span class="material-symbols-outlined text-3xl">help</span>
+            <span class="fab-tooltip">Precisa de ajuda?</span>
         </button>
     </div>
 
