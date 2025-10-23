@@ -713,6 +713,9 @@ async function iniciarDuplicacao(id) {
     // Ao duplicar, o nome completo será o mesmo do original.
     // O usuário deverá editá-lo no modal.
     novoInscrito.nome_completo = original.nome_completo;
+    // Ao duplicar, o campo de nome virá em branco para ser preenchido.
+    // Todos os outros dados são mantidos.
+    novoInscrito.nome_completo = '';
     // Mantém o e-mail original para o usuário editar.
 
     // 3. Abre o modal de "Adicionar" com os dados pré-preenchidos
@@ -1659,6 +1662,7 @@ function configurarModalAdicionarInscrito(callbackSucesso) {
     const form = document.getElementById('add-inscrito-form');
     const closeBtn = document.getElementById('add-modal-close-btn');
     const cancelBtn = document.getElementById('add-modal-cancel-btn');
+    const saveAndAddAnotherBtn = document.getElementById('save-and-add-another-btn');
     const tituloModal = modal.querySelector('h3');
 
     // Lógica para o botão de copiar link (já em português)
@@ -1696,12 +1700,11 @@ function configurarModalAdicionarInscrito(callbackSucesso) {
     closeBtn.addEventListener('click', esconderModal);
     cancelBtn.addEventListener('click', esconderModal);
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const submitButton = form.querySelector('button[type="submit"]');
-        submitButton.disabled = true;
-        submitButton.textContent = 'Salvando...';
-
+    /**
+     * Função reutilizável para salvar um novo inscrito.
+     * @returns {Promise<boolean>} Retorna true se o salvamento for bem-sucedido, false caso contrário.
+     */
+    const salvarNovoInscrito = async () => {
         const formData = new FormData(form);
         const novoInscrito = {
             nome_completo: formatarParaTitulo(formData.get('nome')),
@@ -1711,18 +1714,15 @@ function configurarModalAdicionarInscrito(callbackSucesso) {
             municipio: formatarParaTitulo(formData.get('municipio')),
             participa_dia_13: formData.has('dia13'),
             participa_dia_14: formData.has('dia14'),
-            is_deleted: false, // Garante que o novo inscrito seja ativo
-            concorda_comunicacoes: true, // Assume consentimento para cadastro manual
+            is_deleted: false,
+            concorda_comunicacoes: true,
             quer_certificado: false,
             status_pagamento: 'nao_solicitado'
         };
 
-        // Validação simples
         if (!novoInscrito.nome_completo || !novoInscrito.email || !novoInscrito.empresa || !novoInscrito.municipio || !novoInscrito.telefone || (!novoInscrito.participa_dia_13 && !novoInscrito.participa_dia_14)) {
             mostrarNotificacao('Por favor, preencha todos os campos, incluindo o telefone e pelo menos um dia de participação.', 'aviso');
-            submitButton.disabled = false;
-            submitButton.textContent = 'Salvar Inscrito';
-            return;
+            return false;
         }
 
         const { error } = await supabase.from('cadastro_workshop').insert([novoInscrito]);
@@ -1730,14 +1730,39 @@ function configurarModalAdicionarInscrito(callbackSucesso) {
         if (error) {
             mostrarNotificacao(error.code === '23505' ? 'Este e-mail já está cadastrado.' : 'Ocorreu um erro ao salvar.', 'erro');
             console.error('Erro ao adicionar inscrito:', error);
+            return false;
         } else {
-            esconderModal(); // Chama a função em português
             mostrarNotificacao('Novo inscrito adicionado com sucesso!', 'sucesso');
-            callbackSucesso(); // Atualiza a UI sem recarregar a página
+            callbackSucesso();
+            return true;
+        }
+    };
+
+    // Evento para "Salvar e Fechar"
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submitButton = form.querySelector('button[type="submit"]');
+        const originalText = submitButton.innerHTML;
+        submitButton.disabled = true;
+        submitButton.innerHTML = `<span class="material-symbols-outlined animate-spin">progress_activity</span>Salvando...`;
+
+        const sucesso = await salvarNovoInscrito();
+        if (sucesso) {
+            esconderModal();
         }
 
         submitButton.disabled = false;
-        submitButton.textContent = 'Salvar Inscrito';
+        submitButton.innerHTML = originalText;
+    });
+
+    // Evento para "Salvar e Novo"
+    saveAndAddAnotherBtn.addEventListener('click', async () => {
+        const sucesso = await salvarNovoInscrito();
+        if (sucesso) {
+            form.elements['nome'].value = '';
+            form.elements['email'].value = '';
+            form.elements['nome'].focus();
+        }
     });
 }
 
@@ -1785,6 +1810,7 @@ function configurarModalEditarInscrito(callbackSucesso) {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const submitButton = form.querySelector('button[type="submit"]');
+        submitButton.disabled = false;
         submitButton.disabled = true;
         submitButton.textContent = 'Salvando...';
 
