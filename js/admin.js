@@ -268,7 +268,10 @@ function renderizarTabela(inscritos, naLixeira = false) {
     if (!corpoTabela) return;
 
     if (inscritos.length === 0) {
-        corpoTabela.innerHTML = `<tr><td colspan="9" class="px-6 py-4 text-center text-gray-500">Nenhum inscrito encontrado.</td></tr>`;
+        const mensagemVazio = naLixeira 
+            ? 'Lixeira vazia. Missão cumprida! ✅' 
+            : 'Eco... eco... eco... Parece que estamos sozinhos por aqui. 🦗';
+        corpoTabela.innerHTML = `<tr><td colspan="9" class="px-6 py-4 text-center text-gray-500">${mensagemVazio}</td></tr>`;
         return;
     }
 
