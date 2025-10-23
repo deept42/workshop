@@ -281,18 +281,24 @@
                     <div class="animate-on-scroll w-full lg:w-1/2 text-[#062E51]" style="--animation-delay: 0.1s;">
                         <!-- Container para Data e Local lado a lado -->
                         <div class="flex flex-col sm:flex-row gap-6 mb-6 text-center">
-                            <div class="flex-1 bg-white/50 p-4 rounded-lg shadow-sm border border-gray-200">
-                                <h3 class="text-xl font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">calendar_month</span>Data</h3>
-                                <p class="text-lg text-gray-700 mt-2">13 e 14 de Novembro</p>
-                            </div>
-                            <div class="flex-1 bg-white/50 p-4 rounded-lg shadow-sm border border-gray-200">
-                                <h3 class="text-xl font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">location_on</span>Local</h3>
-                                <p class="text-lg text-gray-700 mt-2">ISULPAR, Paranaguá - PR</p>
-                            </div>
+                            <!-- Link que envolve o card de Data -->
+                            <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=WORKSHOP%3A+Munic%C3%ADpios+Mais+Resilientes+em+Desastres&dates=20251113T110000Z/20251114T210000Z&details=Participe+do+WORKSHOP%3A+Munic%C3%ADpios+Mais+Resilientes+em+Desastres%2C+uma+iniciativa+para+capacitar+gestores+e+comunidades+do+Litoral+do+Paran%C3%A1+para+um+futuro+mais+seguro.&location=ISULPAR+-+Instituto+Superior+do+Litoral+do+Paran%C3%A1%2C+Paranagu%C3%A1+-+PR&ctz=America/Sao_Paulo" target="_blank" rel="noopener noreferrer" class="flex-1 group">
+                                <div class="bg-white/50 p-4 rounded-lg shadow-sm border border-gray-200 h-full transition-all duration-300 group-hover:bg-white group-hover:shadow-md group-hover:-translate-y-1">
+                                    <h3 class="text-xl font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">calendar_month</span>Data</h3>
+                                    <p class="text-lg text-gray-700 mt-2">13 e 14 de Novembro</p>
+                                </div>
+                            </a>
+                            <!-- Link que envolve o card de localização -->
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=ISULPAR+-+Instituto+Superior+do+Litoral+do+Paraná" target="_blank" rel="noopener noreferrer" class="flex-1 group">
+                                <div class="bg-white/50 p-4 rounded-lg shadow-sm border border-gray-200 h-full transition-all duration-300 group-hover:bg-white group-hover:shadow-md group-hover:-translate-y-1">
+                                    <h3 class="text-xl font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">location_on</span>Local</h3>
+                                    <p class="text-lg text-gray-700 mt-2">ISULPAR, Paranaguá - PR</p>
+                                </div>
+                            </a>
                         </div>
                         
                         <div class="map-container">
-                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3602.937746205809!2d-48.50954002470258!3d-25.44029997755535!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94dbee903150338b%3A0x973a1e5c26b0142a!2sR.%20Jo%C3%A£o%20Eug%C3%AAnio%2C%20534%20-%20Costeira%2C%20Paranagu%C3%A1%20-%20PR%2C%2083203-400!5e0!3m2!1spt-BR!2sbr!4v1721344893129!5m2!1spt-BR!2sbr" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3600.916896172601!2d-48.50954012470008!3d-25.50785197751109!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94db9a4fdae91e1b%3A0x3be8bd20abca96b9!2sISULPAR%20-%20Instituto%20Superior%20do%20Litoral%20do%20Paran%C3%A1!5e0!3m2!1spt-BR!2sbr!4v1721843194041!5m2!1spt-BR!2sbr" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
                         
                         <h3 class="text-2xl font-bold mt-8 mb-4 text-center">Realização e Apoio</h3>
