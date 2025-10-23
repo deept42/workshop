@@ -710,29 +710,9 @@ async function iniciarDuplicacao(id) {
     delete novoInscrito.id; // Remove o ID antigo
     delete novoInscrito.created_at; // Deixa o Supabase gerar um novo timestamp
 
-    // Lógica para numeração sequencial das cópias
-    const baseName = original.nome_completo.replace(/^Cópia (\d+)?\s?-\s?/, '');
-    const { data: existentes, error: searchError } = await supabase
-        .from('cadastro_workshop')
-        .select('nome_completo')
-        .like('nome_completo', `%${baseName}`);
-
-    if (searchError) {
-        mostrarNotificacao('Erro ao verificar cópias existentes.', 'erro');
-        return;
-    }
-
-    const regex = /^Cópia (\d+)\s?-\s?/;
-    let maxCopyNum = 0;
-    existentes.forEach(item => {
-        const match = item.nome_completo.match(regex);
-        if (match) {
-            const num = match[1] ? parseInt(match[1], 10) : 1;
-            if (num > maxCopyNum) maxCopyNum = num;
-        }
-    });
-
-    novoInscrito.nome_completo = `Cópia ${maxCopyNum + 1} - ${baseName}`;
+    // Ao duplicar, o nome completo será o mesmo do original.
+    // O usuário deverá editá-lo no modal.
+    novoInscrito.nome_completo = original.nome_completo;
     // Mantém o e-mail original para o usuário editar.
 
     // 3. Abre o modal de "Adicionar" com os dados pré-preenchidos
@@ -1511,19 +1491,19 @@ function configurarExclusaoDuplicados() {
             return;
         }
 
-        // 1. Agrupa inscritos por e-mail
-        const inscritosPorEmail = todosInscritos.reduce((acc, inscrito) => {
-            const email = inscrito.email.toLowerCase();
-            if (!acc[email]) {
-                acc[email] = [];
+        // 1. Agrupa inscritos por nome completo (ignorando maiúsculas/minúsculas)
+        const inscritosPorNome = todosInscritos.reduce((acc, inscrito) => {
+            const nome = inscrito.nome_completo.toLowerCase().trim();
+            if (!acc[nome]) {
+                acc[nome] = [];
             }
-            acc[email].push(inscrito);
+            acc[nome].push(inscrito);
             return acc;
         }, {});
 
         // 2. Encontra os IDs para deletar (todos exceto o mais recente de cada grupo de duplicados)
         const idsParaDeletar = [];
-        Object.values(inscritosPorEmail).forEach(grupo => {
+        Object.values(inscritosPorNome).forEach(grupo => {
             if (grupo.length > 1) {
                 // Ordena por data de criação, do mais novo para o mais antigo
                 grupo.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
@@ -1541,7 +1521,7 @@ function configurarExclusaoDuplicados() {
         // 3. Pede confirmação ao usuário
         const confirmado = await mostrarModalConfirmacaoDeletar(
             `Excluir ${idsParaDeletar.length} Duplicados`,
-            `Foram encontrados ${idsParaDeletar.length} inscritos duplicados (baseado no e-mail). Deseja mover os registros mais antigos para a lixeira, mantendo apenas o mais recente de cada?`,
+            `Foram encontrados ${idsParaDeletar.length} inscritos duplicados (baseado no nome completo). Deseja mover os registros mais antigos para a lixeira, mantendo apenas o mais recente de cada?`,
             `Sim, mover para lixeira`
         );
 
