@@ -184,6 +184,19 @@ export function configurarValidacaoFormulario() {
             const idNovoRegistro = data ? data[0].id : null;
             mostrarModalCertificado(idNovoRegistro);
 
+            // Tenta enviar o e-mail de confirmação chamando a Edge Function
+            try {
+                await supabase.functions.invoke('send-confirmation-email', {
+                    body: { nome, email },
+                });
+                // Não precisa mostrar notificação de sucesso do e-mail para não poluir a tela.
+                // O importante é a confirmação da inscrição.
+            } catch (emailError) {
+                // Se o envio do e-mail falhar, apenas loga no console para não confundir o usuário,
+                // pois a inscrição em si foi um sucesso.
+                console.error("Falha ao enviar e-mail de confirmação:", emailError);
+            }
+
             setTimeout(() => {
                 botaoSubmit.disabled = false;
                 botaoSubmit.textContent = 'Inscrever-se Agora';
