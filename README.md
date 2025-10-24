@@ -94,6 +94,7 @@ Para rodar este projeto localmente, você precisará configurar o Supabase.
       id uuid NOT NULL DEFAULT gen_random_uuid(),
       created_at timestamp with time zone NOT NULL DEFAULT now(),
       nome_completo text NOT NULL,
+      cargo_funcao text,
       empresa text,
       email text NOT NULL,
       telefone text,

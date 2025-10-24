@@ -250,6 +250,7 @@ function gerarHtmlLinha(inscrito, naLixeira = false) {
     return `<tr data-id="${inscrito.id}">
         <td class="text-center"><input type="checkbox" class="row-checkbox h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" data-id="${inscrito.id}"></td>
         <td class="whitespace-nowrap font-medium">${nomeHtml}</td>
+        <td class="whitespace-nowrap">${formatarParaTitulo(inscrito.cargo_funcao) || ''}</td>
         <td class="whitespace-nowrap">${inscrito.email}</td>
         <td class="whitespace-nowrap">${inscrito.telefone}</td>
         <td class="whitespace-nowrap">${formatarParaTitulo(inscrito.empresa)}</td>
@@ -273,7 +274,7 @@ function renderizarTabela(inscritos, naLixeira = false) {
         const mensagemVazio = naLixeira 
             ? 'Lixeira vazia. Missão cumprida! ✅' 
             : 'Eco... eco... eco... Parece que estamos sozinhos por aqui. 🦗';
-        corpoTabela.innerHTML = `<tr><td colspan="9" class="px-6 py-4 text-center text-gray-500">${mensagemVazio}</td></tr>`;
+        corpoTabela.innerHTML = `<tr><td colspan="10" class="px-6 py-4 text-center text-gray-500">${mensagemVazio}</td></tr>`;
         return;
     }
 
@@ -305,6 +306,7 @@ function configurarFiltroDeBusca() {
         // Mapeia os valores do <select> para os índices das colunas da tabela (começando em 0)
         const mapaColunas = {
             'nome': 1,
+            'cargo': 2,
             'email': 2,
             'telefone': 3,
             'empresa': 4,
@@ -1713,6 +1715,7 @@ function configurarModalAdicionarInscrito(callbackSucesso) {
         const formData = new FormData(form);
         const novoInscrito = {
             nome_completo: formatarParaTitulo(formData.get('nome')),
+            cargo_funcao: formatarParaTitulo(formData.get('cargo')),
             email: formData.get('email').toLowerCase(),
             empresa: formatarParaTitulo(formData.get('empresa')),
             telefone: formData.get('telefone'),
@@ -1784,6 +1787,7 @@ function abrirModalAdicionarComDados(dados) {
 
     // Preenche o formulário
     form.elements['nome'].value = dados.nome_completo;
+    form.elements['cargo'].value = dados.cargo_funcao;
     form.elements['email'].value = dados.email;
     form.elements['empresa'].value = dados.empresa;
     form.elements['telefone'].value = dados.telefone;
@@ -1823,6 +1827,7 @@ function configurarModalEditarInscrito(callbackSucesso) {
         const id = formData.get('id');
         const dadosAtualizados = {
             nome_completo: formatarParaTitulo(formData.get('nome')),
+            cargo_funcao: formatarParaTitulo(formData.get('cargo')),
             email: formData.get('email').toLowerCase(),
             empresa: formatarParaTitulo(formData.get('empresa')),
             telefone: formData.get('telefone'),
@@ -1860,6 +1865,7 @@ function abrirModalEdicao(inscrito) {
     // Preenche o formulário
     form.elements['id'].value = inscrito.id;
     form.elements['nome'].value = inscrito.nome_completo;
+    form.elements['cargo'].value = inscrito.cargo_funcao;
     form.elements['email'].value = inscrito.email;
     form.elements['empresa'].value = inscrito.empresa;
     form.elements['telefone'].value = inscrito.telefone;

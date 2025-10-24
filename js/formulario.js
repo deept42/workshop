@@ -48,7 +48,7 @@ export function configurarValidacaoFormulario() {
     if (!form || !mensagensForm || !botaoSubmit) return;
 
     // --- Validação em Tempo Real ---
-    const camposParaValidar = ['nome', 'empresa', 'email', 'telefone', 'municipio'];
+    const camposParaValidar = ['nome', 'cargo', 'empresa', 'email', 'telefone', 'municipio'];
     camposParaValidar.forEach(nomeCampo => {
         const input = form.elements[nomeCampo];
         if (input) {
@@ -70,6 +70,7 @@ export function configurarValidacaoFormulario() {
         botaoSubmit.textContent = 'Enviando...';
 
         const nome = form.elements['nome'].value.trim();
+        const cargo = form.elements['cargo'].value.trim();
         const empresa = form.elements['empresa'].value.trim();
         const email = form.elements['email'].value.trim();
         const telefone = form.elements['telefone'].value.trim();
@@ -94,6 +95,10 @@ export function configurarValidacaoFormulario() {
             nomeGroup.classList.add('error');
             isFormValid = false;
         }
+
+        // Valida campo Cargo (opcional, mas adiciona classe 'success' se preenchido)
+        const cargoGroup = form.elements['cargo'].closest('.form-group');
+        if (cargo) cargoGroup.classList.add('success');
 
         // Valida campo Empresa (obrigatório)
         const empresaGroup = form.elements['empresa'].closest('.form-group');
@@ -155,6 +160,7 @@ export function configurarValidacaoFormulario() {
             .from('cadastro_workshop')
             .insert([{
                 nome_completo: formatarParaTitulo(nome),
+                cargo_funcao: formatarParaTitulo(cargo),
                 empresa: formatarParaTitulo(empresa),
                 email: email.toLowerCase(), // E-mail sempre em minúsculas
                 telefone: telefone,
@@ -238,6 +244,8 @@ export function configurarValidacaoFormulario() {
             case 'telefone':
                 ehValido = valor && validarTelefone(valor);
                 break;
+            case 'cargo': // Cargo é opcional, então sempre é "válido" para o blur
+                ehValido = true; break;
             default: // Para nome, empresa, municipio
                 ehValido = !!valor; // Verifica se não está vazio
         }
@@ -246,7 +254,10 @@ export function configurarValidacaoFormulario() {
         if (ehValido) {
             grupo.classList.add('success');
         } else {
-            grupo.classList.add('error');
+            // Não marca erro no blur para campos opcionais ou se o campo estiver vazio
+            if (input.name !== 'cargo' && valor) {
+                grupo.classList.add('error');
+            }
         }
         return ehValido;
     }
@@ -447,13 +458,14 @@ export async function configurarAutocompletarComDadosSalvos() {
             // Busca no Supabase pelo e-mail inserido
             const { data, error } = await supabase
                 .from('cadastro_workshop')
-                .select('nome_completo, empresa, telefone, municipio')
+                .select('nome_completo, cargo_funcao, empresa, telefone, municipio')
                 .eq('email', email)
                 .single(); // .single() retorna um único objeto ou null
 
             if (data && !error) {
                 // Se encontrou dados, preenche o formulário
                 form.elements['nome'].value = data.nome_completo || '';
+                form.elements['cargo'].value = data.cargo_funcao || '';
                 form.elements['empresa'].value = data.empresa || '';
                 form.elements['municipio'].value = data.municipio || '';
 

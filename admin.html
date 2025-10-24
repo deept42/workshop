@@ -444,6 +444,7 @@
                     <select id="filtro-coluna" class="flex-shrink-0 p-3 border border-r-0 border-gray-300 rounded-l-lg bg-gray-50 focus:ring-2 focus:ring-[#062E51] focus:outline-none transition text-gray-600 font-semibold">
                         <option value="all">Buscar em Tudo</option>
                         <option value="nome">Nome</option>
+                        <option value="cargo">Cargo</option>
                         <option value="email">E-mail</option>
                         <option value="municipio">Município</option>
                         <option value="empresa">Empresa</option>
@@ -523,6 +524,9 @@
                             <th scope="col" data-column="nome_completo">
                                 <div class="flex items-center gap-2">Nome Completo <span class="material-symbols-outlined text-sm opacity-50">unfold_more</span></div>
                             </th>
+                            <th scope="col" data-column="cargo_funcao">
+                                <div class="flex items-center gap-2">Cargo/Função <span class="material-symbols-outlined text-sm opacity-50">unfold_more</span></div>
+                            </th>
                             <th scope="col" data-column="email">
                                 <div class="flex items-center gap-2">E-mail <span class="material-symbols-outlined text-sm opacity-50">unfold_more</span></div>
                             </th>
@@ -549,7 +553,7 @@
                     <tbody id="lista-inscritos">
                         <!-- Linha de carregamento -->
                         <tr>
-                            <td colspan="9" class="px-6 py-4 text-center text-gray-500">Carregando inscritos...</td>
+                            <td colspan="10" class="px-6 py-4 text-center text-gray-500">Carregando inscritos...</td>
                         </tr>
                         <!-- As linhas com os dados dos inscritos serão inseridas aqui via JavaScript -->
                     </tbody>
@@ -605,6 +609,7 @@
             <form id="add-inscrito-form" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input type="text" name="nome" class="form-input-admin" placeholder="Nome Completo *" required>
+                    <input type="text" name="cargo" class="form-input-admin" placeholder="Cargo / Função">
                     <input type="email" name="email" class="form-input-admin" placeholder="E-mail *" required>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -657,6 +662,7 @@
                 <input type="hidden" name="id">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input type="text" name="nome" class="form-input-admin" placeholder="Nome Completo *" required>
+                    <input type="text" name="cargo" class="form-input-admin" placeholder="Cargo / Função">
                     <input type="email" name="email" class="form-input-admin" placeholder="E-mail *" required>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
