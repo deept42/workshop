@@ -1,6 +1,6 @@
 # Workshop: Municípios Mais Resilientes (WMRD-PR)
 
-Este é o repositório oficial do site para o evento "Workshop: Municípios Mais Resilientes em Desastres", uma iniciativa do Corpo de Bombeiros Militar do Paraná. O site serve como portal de informações, plataforma de inscrição e painel de gerenciamento para os administradores do evento.
+Este é o repositório oficial do site para o evento "Workshop: Municípios Mais Resilientes em Desastres", uma iniciativa do Corpo de Bombeiros Militar do Paraná. O projeto consiste em uma página pública para informações e inscrições, e um painel de administração completo para o gerenciamento do evento.
 
 ## ✨ Funcionalidades
 
@@ -8,49 +8,62 @@ O projeto é dividido em duas áreas principais: a página pública e o painel a
 
 ### Página Pública (`index.html`)
 
-- **Design Responsivo:** Layout otimizado para desktops, tablets e celulares.
+- **Design Responsivo:** Interface otimizada para desktops, tablets e celulares.
 - **Contagem Regressiva:** Barra no topo com um contador em tempo real para a data do evento.
-- **Vídeo de Fundo:** Seção inicial com um vídeo dinâmico do YouTube.
-- **Navegação Intuitiva:**
-  - Menu lateral elegante para desktops.
-  - Barra de navegação inferior fixa e funcional para tablets e celulares.
-  - Rolagem suave entre as seções.
-- **Formulário de Inscrição Inteligente:**
-  - Validação de campos em tempo real.
-  - Máscara para campo de telefone.
-  - Autocompletar para municípios do Paraná.
+- **Vídeo de Fundo:** Seção de boas-vindas com um vídeo dinâmico em loop.
+- **Navegação Fluida:**
+  - Menu lateral elegante para desktops com indicador de seção ativa.
+  - Barra de navegação inferior fixa e funcional para dispositivos móveis.
+  - Rolagem suave entre as seções da página.
+- **Formulário de Inscrição Multi-passo:**
+  - Validação de campos em tempo real e ao submeter.
+  - Máscaras para campos de CPF, Telefone e CEP.
+  - Autocompletar para municípios do Paraná, facilitando o preenchimento.
+  - **Preenchimento Automático:** Detecta e-mails já cadastrados e preenche os dados do usuário para agilizar novas inscrições.
   - Integração direta com o banco de dados **Supabase**.
-  - Preenchimento automático de dados para e-mails já cadastrados.
+- **Integração de Pagamento (Asaas):**
+  - Após a inscrição, um modal oferece a opção de adquirir o certificado.
+  - Ao aceitar, uma **Edge Function** do Supabase é chamada para gerar um link de pagamento via API do Asaas.
+- **Confirmação por E-mail:** Envio automático de e-mail de confirmação com o código de inscrição após o cadastro, utilizando uma Edge Function.
 - **Acessibilidade:** Controles para aumentar, diminuir e resetar o tamanho da fonte.
-- **Interatividade:** Animações sutis de entrada e zoom na imagem de palestrantes.
+- **Interatividade:** Animações de entrada para elementos e efeito de zoom na imagem de palestrantes.
 
 ### Painel Administrativo (`admin.html`)
 
 - **Acesso Seguro:** Rota protegida com sistema de login e senha via **Supabase Auth**.
-- **Dashboard de Métricas:**
-  - Cards com dados chave: total de inscritos, municípios únicos, adesão a certificados, etc.
-  - Gráficos visuais (usando Chart.js) para participação por dia e top 5 municípios.
+- **Dashboard Interativo:**
+  - **Cards de Métricas em Pilha:** Cards animados que rotacionam automaticamente ou com um clique, exibindo múltiplas métricas (Ex: Total de empresas, empresa com mais/menos inscritos).
+  - **Gráficos Detalhados:** Visualizações (usando Chart.js) para participação por dia, top 5 municípios e top 5 empresas.
 - **Gerenciamento de Inscritos:**
   - Tabela completa com todos os participantes.
   - Funcionalidades de **busca**, **filtro** por coluna e **ordenação**.
-  - Sistema de **Lixeira**: mova inscritos para a lixeira em vez de deletar permanentemente.
-  - **Ações em Massa:** Selecione múltiplos inscritos para mover para a lixeira ou exportar.
+  - **Edição de Status de Pagamento:** Altere o status do certificado (Confirmado, Pendente, Não solicitado) diretamente na tabela.
+  - **Sistema de Lixeira:** Mova inscritos para a lixeira com a opção de restaurar ou excluir permanentemente, evitando perdas acidentais.
 - **Exportação de Dados:**
   - Exporte a lista de inscritos para **CSV**.
   - Gere um **PDF** profissional com a lista completa.
   - Exporte uma **Lista de Chamada (Checklist)** em PDF, pronta para impressão.
-- **Adição Manual:** Modal para adicionar novos inscritos diretamente pelo painel.
+- **Ações em Massa Avançadas:**
+  - Selecione múltiplos inscritos para mover para a lixeira, restaurar, excluir permanentemente ou exportar.
+  - **Editar ou Duplicar** diretamente da barra de ações, sem precisar rolar a tabela.
+- **Ferramentas de Produtividade:**
+  - **Adição Manual:** Modal para adicionar novos inscritos diretamente pelo painel, com opção "Salvar e Novo" para agilizar cadastros em lote.
+  - **Duplicação de Inscritos:** Crie um novo registro a partir de um existente, ideal para cadastrar pessoas da mesma empresa.
+  - **Exclusão de Duplicados:** Ferramenta que identifica inscritos com o mesmo nome e move os registros mais antigos para a lixeira.
+- **Tutorial Guiado Interativo:** Um tour completo que destaca e explica cada funcionalidade do painel, simulando cliques para abrir menus e modais.
+- **Notificações do GitHub:** Um badge no cabeçalho informa sobre novas atualizações (commits) no repositório do projeto.
 
 ## 🚀 Tecnologias Utilizadas
 
 - **Frontend:**
   - HTML5
   - CSS3 com **Tailwind CSS** para estilização rápida.
-  - JavaScript (ES6+ com módulos)
+  - JavaScript (ES6+ com Módulos)
 - **Backend e Banco de Dados:**
   - **Supabase:** Usado como um backend completo para:
     - **Database:** Armazenamento de todos os inscritos.
     - **Auth:** Sistema de autenticação para o painel de admin.
+    - **Edge Functions (Deno/TypeScript):** Para envio de e-mails de confirmação e geração de cobranças via API externa (Asaas).
 - **Bibliotecas JavaScript:**
   - **Chart.js:** Para a criação dos gráficos no dashboard.
   - **jsPDF** e **jsPDF-AutoTable:** Para a geração dos arquivos PDF.
