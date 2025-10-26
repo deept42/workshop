@@ -2059,14 +2059,13 @@ function configurarTutorialGuiado() {
             finalizarTutorial();
             return;
         }
+
+        // Executa a ação de "limpeza" do passo de onde saímos (seja para frente ou para trás)
+        const passoAnterior = passos[passoAtual];
+        if (passoAnterior && passoAnterior.acaoDepois) { passoAnterior.acaoDepois(); }
+
         passoAtual = index;
         const passo = passos[index];
-        const passoAnterior = passos[index - 1];
-
-        // Executa a ação de "limpeza" do passo anterior, se houver
-        if (passoAnterior && passoAnterior.acaoDepois) {
-            passoAnterior.acaoDepois();
-        }
         const elementoAlvo = document.querySelector(passo.element);
 
         if (!elementoAlvo) {
@@ -2108,7 +2107,7 @@ function configurarTutorialGuiado() {
                 <div class="flex justify-between items-center">
                     <span class="text-xs font-semibold text-gray-500">${index + 1} / ${passos.length}</span>
                     <div>
-                        <button id="tutorial-prev-btn" class="px-3 py-1 text-sm rounded-md bg-gray-200 hover:bg-gray-300 transition-colors ${index === 0 ? 'hidden' : ''}">Anterior</button>
+                        <button id="tutorial-end-btn" class="px-3 py-1 text-sm rounded-md bg-gray-200 hover:bg-gray-300 transition-colors">Encerrar</button>
                         <button id="tutorial-next-btn" class="px-3 py-1 text-sm rounded-md bg-blue-600 hover:bg-blue-700 text-white transition-colors">${index === passos.length - 1 ? 'Finalizar' : 'Próximo'}</button>
                     </div>
                 </div>
@@ -2141,10 +2140,7 @@ function configurarTutorialGuiado() {
 
             // Configura os botões de navegação do tutorial
             document.getElementById('tutorial-next-btn').addEventListener('click', () => mostrarPasso(passoAtual + 1));
-            const prevBtn = document.getElementById('tutorial-prev-btn');
-            if (prevBtn) {
-                prevBtn.addEventListener('click', () => mostrarPasso(passoAtual - 1));
-            }
+            document.getElementById('tutorial-end-btn').addEventListener('click', () => finalizarTutorial());
         }, 50); // Pequeno delay para suavizar a transição visual
     }
 
