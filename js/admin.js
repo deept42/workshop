@@ -1695,6 +1695,33 @@ async function configurarNotificacoesDeCommit() {
     });
 }
 
+/**
+ * Cria um efeito de chuva de confetes na tela.
+ */
+function criarConfetes() {
+    const container = document.body;
+    const numeroDeConfetes = 150;
+    // Cores baseadas no tema do site e do painel
+    const cores = ['#E63946', '#3b82f6', '#22c55e', '#f97316', '#a8dadc', '#1d3557'];
+
+    for (let i = 0; i < numeroDeConfetes; i++) {
+        const confete = document.createElement('div');
+        confete.classList.add('confete');
+        confete.style.left = `${Math.random() * 100}vw`;
+        // Duração da animação entre 3 e 7 segundos
+        confete.style.animationDuration = `${Math.random() * 4 + 3}s`;
+        confete.style.animationDelay = `${Math.random() * 3}s`;
+        confete.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
+        
+        container.appendChild(confete);
+
+        // Remove o confete do DOM após a animação para não sobrecarregar a página
+        confete.addEventListener('animationend', () => {
+            confete.remove();
+        });
+    }
+}
+
 // Inicia a execução do script da página.
 document.addEventListener('DOMContentLoaded', inicializarPainelAdministrativo);
 
@@ -1978,30 +2005,68 @@ function configurarTutorialGuiado() {
 
     if (!startBtn || !overlay || !highlightBox || !tutorialBox) return;
 
+    // Ações personalizadas que podem ser executadas antes ou depois de um passo
+    const acoesTutorial = {
+        abrirGraficos: () => document.getElementById('toggle-charts-btn')?.click(),
+        fecharGraficos: () => {
+            const chartsSection = document.getElementById('charts-section');
+            if (chartsSection && !chartsSection.classList.contains('hidden')) {
+                document.getElementById('toggle-charts-btn')?.click();
+            }
+        },
+        abrirMenuAjuda: () => document.getElementById('fab-container')?.classList.add('open'),
+        fecharMenuAjuda: () => document.getElementById('fab-container')?.classList.remove('open'),
+        abrirModalAdicionar: () => {
+            return new Promise(resolve => {
+                document.getElementById('add-inscrito-btn')?.click();
+                setTimeout(resolve, 300); // Aguarda 300ms para a animação do modal
+            });
+        },
+        fecharModalAdicionar: () => document.getElementById('add-modal-close-btn')?.click(),
+        abrirModalEditar: () => {
+            return new Promise(resolve => {
+                document.querySelector('.btn-editar')?.click(); // Clica no primeiro botão de editar que encontrar
+                setTimeout(resolve, 300); // Aguarda a animação do modal
+            });
+        },
+        fecharModalEditar: () => document.getElementById('edit-modal-close-btn')?.click()
+    };
+
     const passos = [
-        { element: '#summary-section', title: 'Resumo Geral', text: 'Aqui você tem uma visão rápida das métricas mais importantes do evento. Clique nos cards para ver mais detalhes.', proTip: 'Os cards são interativos! Clique neles para alternar entre diferentes métricas, como o total de empresas e o município com mais inscritos.' },
-        { element: '#toggle-charts-btn', title: 'Gráficos Detalhados', text: 'Clique aqui para expandir ou ocultar os gráficos que mostram a distribuição de inscritos por dia, município e empresa.', proTip: 'Use os gráficos para identificar tendências visuais rapidamente, como a adesão por empresa ou a proporção de participantes por dia.' },
-        { element: '#filtro-busca', title: 'Busca e Filtro', text: 'Use este campo para encontrar rapidamente um inscrito. Você pode escolher em qual coluna buscar para refinar sua pesquisa.', proTip: 'Para buscar por um dia específico, selecione a coluna "Dia" e digite "13" ou "14". Para buscar por data, use o formato DD/MM/AAAA.' },
-        { element: '#add-inscrito-btn', title: 'Adicionar Inscrito', text: 'Use este botão para cadastrar um novo participante manualmente. Ideal para inscrições feitas no local ou por telefone.', proTip: 'Utilize o botão "Salvar e Novo" para cadastrar rapidamente várias pessoas da mesma empresa, mantendo os dados em comum.' },
-        { element: '#export-csv-btn', title: 'Exportar para CSV', text: 'Gera um arquivo CSV (compatível com Excel) com os dados dos inscritos visíveis na tabela.', proTip: 'O CSV é ideal para análises de dados mais profundas ou para importar a lista em outras ferramentas de gerenciamento.' },
-        { element: '#export-pdf-btn', title: 'Exportar Relatório PDF', text: 'Cria um relatório completo em PDF com todos os dados dos inscritos, ideal para arquivamento e análise.', proTip: 'Este PDF é perfeito para gerar um documento oficial do evento, com uma formatação profissional e todos os detalhes dos participantes.' },
-        { element: '#export-checklist-btn', title: 'Exportar Checklist de Presença', text: 'Gera uma lista de chamada simplificada em PDF, pronta para ser impressa e usada no credenciamento do evento.', proTip: 'No dia do evento, imprima uma lista para cada dia. Use o filtro de "Dias" antes de exportar para gerar uma checklist específica para o Dia 13 e outra para o Dia 14.' },
-        { element: '#delete-duplicates-btn', title: 'Excluir Duplicados', text: 'Esta função inteligente verifica todos os inscritos com o mesmo nome completo e move os registros mais antigos para a lixeira.', proTip: 'Use esta função após importar ou adicionar muitos inscritos para garantir que sua lista esteja limpa e sem entradas repetidas.' },
-        { element: '#view-toggle-switch', title: 'Ativos e Lixeira', text: 'Alterne entre a visualização de inscritos ativos e os que foram movidos para a lixeira. O número na lixeira indica quantos itens foram removidos.', proTip: 'A lixeira é uma camada de segurança. Itens aqui podem ser restaurados ou excluídos permanentemente, evitando perdas acidentais.' },
-        { element: '.admin-table', title: 'Tabela de Inscritos', text: 'Esta é a lista principal de inscritos. Você pode ordenar as colunas clicando nos títulos e realizar ações individuais.', proTip: 'Clique no cabeçalho de uma coluna (como "Nome Completo" ou "Data Inscrição") para ordenar a lista em ordem crescente ou decrescente.' },
-        { element: '#select-all-checkbox', title: 'Ações em Massa', text: 'Use este checkbox para selecionar todos os inscritos visíveis e realizar ações em massa, como exportar ou mover para a lixeira.', proTip: 'Combine esta função com o filtro. Por exemplo, filtre por um município e depois use "Selecionar Tudo" para exportar apenas os inscritos daquela cidade.' },
-        { element: '#fab-container', title: 'Menu de Ajuda', text: 'Este é o menu que você acabou de usar! Por aqui, você pode iniciar este tutorial novamente ou entrar em contato com o suporte técnico.', proTip: 'Se encontrar qualquer comportamento inesperado (um "bug"), use o botão de WhatsApp para reportar diretamente ao desenvolvedor.' }
+        { element: '#summary-section', title: '1. Visão Geral (Resumo e Gráficos)', text: 'Aqui você tem uma visão rápida das métricas mais importantes. Os cards são interativos e os gráficos mostram a distribuição dos inscritos.', proTip: 'Clique nos cards para alternar entre diferentes métricas, como o total de empresas e o município com mais inscritos.' },
+        { element: '#toggle-charts-btn', title: '2. Alternar Visualização (Ocultar/Mostrar Gráficos)', text: 'Use este botão para expandir ou recolher a seção de gráficos, focando na tabela de inscritos quando necessário.', proTip: 'Ocultar os gráficos pode facilitar a visualização da tabela em telas menores.', acaoAntes: acoesTutorial.abrirGraficos, acaoDepois: acoesTutorial.fecharGraficos },
+        { element: '.admin-table', title: '3. Entender a Lista de Inscritos', text: 'Esta é a lista principal de participantes. Você pode ordenar as colunas clicando nos títulos e realizar ações individuais em cada linha.', proTip: 'Clique no cabeçalho de uma coluna (como "Nome Completo") para ordenar a lista em ordem crescente ou decrescente.' },
+        { element: '#filtro-busca', title: '4. Buscar e Filtrar Inscritos', text: 'Use este campo para encontrar rapidamente um participante. Você pode escolher em qual coluna buscar para refinar sua pesquisa.', proTip: 'Para buscar por um dia específico, selecione a coluna "Dia" e digite "13" ou "14".' },
+        { element: '#add-inscrito-btn', title: '5. Adicionar Novo Inscrito', text: 'Clique aqui para abrir o formulário e cadastrar um novo participante manualmente. Ideal para inscrições feitas no local.', proTip: 'Manter o painel aberto em um tablet no dia do evento pode agilizar o cadastro de última hora.' },
+        { element: '#add-inscrito-modal-content', title: '6. Preencher o Formulário', text: 'Este é o formulário para adicionar um novo inscrito. Preencha os dados e escolha os dias de participação.', proTip: 'Campos com * são obrigatórios para garantir a qualidade dos dados.', acaoAntes: acoesTutorial.abrirModalAdicionar, position: 'right' },
+        { element: '#save-and-add-another-btn', title: '7. Salvar o Novo Inscrito', text: 'Use "Salvar e Fechar" para finalizar ou "Salvar e Novo" para cadastrar várias pessoas da mesma empresa rapidamente, mantendo os dados em comum.', proTip: 'O botão "Salvar e Novo" é um grande aliado para agilizar o cadastro de grupos.', acaoDepois: acoesTutorial.fecharModalAdicionar },
+        { element: '#export-csv-btn', title: '8. Exportar para CSV', text: 'Gera um arquivo CSV (compatível com Excel) com os dados dos inscritos visíveis na tabela.', proTip: 'O CSV é ideal para análises de dados mais profundas ou para importar a lista em outras ferramentas de gerenciamento.' },
+        { element: '#export-pdf-btn', title: '9. Exportar Relatório PDF', text: 'Cria um relatório completo em PDF com todos os dados dos inscritos, ideal para arquivamento e análise.', proTip: 'Este PDF é perfeito para gerar um documento oficial do evento, com uma formatação profissional e todos os detalhes dos participantes.' },
+        { element: '#export-checklist-btn', title: '10. Exportar Checklist de Presença', text: 'Gera uma lista de chamada simplificada em PDF, pronta para ser impressa e usada no credenciamento do evento.', proTip: 'No dia do evento, imprima uma lista para cada dia. Use o filtro de "Dias" antes de exportar para gerar uma checklist específica para o Dia 13 e outra para o Dia 14.' },
+        { element: '#delete-duplicates-btn', title: '11. Excluir Duplicados', text: 'Esta função inteligente verifica todos os inscritos com o mesmo nome completo e move os registros mais antigos para a lixeira.', proTip: 'Use esta função após importar ou adicionar muitos inscritos para garantir que sua lista esteja limpa e sem entradas repetidas.' },
+        { element: '#view-toggle-switch', title: '12. Ativos e Lixeira', text: 'Alterne entre a visualização de inscritos ativos e os que foram movidos para a lixeira. O número na lixeira indica quantos itens foram removidos.', proTip: 'A lixeira é uma camada de segurança. Itens aqui podem ser restaurados ou excluídos permanentemente, evitando perdas acidentais.' },
+        { element: '#lista-inscritos tr:first-child td:last-child', title: '13. Ações Individuais', text: 'Em cada linha, você encontra botões para Editar, Mover para a Lixeira ou Duplicar um inscrito.', proTip: 'Duplicar é útil para cadastrar rapidamente outra pessoa da mesma empresa, pois copia todos os dados, exceto o nome.' },
+        { element: '.btn-editar', title: '14. Editar um Inscrito', text: 'Vamos ver como editar. Ao clicar no lápis, o formulário de edição é aberto com os dados do participante.', proTip: 'É a maneira mais rápida de corrigir um nome, e-mail ou alterar os dias de participação.' },
+        { element: '#edit-inscrito-modal-content', title: '15. Alterar os Dados', text: 'O formulário de edição é similar ao de adição. Faça as alterações necessárias nos campos.', proTip: 'Lembre-se de verificar se os dias de participação estão corretos antes de salvar.', acaoAntes: acoesTutorial.abrirModalEditar, position: 'right' },
+        { element: '#edit-inscrito-form button[type="submit"]', title: '16. Salvar Alterações', text: 'Após fazer as modificações, clique neste botão para salvar e atualizar os dados do inscrito na tabela.', proTip: 'As alterações são salvas imediatamente no banco de dados.', acaoDepois: acoesTutorial.fecharModalEditar },
+        { element: '#fab-main-btn', title: '17. Conclusão (Precisa de ajuda?)', text: 'Este é o menu de ajuda. Por aqui, você pode iniciar este tutorial novamente ou entrar em contato com o suporte técnico.', proTip: 'Se encontrar qualquer comportamento inesperado (um "bug"), use o botão de WhatsApp para reportar diretamente ao desenvolvedor.', acaoAntes: acoesTutorial.abrirMenuAjuda, acaoDepois: acoesTutorial.fecharMenuAjuda }
     ];
 
     let passoAtual = 0;
 
-    function mostrarPasso(index) {
+    async function mostrarPasso(index) {
         if (index < 0 || index >= passos.length) {
             finalizarTutorial();
             return;
         }
         passoAtual = index;
         const passo = passos[index];
+        const passoAnterior = passos[index - 1];
+
+        // Executa a ação de "limpeza" do passo anterior, se houver
+        if (passoAnterior && passoAnterior.acaoDepois) {
+            passoAnterior.acaoDepois();
+        }
         const elementoAlvo = document.querySelector(passo.element);
 
         if (!elementoAlvo) {
@@ -2010,59 +2075,77 @@ function configurarTutorialGuiado() {
             return;
         }
 
-        // Posiciona a área de destaque
-        const rect = elementoAlvo.getBoundingClientRect();
-        highlightBox.style.width = `${rect.width + 16}px`;
-        highlightBox.style.height = `${rect.height + 16}px`;
-        highlightBox.style.top = `${rect.top - 8 + window.scrollY}px`;
-        highlightBox.style.left = `${rect.left - 8 + window.scrollX}px`;
+        // Executa a ação ANTES de mostrar o passo atual
+        if (passo.acaoAntes) { // Agora a função pode ser assíncrona
+            await passo.acaoAntes();
+        }
 
-        // Cria e posiciona a caixa de texto
-        const proTipHtml = passo.proTip 
-            ? `<div class="mt-4 pt-3 border-t border-gray-200">
-                   <p class="text-xs font-bold text-amber-600 uppercase mb-1">Dica do Desenvolvedor</p>
-                   <p class="text-xs text-gray-600">${passo.proTip}</p>
-               </div>`
-            : '';
+        // Rola a tela para que o elemento destacado fique visível ANTES de calcular a posição.
+        // Usamos 'instant' para garantir que a posição seja calculada corretamente,
+        // e um pequeno timeout para dar a sensação de suavidade.
+        elementoAlvo.scrollIntoView({ behavior: 'instant', block: 'center', inline: 'center' });
 
-        tutorialBox.innerHTML = `
-            <h4 class="font-bold text-lg text-[#062E51] mb-2">${passo.title}</h4>
-            <p class="text-gray-700 text-sm">${passo.text}</p>
-            ${proTipHtml}
-            <div class="flex justify-between items-center">
-                <span class="text-xs font-semibold text-gray-500">${index + 1} / ${passos.length}</span>
-                <div>
-                    <button id="tutorial-prev-btn" class="px-3 py-1 text-sm rounded-md bg-gray-200 hover:bg-gray-300 transition-colors ${index === 0 ? 'hidden' : ''}">Anterior</button>
-                    <button id="tutorial-next-btn" class="px-3 py-1 text-sm rounded-md bg-blue-600 hover:bg-blue-700 text-white transition-colors">${index === passos.length - 1 ? 'Finalizar' : 'Próximo'}</button>
+        setTimeout(() => {
+            // Posiciona a área de destaque
+            const rect = elementoAlvo.getBoundingClientRect();
+            highlightBox.style.width = `${rect.width + 16}px`;
+            highlightBox.style.height = `${rect.height + 16}px`;
+            highlightBox.style.top = `${rect.top - 8 + window.scrollY}px`;
+            highlightBox.style.left = `${rect.left - 8 + window.scrollX}px`;
+
+            // Cria e posiciona a caixa de texto
+            const proTipHtml = passo.proTip 
+                ? `<div class="mt-4 pt-3 border-t border-gray-200">
+                       <p class="text-xs font-bold text-amber-600 uppercase mb-1">Dica do Desenvolvedor</p>
+                       <p class="text-xs text-gray-600">${passo.proTip}</p>
+                   </div>`
+                : '';
+
+            tutorialBox.innerHTML = `
+                <h4 class="font-bold text-lg text-[#062E51] mb-2">${passo.title}</h4>
+                <p class="text-gray-700 text-sm">${passo.text}</p>
+                ${proTipHtml}
+                <div class="flex justify-between items-center">
+                    <span class="text-xs font-semibold text-gray-500">${index + 1} / ${passos.length}</span>
+                    <div>
+                        <button id="tutorial-prev-btn" class="px-3 py-1 text-sm rounded-md bg-gray-200 hover:bg-gray-300 transition-colors ${index === 0 ? 'hidden' : ''}">Anterior</button>
+                        <button id="tutorial-next-btn" class="px-3 py-1 text-sm rounded-md bg-blue-600 hover:bg-blue-700 text-white transition-colors">${index === passos.length - 1 ? 'Finalizar' : 'Próximo'}</button>
+                    </div>
                 </div>
-            </div>
-        `;
-        tutorialBox.classList.remove('hidden');
+            `;
+            tutorialBox.classList.remove('hidden');
 
-        // Posiciona a caixa de texto
-        const boxRect = tutorialBox.getBoundingClientRect();
-        let top = rect.bottom + 15 + window.scrollY;
-        let left = rect.left + (rect.width / 2) - (boxRect.width / 2) + window.scrollX;
+            // Posiciona a caixa de texto
+            const boxRect = tutorialBox.getBoundingClientRect();
+            let top, left;
 
-        // Ajusta para não sair da tela
-        if (left < 10) left = 10;
-        if (left + boxRect.width > window.innerWidth - 10) left = window.innerWidth - boxRect.width - 10;
-        if (top + boxRect.height > window.innerHeight + window.scrollY - 10) {
-            top = rect.top - boxRect.height - 15 + window.scrollY;
-        }
+            if (passo.position === 'right') {
+                // Posiciona à direita do elemento alvo
+                top = rect.top + (rect.height / 2) - (boxRect.height / 2) + window.scrollY;
+                left = rect.right + 15 + window.scrollX;
+            } else {
+                // Lógica padrão (abaixo ou acima)
+                top = rect.bottom + 15 + window.scrollY;
+                left = rect.left + (rect.width / 2) - (boxRect.width / 2) + window.scrollX;
 
-        tutorialBox.style.top = `${top}px`;
-        tutorialBox.style.left = `${left}px`;
+                // Ajusta para não sair da tela
+                if (left < 10) left = 10;
+                if (left + boxRect.width > window.innerWidth - 10) left = window.innerWidth - boxRect.width - 10;
+                if (top + boxRect.height > window.innerHeight + window.scrollY - 10) {
+                    top = rect.top - boxRect.height - 15 + window.scrollY;
+                }
+            }
 
-        // Rola a tela para que o elemento destacado fique visível
-        elementoAlvo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            tutorialBox.style.top = `${top}px`;
+            tutorialBox.style.left = `${left}px`;
 
-        // Configura os botões de navegação do tutorial
-        document.getElementById('tutorial-next-btn').addEventListener('click', () => mostrarPasso(passoAtual + 1));
-        const prevBtn = document.getElementById('tutorial-prev-btn');
-        if (prevBtn) {
-            prevBtn.addEventListener('click', () => mostrarPasso(passoAtual - 1));
-        }
+            // Configura os botões de navegação do tutorial
+            document.getElementById('tutorial-next-btn').addEventListener('click', () => mostrarPasso(passoAtual + 1));
+            const prevBtn = document.getElementById('tutorial-prev-btn');
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => mostrarPasso(passoAtual - 1));
+            }
+        }, 50); // Pequeno delay para suavizar a transição visual
     }
 
     function iniciarTutorial() {
@@ -2075,6 +2158,18 @@ function configurarTutorialGuiado() {
         overlay.classList.add('hidden');
         tutorialBox.classList.add('hidden');
         highlightBox.style.width = '0px'; // Recolhe a caixa de destaque
+
+        // Garante que qualquer ação de "limpeza" do último passo seja executada
+        const ultimoPasso = passos[passoAtual];
+        if (ultimoPasso && ultimoPasso.acaoDepois) {
+            ultimoPasso.acaoDepois();
+        }
+
+        // Solta os confetes para celebrar!
+        criarConfetes();
+
+        // Mostra uma notificação de sucesso
+        mostrarNotificacao('Tutorial concluído com sucesso!', 'sucesso');
     }
 
     startBtn.addEventListener('click', (e) => {

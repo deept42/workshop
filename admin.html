@@ -219,6 +219,23 @@
         width: 0; height: 0;
         border-style: solid;
     }
+    /* --- Estilos para o Confete de Finalização --- */
+    .confete {
+        position: fixed;
+        top: -20px; /* Começa um pouco acima da tela */
+        width: 10px;
+        height: 10px;
+        opacity: 0.9;
+        z-index: 9999; /* Garante que fique acima de tudo */
+        animation: cair-confete linear;
+    }
+
+    @keyframes cair-confete {
+        to {
+            transform: translateY(105vh) rotate(720deg);
+            opacity: 0;
+        }
+    }
 </style>
 <body class="p-4 md:p-8">
 
@@ -614,7 +631,7 @@
 
     <!-- Modal para Adicionar Inscrito Manualmente -->
     <div id="add-inscrito-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-xl p-8 max-w-lg w-full">
+        <div id="add-inscrito-modal-content" class="bg-white rounded-lg shadow-xl p-8 max-w-lg w-full">
             <div class="flex justify-between items-start mb-6">
                 <h3 class="text-2xl font-bold text-[#062E51]">Adicionar Novo Inscrito</h3>
                 <button id="add-modal-close-btn" class="text-gray-400 hover:text-gray-600">
@@ -670,7 +687,7 @@
 
     <!-- Modal para Editar Inscrito -->
     <div id="edit-inscrito-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-xl p-8 max-w-lg w-full">
+        <div id="edit-inscrito-modal-content" class="bg-white rounded-lg shadow-xl p-8 max-w-lg w-full">
             <div class="flex justify-between items-start mb-6">
                 <h3 class="text-2xl font-bold text-[#062E51]">Editar Inscrito</h3>
                 <button id="edit-modal-close-btn" class="text-gray-400 hover:text-gray-600">
