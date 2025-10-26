@@ -358,7 +358,15 @@
                 </div>
                 <!-- Card Adesão ao Certificado (COM ANIMAÇÃO DE PILHA) -->
                 <div id="card-adesao-wrapper" class="card-stack-wrapper">
-                    <!-- Card Escondido (Receita Gerada) -->
+                    <!-- Card 4: Receita Real (Pago) - Alterado para um tom mais escuro de laranja -->
+                    <div id="card-adesao-receita-paga" class="stack-card is-hidden bg-orange-600">
+                        <span class="material-symbols-outlined text-5xl opacity-80">price_check</span>
+                        <div>
+                            <p class="text-xl font-bold">Receita (Pago)</p>
+                            <p id="card-certificado-receita-paga-valor" class="text-2xl font-semibold opacity-90">R$ 0,00</p>
+                        </div>
+                    </div>
+                    <!-- Card 3: Receita Estimada -->
                     <div id="card-adesao-receita" class="stack-card is-hidden bg-amber-600">
                         <span class="material-symbols-outlined text-5xl opacity-80">monetization_on</span>
                         <div>
@@ -366,7 +374,7 @@
                             <p id="card-certificado-receita-valor" class="text-2xl font-semibold opacity-90">R$ 0,00</p>
                         </div>
                     </div>
-                    <!-- Card de Trás (Contagem) -->
+                    <!-- Card 2: Contagem de Solicitações -->
                     <div id="card-adesao-count" class="stack-card is-back bg-amber-500">
                         <span class="material-symbols-outlined text-5xl opacity-80">workspace_premium</span>
                         <div>
@@ -374,7 +382,7 @@
                             <p id="card-certificado-count-valor" class="text-2xl font-semibold opacity-90">0</p>
                         </div>
                     </div>
-                    <!-- Card da Frente (Percentual) -->
+                    <!-- Card 1: Percentual de Adesão -->
                     <div id="card-adesao-percent" class="stack-card is-front bg-yellow-500">
                         <span class="material-symbols-outlined text-5xl opacity-80">workspace_premium</span>
                         <div>
@@ -384,6 +392,7 @@
                     </div>
                     <div class="card-indicators absolute bottom-4 left-1/2 -translate-x-1/2 z-30">
                         <span class="indicator-dot active"></span>
+                        <span class="indicator-dot"></span>
                         <span class="indicator-dot"></span>
                         <span class="indicator-dot"></span>
                     </div>

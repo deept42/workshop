@@ -1200,19 +1200,21 @@ function configurarCardCertificadoInterativo(inscritos) {
     const cards = [
         document.getElementById('card-adesao-percent'),
         document.getElementById('card-adesao-count'),
-        document.getElementById('card-adesao-receita')
+        document.getElementById('card-adesao-receita'),
+        document.getElementById('card-adesao-receita-paga')
     ];
     const valores = [
         document.getElementById('card-certificado-percent-valor'),
         document.getElementById('card-certificado-count-valor'),
-        document.getElementById('card-certificado-receita-valor')
+        document.getElementById('card-certificado-receita-valor'),
+        document.getElementById('card-certificado-receita-paga-valor')
     ];
     const indicators = wrapper ? wrapper.querySelectorAll('.indicator-dot') : [];
 
     if (!wrapper || cards.some(c => !c) || valores.some(v => !v) || indicators.length === 0) return;
 
     let isAnimating = false;
-    let estadoAtual = 0; // 0: Percentual, 1: Contagem, 2: Receita
+    let estadoAtual = 0; // 0: Percentual, 1: Contagem, 2: Receita Estimada, 3: Receita Paga
     let autoRotateTimeout; // Variável para controlar o setTimeout
     const progressBar = wrapper.querySelector('.card-progress-bar');
     const autoRotateDelay = 10000; // 10 segundos
@@ -1221,12 +1223,15 @@ function configurarCardCertificadoInterativo(inscritos) {
     const preencherDados = () => {
         const totalInscritos = inscritos.length;
         const comCertificado = inscritos.filter(i => i.quer_certificado).length;
-        const receita = comCertificado * 5.00; // Atualizado para o novo valor de R$ 5,00
+        const pagos = inscritos.filter(i => i.status_pagamento === 'pago').length;
+        const receitaEstimada = comCertificado * 5.00;
+        const receitaPaga = pagos * 5.00;
         const taxa = totalInscritos > 0 ? (comCertificado / totalInscritos) * 100 : 0;
 
         valores[0].textContent = `${taxa.toFixed(0)}%`;
         valores[1].textContent = comCertificado;
-        valores[2].textContent = `R$ ${receita.toFixed(2).replace('.', ',')}`;
+        valores[2].textContent = `R$ ${receitaEstimada.toFixed(2).replace('.', ',')}`;
+        valores[3].textContent = `R$ ${receitaPaga.toFixed(2).replace('.', ',')}`;
     };
 
     const atualizarIndicadores = () => {
