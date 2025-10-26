@@ -217,7 +217,14 @@ function gerarHtmlLinha(inscrito, naLixeira = false) {
     }
 
     const botaoAcao = naLixeira
-        ? `<div class="flex gap-2">...</div>` // Lógica da lixeira mantida
+        ? `<div class="flex gap-2">
+               <button class="btn-restaurar text-gray-500 hover:text-green-600 transition-colors" data-id="${inscrito.id}" data-nome="${inscrito.nome_completo}" title="Restaurar inscrito">
+                   <span class="material-symbols-outlined">restore_from_trash</span>
+               </button>
+               <button class="btn-deletar-permanente text-gray-500 hover:text-red-600 transition-colors" data-id="${inscrito.id}" data-nome="${inscrito.nome_completo}" title="Excluir permanentemente">
+                   <span class="material-symbols-outlined">delete_forever</span>
+               </button>
+           </div>`
         : `<button class="btn-mover-lixeira text-gray-500 hover:text-red-600 transition-colors" data-id="${inscrito.id}" data-nome="${inscrito.nome_completo}" title="Mover para a lixeira">
                <span class="material-symbols-outlined">delete</span>
            </button>
@@ -675,7 +682,10 @@ function configurarAcoesTabela(callbackSucesso) {
             }
         } else if (targetButton.classList.contains('btn-restaurar')) {
             // Restaurando da lixeira (não precisa de confirmação)
-            await atualizarStatusInscrito(inscritoId, false, callbackSucesso);
+            const sucesso = await atualizarStatusInscrito(inscritoId, false);
+            if (sucesso) {
+                callbackSucesso();
+            }
         } else if (targetButton.classList.contains('btn-deletar-permanente')) {
             // Abre o modal de confirmação para exclusão permanente
             const confirmado = await mostrarModalConfirmacaoDeletar(
