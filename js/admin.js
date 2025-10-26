@@ -257,19 +257,41 @@ function gerarHtmlLinha(inscrito, naLixeira = false) {
     });
 
     // Lógica para o status do certificado
-    let certificadoHtml = '';
-    if (inscrito.quer_certificado) {
+    let statusClass = '';
+    let statusText = '';
+
+    if (inscrito.quer_certificado) { // Se o usuário quer o certificado
         if (inscrito.status_pagamento === 'pago') {
-            certificadoHtml = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Confirmado</span>`;
+            statusClass = 'bg-green-100 text-green-800';
+            statusText = 'Confirmado';
         } else if (inscrito.status_pagamento === 'pendente') {
-            certificadoHtml = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pendente</span>`;
+            statusClass = 'bg-yellow-100 text-yellow-800';
+            statusText = 'Pendente';
         } else {
             // Caso genérico para 'quer_certificado' mas sem status definido
-            certificadoHtml = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Solicitado</span>`;
+            statusClass = 'bg-blue-100 text-blue-800';
+            statusText = 'Solicitado';
         }
     } else {
-        certificadoHtml = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-600">Não solicitado</span>`;
+        statusClass = 'bg-gray-100 text-gray-600';
+        statusText = 'Não solicitado';
     }
+
+    const certificadoHtml = `
+        <div class="relative inline-block text-left">
+            <button type="button" class="btn-status-certificado px-2 inline-flex text-xs leading-5 font-semibold rounded-full transition-transform hover:scale-105 ${statusClass}" data-id="${inscrito.id}">
+                ${statusText}
+                <span class="material-symbols-outlined text-sm ml-1">arrow_drop_down</span>
+            </button>
+            <div class="menu-status-certificado origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden z-10">
+                <div class="py-1" role="none">
+                    <a href="#" class="item-menu-status text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" data-status="pago">Marcar como Confirmado</a>
+                    <a href="#" class="item-menu-status text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" data-status="pendente">Marcar como Pendente</a>
+                    <a href="#" class="item-menu-status text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" data-status="nao_solicitado">Marcar como Não Solicitado</a>
+                </div>
+            </div>
+        </div>
+    `;
 
     // Formata o CPF para exibição
     const formatarCPF = (cpf) => {
@@ -458,6 +480,9 @@ function configurarAcoesEmMassa(callbackSucesso) {
     const bulkChecklistBtn = document.getElementById('bulk-export-checklist-btn');    
     const bulkRestoreBtn = document.getElementById('bulk-restore-btn');
     const bulkDeletePermanentBtn = document.getElementById('bulk-delete-permanent-btn');
+    const bulkEditBtn = document.getElementById('bulk-edit-btn');
+    const bulkDuplicateBtn = document.getElementById('bulk-duplicate-btn');
+
     if (bulkMoveBtn) {
         bulkMoveBtn.addEventListener('click', async () => {
             const idsParaMover = obterIdsSelecionados();
@@ -548,6 +573,33 @@ function configurarAcoesEmMassa(callbackSucesso) {
             }
         });
     }
+
+    // Ação: Editar o item selecionado (só funciona se 1 item for selecionado)
+    if (bulkEditBtn) {
+        bulkEditBtn.addEventListener('click', async () => {
+            const idsSelecionados = obterIdsSelecionados();
+            if (idsSelecionados.length !== 1) return;
+
+            const { data, error } = await supabase.from('cadastro_workshop').select('*').eq('id', idsSelecionados[0]).single();
+            if (error) {
+                mostrarNotificacao('Erro ao buscar dados do inscrito para edição.', 'erro');
+            } else {
+                abrirModalEdicao(data);
+            }
+        });
+    }
+
+    // Ação: Duplicar o(s) item(ns) selecionado(s)
+    if (bulkDuplicateBtn) {
+        bulkDuplicateBtn.addEventListener('click', async () => {
+            const idsSelecionados = obterIdsSelecionados();
+            if (idsSelecionados.length === 0) return;
+
+            for (const id of idsSelecionados) {
+                await iniciarDuplicacao(id);
+            }
+        });
+    }
 }
 
 /**
@@ -587,6 +639,8 @@ function configurarSelecaoEmMassa(naLixeira = false) {
     
     const btnsAtivos = document.querySelectorAll('.bulk-action-ativos');
     const btnsLixeira = document.querySelectorAll('.bulk-action-lixeira');
+    const bulkEditBtn = document.getElementById('bulk-edit-btn');
+    const bulkDuplicateBtn = document.getElementById('bulk-duplicate-btn');
 
     if (!selectAllCheckbox || !bulkActionsBar || !bulkActionsCount) return;
 
@@ -607,6 +661,10 @@ function configurarSelecaoEmMassa(naLixeira = false) {
         // Alterna a visibilidade dos botões de ação com base na visualização
         btnsAtivos.forEach(btn => btn.classList.toggle('hidden', naLixeira));
         btnsLixeira.forEach(btn => btn.classList.toggle('hidden', !naLixeira));
+
+        // Lógica de visibilidade para os novos botões
+        if (bulkEditBtn) bulkEditBtn.classList.toggle('hidden', naLixeira || totalSelecionado !== 1);
+        if (bulkDuplicateBtn) bulkDuplicateBtn.classList.toggle('hidden', naLixeira || totalSelecionado === 0);
 
         // Se não houver linhas visíveis (ex: filtro não encontrou nada), desmarca o "selecionar tudo"
         if (totalVisivel === 0) {
@@ -711,6 +769,42 @@ function configurarAcoesTabela(callbackSucesso) {
             await iniciarDuplicacao(inscritoId);
         }
     });
+
+    // Lógica para o menu de status do certificado
+    corpoTabela.addEventListener('click', async (e) => {
+        const target = e.target;
+
+        // Se clicar no botão principal, abre/fecha o menu
+        if (target.closest('.btn-status-certificado')) {
+            e.preventDefault();
+            const menu = target.closest('.relative').querySelector('.menu-status-certificado');
+            // Fecha todos os outros menus abertos
+            document.querySelectorAll('.menu-status-certificado').forEach(m => {
+                if (m !== menu) m.classList.add('hidden');
+            });
+            menu.classList.toggle('hidden');
+        }
+
+        // Se clicar em um item do menu, atualiza o status
+        if (target.classList.contains('item-menu-status')) {
+            e.preventDefault();
+            const menu = target.closest('.menu-status-certificado');
+            const id = menu.closest('.relative').querySelector('.btn-status-certificado').dataset.id;
+            const novoStatus = target.dataset.status;
+
+            const sucesso = await atualizarStatusCertificado(id, novoStatus);
+            if (sucesso) {
+                callbackSucesso(); // Recarrega a tabela
+            }
+            menu.classList.add('hidden'); // Fecha o menu após a ação
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.btn-status-certificado')) {
+            document.querySelectorAll('.menu-status-certificado').forEach(m => m.classList.add('hidden'));
+        }
+    });
 }
 
 async function atualizarStatusInscrito(id, isDeleted) {
@@ -731,6 +825,34 @@ async function atualizarStatusInscrito(id, isDeleted) {
         mostrarNotificacao(mensagem, 'sucesso');
         return true;
     }
+}
+
+/**
+ * Atualiza o status do certificado de um inscrito no banco de dados.
+ * @param {string} id - O ID do inscrito.
+ * @param {'pago' | 'pendente' | 'nao_solicitado'} novoStatus - O novo status.
+ * @returns {Promise<boolean>} Retorna true se a operação for bem-sucedida.
+ */
+async function atualizarStatusCertificado(id, novoStatus) {
+    let dadosParaAtualizar = {};
+
+    if (novoStatus === 'pago') {
+        dadosParaAtualizar = { quer_certificado: true, status_pagamento: 'pago' };
+    } else if (novoStatus === 'pendente') {
+        dadosParaAtualizar = { quer_certificado: true, status_pagamento: 'pendente' };
+    } else { // nao_solicitado
+        dadosParaAtualizar = { quer_certificado: false, status_pagamento: 'nao_solicitado' };
+    }
+
+    const { error } = await supabase.from('cadastro_workshop').update(dadosParaAtualizar).eq('id', id);
+
+    if (error) {
+        mostrarNotificacao('Erro ao atualizar o status do certificado.', 'erro');
+        console.error('Erro ao atualizar status do certificado:', error);
+        return false;
+    }
+    mostrarNotificacao('Status do certificado atualizado com sucesso!', 'sucesso');
+    return true;
 }
 
 async function deletarInscritoPermanentemente(id) {
