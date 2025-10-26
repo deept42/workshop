@@ -444,12 +444,15 @@
                     <select id="filtro-coluna" class="flex-shrink-0 p-3 border border-r-0 border-gray-300 rounded-l-lg bg-gray-50 focus:ring-2 focus:ring-[#062E51] focus:outline-none transition text-gray-600 font-semibold">
                         <option value="all">Buscar em Tudo</option>
                         <option value="nome">Nome</option>
+                        <option value="cpf">CPF</option>
                         <option value="cargo">Cargo</option>
                         <option value="email">E-mail</option>
                         <option value="municipio">Município</option>
+                        <option value="cep">CEP</option>
                         <option value="empresa">Empresa</option>
                         <option value="dias">Dia</option>
                         <option value="created_at">Data de Inscrição</option>
+                        <option value="certificado">Certificado</option>
                     </select>
                     <input type="text" id="filtro-busca" placeholder="Digite para filtrar..." class="w-full p-3 border border-gray-300 rounded-r-lg focus:ring-2 focus:ring-[#062E51] focus:outline-none transition group-focus-within:border-[#062E51] group-focus-within:ring-2">
                 </div>
@@ -527,6 +530,9 @@
                             <th scope="col" data-column="cargo_funcao">
                                 <div class="flex items-center gap-2">Cargo/Função <span class="material-symbols-outlined text-sm opacity-50">unfold_more</span></div>
                             </th>
+                            <th scope="col" data-column="cpf">
+                                <div class="flex items-center gap-2">CPF <span class="material-symbols-outlined text-sm opacity-50">unfold_more</span></div>
+                            </th>
                             <th scope="col" data-column="email">
                                 <div class="flex items-center gap-2">E-mail <span class="material-symbols-outlined text-sm opacity-50">unfold_more</span></div>
                             </th>
@@ -539,8 +545,14 @@
                             <th scope="col" data-column="municipio">
                                 <div class="flex items-center gap-2">Município <span class="material-symbols-outlined text-sm opacity-50">unfold_more</span></div>
                             </th>
+                            <th scope="col" data-column="cep">
+                                <div class="flex items-center gap-2">CEP <span class="material-symbols-outlined text-sm opacity-50">unfold_more</span></div>
+                            </th>
                             <th scope="col" data-column="dias">
                                 <div class="flex items-center gap-2">Dias <span class="material-symbols-outlined text-sm opacity-50">unfold_more</span></div>
+                            </th>
+                            <th scope="col" data-column="quer_certificado">
+                                <div class="flex items-center gap-2">Certificado <span class="material-symbols-outlined text-sm opacity-50">unfold_more</span></div>
                             </th>
                             <th scope="col" data-column="created_at">
                                 <div class="flex items-center gap-2">Data Inscrição <span class="material-symbols-outlined text-sm opacity-50">unfold_more</span></div>
@@ -553,7 +565,7 @@
                     <tbody id="lista-inscritos">
                         <!-- Linha de carregamento -->
                         <tr>
-                            <td colspan="10" class="px-6 py-4 text-center text-gray-500">Carregando inscritos...</td>
+                            <td colspan="13" class="px-6 py-4 text-center text-gray-500">Carregando inscritos...</td>
                         </tr>
                         <!-- As linhas com os dados dos inscritos serão inseridas aqui via JavaScript -->
                     </tbody>
@@ -610,13 +622,17 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input type="text" name="nome" class="form-input-admin" placeholder="Nome Completo *" required>
                     <input type="text" name="cargo" class="form-input-admin" placeholder="Cargo / Função">
+                    <input type="text" name="cpf" class="form-input-admin" placeholder="CPF">
                     <input type="email" name="email" class="form-input-admin" placeholder="E-mail *" required>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input type="text" name="empresa" class="form-input-admin" placeholder="Empresa / Instituição *" required>
                     <input type="text" name="telefone" class="form-input-admin" placeholder="Telefone">
                 </div>
-                <input type="text" name="municipio" class="form-input-admin" placeholder="Município *" required>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" name="municipio" class="form-input-admin" placeholder="Município *" required>
+                    <input type="text" name="cep" class="form-input-admin" placeholder="CEP">
+                </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Dias de participação:</label>
                     <div class="flex gap-4">
@@ -663,13 +679,17 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input type="text" name="nome" class="form-input-admin" placeholder="Nome Completo *" required>
                     <input type="text" name="cargo" class="form-input-admin" placeholder="Cargo / Função">
+                    <input type="text" name="cpf" class="form-input-admin" placeholder="CPF">
                     <input type="email" name="email" class="form-input-admin" placeholder="E-mail *" required>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input type="text" name="empresa" class="form-input-admin" placeholder="Empresa / Instituição *" required>
                     <input type="text" name="telefone" class="form-input-admin" placeholder="Telefone">
                 </div>
-                <input type="text" name="municipio" class="form-input-admin" placeholder="Município *" required>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" name="municipio" class="form-input-admin" placeholder="Município *" required>
+                    <input type="text" name="cep" class="form-input-admin" placeholder="CEP">
+                </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Dias de participação:</label>
                     <div class="flex gap-4">

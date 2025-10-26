@@ -37,6 +37,68 @@ function validarTelefone(telefone) {
     return /^\d{10,11}$/.test(apenasDigitos);
 }
 
+function validarCPF(cpf) {
+    cpf = cpf.replace(/[^\d]+/g, '');
+    if (cpf === '' || cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+    let add = 0;
+    for (let i = 0; i < 9; i++) add += parseInt(cpf.charAt(i)) * (10 - i);
+    let rev = 11 - (add % 11);
+    if (rev === 10 || rev === 11) rev = 0;
+    if (rev !== parseInt(cpf.charAt(9))) return false;
+    add = 0;
+    for (let i = 0; i < 10; i++) add += parseInt(cpf.charAt(i)) * (11 - i);
+    rev = 11 - (add % 11);
+    if (rev === 10 || rev === 11) rev = 0;
+    if (rev !== parseInt(cpf.charAt(10))) return false;
+    return true;
+}
+
+/**
+ * Aplica uma máscara de CEP em tempo real ao campo de CEP.
+ */
+export function configurarMascaraCEP() {
+    const inputCEP = document.getElementById('cep');
+    if (!inputCEP) return;
+
+    inputCEP.addEventListener('input', (evento) => {
+        const input = evento.target;
+        let valor = input.value.replace(/\D/g, '');
+        valor = valor.slice(0, 8);
+
+        if (valor.length > 5) {
+            valor = valor.replace(/(\d{5})(\d)/, '$1-$2');
+        }
+        input.value = valor;
+    });
+}
+
+function validarCEP(cep) {
+    return /^\d{5}-\d{3}$/.test(cep);
+}
+
+/**
+ * Aplica uma máscara de CPF em tempo real ao campo de CPF.
+ */
+export function configurarMascaraCPF() {
+    const inputCPF = document.getElementById('cpf');
+    if (!inputCPF) return;
+
+    inputCPF.addEventListener('input', (evento) => {
+        const input = evento.target;
+        let valor = input.value.replace(/\D/g, '');
+        valor = valor.slice(0, 11);
+
+        if (valor.length > 9) {
+            valor = valor.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+        } else if (valor.length > 6) {
+            valor = valor.replace(/(\d{3})(\d{3})(\d{3})/, '$1.$2.$3');
+        } else if (valor.length > 3) {
+            valor = valor.replace(/(\d{3})(\d{3})/, '$1.$2');
+        }
+        input.value = valor;
+    });
+}
+
 /**
  * Configura a validação e o envio do formulário de inscrição para o Supabase.
  */
@@ -48,7 +110,7 @@ export function configurarValidacaoFormulario() {
     if (!form || !mensagensForm || !botaoSubmit) return;
 
     // --- Validação em Tempo Real ---
-    const camposParaValidar = ['nome', 'cargo', 'empresa', 'email', 'telefone', 'municipio'];
+    const camposParaValidar = ['nome', 'cargo', 'cpf', 'empresa', 'email', 'telefone', 'municipio', 'cep'];
     camposParaValidar.forEach(nomeCampo => {
         const input = form.elements[nomeCampo];
         if (input) {
@@ -71,10 +133,12 @@ export function configurarValidacaoFormulario() {
 
         const nome = form.elements['nome'].value.trim();
         const cargo = form.elements['cargo'].value.trim();
+        const cpf = form.elements['cpf'].value.trim();
         const empresa = form.elements['empresa'].value.trim();
         const email = form.elements['email'].value.trim();
         const telefone = form.elements['telefone'].value.trim();
         const municipio = form.elements['municipio'].value.trim();
+        const cep = form.elements['cep'].value.trim();
         const consentimento = form.elements['consent'].checked;
         const participaDia13 = form.elements['dia13'].checked;
         const participaDia14 = form.elements['dia14'].checked;
@@ -99,6 +163,15 @@ export function configurarValidacaoFormulario() {
         // Valida campo Cargo (opcional, mas adiciona classe 'success' se preenchido)
         const cargoGroup = form.elements['cargo'].closest('.form-group');
         if (cargo) cargoGroup.classList.add('success');
+
+        // Valida campo CPF (obrigatório e formato válido)
+        const cpfGroup = form.elements['cpf'].closest('.form-group');
+        if (cpf && validarCPF(cpf)) {
+            cpfGroup.classList.add('success');
+        } else {
+            cpfGroup.classList.add('error');
+            isFormValid = false;
+        }
 
         // Valida campo Empresa (obrigatório)
         const empresaGroup = form.elements['empresa'].closest('.form-group');
@@ -136,6 +209,15 @@ export function configurarValidacaoFormulario() {
             isFormValid = false;
         }
 
+        // Valida campo CEP (obrigatório e formato válido)
+        const cepGroup = form.elements['cep'].closest('.form-group');
+        if (cep && validarCEP(cep)) {
+            cepGroup.classList.add('success');
+        } else {
+            cepGroup.classList.add('error');
+            isFormValid = false;
+        }
+
         // Validações sem feedback visual direto no campo, mas que invalidam o formulário
         const daysGroup = form.querySelector('.days-selection-group');
         if (!participaDia13 && !participaDia14) {
@@ -161,13 +243,14 @@ export function configurarValidacaoFormulario() {
             .insert([{
                 nome_completo: formatarParaTitulo(nome),
                 cargo_funcao: formatarParaTitulo(cargo),
+                cpf: cpf.replace(/\D/g, ''), // Salva apenas os números
                 empresa: formatarParaTitulo(empresa),
                 email: email.toLowerCase(), // E-mail sempre em minúsculas
                 telefone: telefone,
                 municipio: formatarParaTitulo(municipio),
+                cep: cep,
                 participa_dia_13: participaDia13,
                 participa_dia_14: participaDia14,
-                concorda_comunicacoes: consentimento,
                 quer_certificado: false,
                 status_pagamento: 'nao_solicitado'
             }])
@@ -183,12 +266,15 @@ export function configurarValidacaoFormulario() {
             botaoSubmit.disabled = false;
             botaoSubmit.textContent = 'Inscrever-se Agora';
         } else {
+            // Coleta os dados ANTES de limpar o formulário
+            const dadosInscrito = { id: data[0].id, nome, email, cpf, telefone, municipio, cep };
+
             mostrarNotificacao('Inscrição confirmada! Verifique as opções de certificado.', 'sucesso');
             mostrarFeedbackSucessoTopo(); // Reativando a barra de sucesso no topo
             form.reset();
 
-            const idNovoRegistro = data ? data[0].id : null;
-            mostrarModalCertificado(idNovoRegistro);
+            // Passa os dados coletados para a função do modal
+            mostrarModalCertificado(dadosInscrito);
 
             // Tenta enviar o e-mail de confirmação chamando a Edge Function
             try {
@@ -244,6 +330,12 @@ export function configurarValidacaoFormulario() {
             case 'telefone':
                 ehValido = valor && validarTelefone(valor);
                 break;
+            case 'cpf':
+                ehValido = valor && validarCPF(valor);
+                break;
+            case 'cep':
+                ehValido = valor && validarCEP(valor);
+                break;
             case 'cargo': // Cargo é opcional, então sempre é "válido" para o blur
                 ehValido = true; break;
             default: // Para nome, empresa, municipio
@@ -279,8 +371,9 @@ export function configurarValidacaoFormulario() {
 /**
  * Exibe um modal de confirmação para o certificado.
  * @param {string} idRegistro - O ID do registro no Supabase.
+ * @param {object} dadosInscrito - Objeto com os dados do inscrito { id, nome, email, cpf, telefone }.
  */
-export async function mostrarModalCertificado(idRegistro) {
+export async function mostrarModalCertificado(dadosInscrito) {
     const modal = document.getElementById('certificate-modal');
     const botaoSim = document.getElementById('cert-btn-yes');
     const botaoNao = document.getElementById('cert-btn-no');
@@ -300,13 +393,35 @@ export async function mostrarModalCertificado(idRegistro) {
     botaoNao.parentNode.replaceChild(novoBotaoNao, botaoNao);
 
     novoBotaoSim.onclick = async () => {
-        if (idRegistro) {
-            await supabase
+        if (dadosInscrito && dadosInscrito.id) {
+            // Primeiro, atualiza o status no banco de dados para 'pendente'
+            // Isso garante que saibamos que o usuário demonstrou interesse,
+            // mesmo que ele feche a aba de pagamento.
+            // O webhook do Asaas cuidará da transição de 'pendente' para 'pago'.
+            const { error: updateError } = await supabase
                 .from('cadastro_workshop')
                 .update({ quer_certificado: true, status_pagamento: 'pendente' })
-                .eq('id', idRegistro);
+                .eq('id', dadosInscrito.id);
+
+            if (updateError) {
+                mostrarNotificacao('Erro ao registrar interesse no certificado. Tente novamente.', 'erro');
+                console.error('Erro ao atualizar status do certificado:', updateError);
+                fecharModal();
+                return;
+            }
+
+            // Em seguida, chama a Edge Function para gerar o boleto
+            const { data, error: invokeError } = await supabase.functions.invoke('create-asaas-charge', {
+                body: dadosInscrito, // Envia o objeto completo com os dados
+            });
+
+            if (invokeError) {
+                mostrarNotificacao('Erro ao gerar boleto. Por favor, tente novamente mais tarde.', 'erro');
+                console.error('Erro ao invocar create-asaas-charge:', invokeError);
+            } else if (data && data.invoiceUrl) {
+                window.open(data.invoiceUrl, '_blank'); // Abre o link do boleto
+            }
         }
-        window.open('https://www.asaas.com/c/p9v42o92yos25x75', '_blank');
         fecharModal();
     };
 
@@ -458,15 +573,31 @@ export async function configurarAutocompletarComDadosSalvos() {
             // Busca no Supabase pelo e-mail inserido
             const { data, error } = await supabase
                 .from('cadastro_workshop')
-                .select('nome_completo, cargo_funcao, empresa, telefone, municipio')
+                .select('nome_completo, cargo_funcao, cpf, empresa, telefone, municipio, cep')
                 .eq('email', email)
-                .single(); // .single() retorna um único objeto ou null
+                // Adiciona ordenação para pegar o mais recente e limita a 1 resultado
+                // para garantir que .single() não falhe se houver duplicados.
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .single(); // .single() agora é seguro
 
             if (data && !error) {
                 // Se encontrou dados, preenche o formulário
                 form.elements['nome'].value = data.nome_completo || '';
                 form.elements['cargo'].value = data.cargo_funcao || '';
+                const inputCPF = form.elements['cpf'];
+                if (inputCPF && data.cpf) {
+                    inputCPF.value = data.cpf;
+                    // Dispara o evento 'input' para que a máscara seja aplicada
+                    inputCPF.dispatchEvent(new Event('input', { bubbles: true }));
+                }
                 form.elements['empresa'].value = data.empresa || '';
+                const inputCEP = form.elements['cep'];
+                if (inputCEP && data.cep) {
+                    inputCEP.value = data.cep;
+                    // Dispara o evento 'input' para que a máscara seja aplicada
+                    inputCEP.dispatchEvent(new Event('input', { bubbles: true }));
+                }
                 form.elements['municipio'].value = data.municipio || '';
 
                 const inputTelefone = form.elements['telefone'];

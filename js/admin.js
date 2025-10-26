@@ -247,15 +247,40 @@ function gerarHtmlLinha(inscrito, naLixeira = false) {
         day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
     });
 
+    // Lógica para o status do certificado
+    let certificadoHtml = '';
+    if (inscrito.quer_certificado) {
+        if (inscrito.status_pagamento === 'pago') {
+            certificadoHtml = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Confirmado</span>`;
+        } else if (inscrito.status_pagamento === 'pendente') {
+            certificadoHtml = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pendente</span>`;
+        } else {
+            // Caso genérico para 'quer_certificado' mas sem status definido
+            certificadoHtml = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Solicitado</span>`;
+        }
+    } else {
+        certificadoHtml = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-600">Não solicitado</span>`;
+    }
+
+    // Formata o CPF para exibição
+    const formatarCPF = (cpf) => {
+        if (!cpf) return '';
+        const cpfLimpo = cpf.replace(/\D/g, '');
+        return cpfLimpo.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    };
+
     return `<tr data-id="${inscrito.id}">
         <td class="text-center"><input type="checkbox" class="row-checkbox h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" data-id="${inscrito.id}"></td>
         <td class="whitespace-nowrap font-medium">${nomeHtml}</td>
         <td class="whitespace-nowrap">${formatarParaTitulo(inscrito.cargo_funcao) || ''}</td>
+        <td class="whitespace-nowrap">${formatarCPF(inscrito.cpf)}</td>
         <td class="whitespace-nowrap">${inscrito.email}</td>
         <td class="whitespace-nowrap">${inscrito.telefone}</td>
         <td class="whitespace-nowrap">${formatarParaTitulo(inscrito.empresa)}</td>
         <td class="whitespace-nowrap">${formatarParaTitulo(inscrito.municipio)}</td>
+        <td class="whitespace-nowrap">${inscrito.cep || ''}</td>
         <td class="whitespace-nowrap">${diasHtml}</td>
+        <td class="whitespace-nowrap">${certificadoHtml}</td>
         <td class="whitespace-nowrap text-sm text-gray-600">${dataInscricao}</td>
         <td class="whitespace-nowrap flex items-center gap-2">${botaoAcao}</td>
     </tr>`;
@@ -274,7 +299,7 @@ function renderizarTabela(inscritos, naLixeira = false) {
         const mensagemVazio = naLixeira 
             ? 'Lixeira vazia. Missão cumprida! ✅' 
             : 'Eco... eco... eco... Parece que estamos sozinhos por aqui. 🦗';
-        corpoTabela.innerHTML = `<tr><td colspan="10" class="px-6 py-4 text-center text-gray-500">${mensagemVazio}</td></tr>`;
+        corpoTabela.innerHTML = `<tr><td colspan="13" class="px-6 py-4 text-center text-gray-500">${mensagemVazio}</td></tr>`;
         return;
     }
 
@@ -306,13 +331,16 @@ function configurarFiltroDeBusca() {
         // Mapeia os valores do <select> para os índices das colunas da tabela (começando em 0)
         const mapaColunas = {
             'nome': 1,
-            'cargo': 2,
-            'email': 2,
-            'telefone': 3,
-            'empresa': 4,
-            'municipio': 5,
-            'dias': 6,
-            'created_at': 7
+            'cargo': 2,            
+            'cpf': 3,
+            'email': 4,
+            'telefone': 5,
+            'empresa': 6,
+            'municipio': 7,
+            'cep': 8,
+            'dias': 9,
+            'certificado': 10,
+            'created_at': 11
         };
 
         linhasTabela.forEach(linha => {
@@ -370,6 +398,14 @@ function configurarOrdenacaoTabela(inscritos, callbackRender) {
                     // Para datas, compara os objetos Date diretamente
                     valorA = new Date(a.created_at);
                     valorB = new Date(b.created_at);
+                } else if (colunaSelecionada === 'quer_certificado') {
+                    // Ordena por um valor numérico: 2=pago, 1=pendente, 0=não solicitado
+                    const getCertValue = (insc) => {
+                        if (!insc.quer_certificado) return 0;
+                        return insc.status_pagamento === 'pago' ? 2 : 1;
+                    };
+                    valorA = getCertValue(a);
+                    valorB = getCertValue(b);
                 } else {
                     valorA = a[colunaSelecionada];
                     valorB = b[colunaSelecionada];
@@ -1043,8 +1079,8 @@ function configurarCardCertificadoInterativo(inscritos) {
     const preencherDados = () => {
         const totalInscritos = inscritos.length;
         const comCertificado = inscritos.filter(i => i.quer_certificado).length;
+        const receita = comCertificado * 5.00; // Atualizado para o novo valor de R$ 5,00
         const taxa = totalInscritos > 0 ? (comCertificado / totalInscritos) * 100 : 0;
-        const receita = comCertificado * 20;
 
         valores[0].textContent = `${taxa.toFixed(0)}%`;
         valores[1].textContent = comCertificado;
@@ -1716,10 +1752,12 @@ function configurarModalAdicionarInscrito(callbackSucesso) {
         const novoInscrito = {
             nome_completo: formatarParaTitulo(formData.get('nome')),
             cargo_funcao: formatarParaTitulo(formData.get('cargo')),
+            cpf: formData.get('cpf').replace(/\D/g, ''), // Salva apenas números
             email: formData.get('email').toLowerCase(),
             empresa: formatarParaTitulo(formData.get('empresa')),
             telefone: formData.get('telefone'),
             municipio: formatarParaTitulo(formData.get('municipio')),
+            cep: formData.get('cep'),
             participa_dia_13: formData.has('dia13'),
             participa_dia_14: formData.has('dia14'),
             is_deleted: false,
@@ -1788,10 +1826,12 @@ function abrirModalAdicionarComDados(dados) {
     // Preenche o formulário
     form.elements['nome'].value = dados.nome_completo;
     form.elements['cargo'].value = dados.cargo_funcao;
+    form.elements['cpf'].value = dados.cpf;
     form.elements['email'].value = dados.email;
     form.elements['empresa'].value = dados.empresa;
     form.elements['telefone'].value = dados.telefone;
     form.elements['municipio'].value = dados.municipio;
+    form.elements['cep'].value = dados.cep;
     form.elements['dia13'].checked = dados.participa_dia_13;
     form.elements['dia14'].checked = dados.participa_dia_14;
 
@@ -1828,10 +1868,12 @@ function configurarModalEditarInscrito(callbackSucesso) {
         const dadosAtualizados = {
             nome_completo: formatarParaTitulo(formData.get('nome')),
             cargo_funcao: formatarParaTitulo(formData.get('cargo')),
+            cpf: formData.get('cpf').replace(/\D/g, ''), // Salva apenas números
             email: formData.get('email').toLowerCase(),
             empresa: formatarParaTitulo(formData.get('empresa')),
             telefone: formData.get('telefone'),
             municipio: formatarParaTitulo(formData.get('municipio')),
+            cep: formData.get('cep'),
             participa_dia_13: formData.has('dia13'),
             participa_dia_14: formData.has('dia14'),
         };
@@ -1865,11 +1907,13 @@ function abrirModalEdicao(inscrito) {
     // Preenche o formulário
     form.elements['id'].value = inscrito.id;
     form.elements['nome'].value = inscrito.nome_completo;
+    form.elements['cpf'].value = inscrito.cpf;
     form.elements['cargo'].value = inscrito.cargo_funcao;
     form.elements['email'].value = inscrito.email;
     form.elements['empresa'].value = inscrito.empresa;
     form.elements['telefone'].value = inscrito.telefone;
     form.elements['municipio'].value = inscrito.municipio;
+    form.elements['cep'].value = inscrito.cep;
     form.elements['dia13'].checked = inscrito.participa_dia_13;
     form.elements['dia14'].checked = inscrito.participa_dia_14;
 

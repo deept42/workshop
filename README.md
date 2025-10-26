@@ -95,10 +95,12 @@ Para rodar este projeto localmente, você precisará configurar o Supabase.
       created_at timestamp with time zone NOT NULL DEFAULT now(),
       nome_completo text NOT NULL,
       cargo_funcao text,
+      cpf text,
       empresa text,
       email text NOT NULL,
       telefone text,
       municipio text,
+      cep text,
       participa_dia_13 boolean DEFAULT false,
       participa_dia_14 boolean DEFAULT false,
       concorda_comunicacoes boolean DEFAULT true,
@@ -106,7 +108,8 @@ Para rodar este projeto localmente, você precisará configurar o Supabase.
       status_pagamento text DEFAULT 'nao_solicitado'::text,
       is_deleted boolean NOT NULL DEFAULT false,
       CONSTRAINT cadastro_workshop_pkey PRIMARY KEY (id),
-      CONSTRAINT cadastro_workshop_email_key UNIQUE (email)
+      CONSTRAINT cadastro_workshop_email_key UNIQUE (email),
+      CONSTRAINT cadastro_workshop_cpf_key UNIQUE (cpf)
     );
     ```
 

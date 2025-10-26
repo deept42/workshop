@@ -5,7 +5,7 @@
 
 import { configurarControlesAcessibilidade } from './acessibilidade.js';
 import { atualizarLinkNavegacaoAtivo, configurarRecalculoIndicadorAoRedimensionar } from './animacoes.js';
-import { configurarValidacaoFormulario, configurarAutocompletar, configurarMascaraTelefone, configurarAutocompletarComDadosSalvos } from './formulario.js';
+import { configurarValidacaoFormulario, configurarAutocompletar, configurarMascaraTelefone, configurarMascaraCPF, configurarMascaraCEP, configurarAutocompletarComDadosSalvos } from './formulario.js';
 import { configurarRolagemSuave, configurarNavegacaoMouseMeio, configurarMenuMobile, configurarBarraProgressoRolagem, configurarBotaoLogout } from './navegacao.js';
 import { configurarContagemRegressiva, configurarZoomImagem, configurarPlayerCustomizado } from './ui.js';
 import { configurarLoginAdmin, fazerLogout } from './auth.js';
@@ -125,6 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
         configurarValidacaoFormulario();
         configurarAutocompletar();
         configurarMascaraTelefone();
+        configurarMascaraCPF();
+        configurarMascaraCEP();
         configurarAutocompletarComDadosSalvos();
 
         // Componentes de UI
