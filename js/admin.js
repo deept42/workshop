@@ -6,14 +6,15 @@
 import { supabase } from './supabaseClient.js';
 import { configurarControlesAcessibilidade } from './acessibilidade.js';
 import { mostrarNotificacao } from './notificacoes.js';
+ 
+// Variável de estado no escopo do módulo para ser acessível por todas as funções
+let todosInscritos = [];
 
 /**
  * Função principal que inicializa o painel de administração.
  */
 async function inicializarPainelAdministrativo() {
-    // Variáveis de estado para controlar a visualização
-    let todosInscritos = [];
-    let mostrandoLixeira = false;
+    let mostrandoLixeira = false; // Variável de estado local para a visualização
 
     const { data: { session } } = await supabase.auth.getSession();
 
@@ -49,9 +50,10 @@ async function inicializarPainelAdministrativo() {
      * Configura todos os listeners de eventos que só precisam ser configurados uma vez.
      */
     function configurarTudo() {
-        configurarFiltroDeBusca();
-        configurarOrdenacaoTabela(todosInscritos, renderizarVisualizacao);
+        configurarFiltroDeBusca(renderizarVisualizacao);
+        configurarOrdenacaoTabela(renderizarVisualizacao);
         configurarAcoesTabela(async () => {
+            // O callback de sucesso é o mesmo para ambas as funções
             todosInscritos = await buscarInscritos();
             atualizarUICompleta();
         });
@@ -59,9 +61,9 @@ async function inicializarPainelAdministrativo() {
             todosInscritos = await buscarInscritos();
             atualizarUICompleta();
         });
-        configurarExportacaoCSV();
-        configurarExportacaoPDF();
-        configurarExportacaoChecklist();
+        configurarExportacaoCSV(todosInscritos);
+        configurarExportacaoPDF(todosInscritos);
+        configurarExportacaoChecklist(todosInscritos);
         configurarExclusaoDuplicados();
         configurarControlesAcessibilidade();
         configurarModalAdicionarInscrito(async () => {
@@ -272,6 +274,7 @@ function gerarHtmlLinha(inscrito, naLixeira = false) {
     return `<tr data-id="${inscrito.id}">
         <td class="text-center"><input type="checkbox" class="row-checkbox h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" data-id="${inscrito.id}"></td>
         <td class="whitespace-nowrap font-medium">${nomeHtml}</td>
+        <td class="whitespace-nowrap font-mono text-sm text-gray-600">${inscrito.codigo_inscricao || 'N/A'}</td>
         <td class="whitespace-nowrap">${formatarParaTitulo(inscrito.cargo_funcao) || ''}</td>
         <td class="whitespace-nowrap">${formatarCPF(inscrito.cpf)}</td>
         <td class="whitespace-nowrap">${inscrito.email}</td>
@@ -298,8 +301,8 @@ function renderizarTabela(inscritos, naLixeira = false) {
     if (inscritos.length === 0) {
         const mensagemVazio = naLixeira 
             ? 'Lixeira vazia. Missão cumprida! ✅' 
-            : 'Eco... eco... eco... Parece que estamos sozinhos por aqui. 🦗';
-        corpoTabela.innerHTML = `<tr><td colspan="13" class="px-6 py-4 text-center text-gray-500">${mensagemVazio}</td></tr>`;
+            : 'Nenhum inscrito encontrado. Parece que estamos sozinhos por aqui. 🦗';
+        corpoTabela.innerHTML = `<tr><td colspan="14" class="px-6 py-4 text-center text-gray-500">${mensagemVazio}</td></tr>`;
         return;
     }
 
@@ -331,6 +334,7 @@ function configurarFiltroDeBusca() {
         // Mapeia os valores do <select> para os índices das colunas da tabela (começando em 0)
         const mapaColunas = {
             'nome': 1,
+            'codigo_inscricao': 2,
             'cargo': 2,            
             'cpf': 3,
             'email': 4,
@@ -367,10 +371,9 @@ function configurarFiltroDeBusca() {
 
 /**
  * Adiciona a funcionalidade de ordenação à tabela ao clicar nos cabeçalhos.
- * @param {Array} inscritos - A lista completa de todos os inscritos (ativos e lixeira).
  * @param {Function} callbackRender - A função que deve ser chamada para re-renderizar a tabela.
  */
-function configurarOrdenacaoTabela(inscritos, callbackRender) {
+function configurarOrdenacaoTabela(callbackRender) {
     const headers = document.querySelectorAll('.admin-table th[data-column]');
     let colunaOrdenadaAtual = 'nome_completo';
     let direcaoOrdenacaoAtual = 'asc';
@@ -387,7 +390,7 @@ function configurarOrdenacaoTabela(inscritos, callbackRender) {
             }
 
             // Ordena o array principal de inscritos
-            inscritos.sort((a, b) => {
+            todosInscritos.sort((a, b) => {
                 let valorA, valorB;
 
                 // Tratamento especial para a coluna 'dias'
@@ -439,14 +442,13 @@ function configurarOrdenacaoTabela(inscritos, callbackRender) {
 
 /**
  * Configura os botões e a lógica da barra de ações em massa.
- * @param {Array} todosInscritos - A lista completa de todos os inscritos.
  * @param {Function} callbackSucesso - Função a ser chamada após uma ação bem-sucedida.
  */
 function configurarAcoesEmMassa(callbackSucesso) {
     const bulkMoveBtn = document.getElementById('bulk-move-to-trash-btn');
     const bulkCsvBtn = document.getElementById('bulk-export-csv-btn');
     const bulkPdfBtn = document.getElementById('bulk-export-pdf-btn');
-    const bulkChecklistBtn = document.getElementById('bulk-export-checklist-btn');
+    const bulkChecklistBtn = document.getElementById('bulk-export-checklist-btn');    
     const bulkRestoreBtn = document.getElementById('bulk-restore-btn');
     const bulkDeletePermanentBtn = document.getElementById('bulk-delete-permanent-btn');
     if (bulkMoveBtn) {
@@ -477,7 +479,7 @@ function configurarAcoesEmMassa(callbackSucesso) {
         bulkCsvBtn.addEventListener('click', () => {
             const linhasSelecionadas = obterLinhasParaExportacao();
             if (linhasSelecionadas.length === 0) return;
-            gerarCSV(linhasSelecionadas);
+            gerarCSV(linhasSelecionadas, todosInscritos);
         });
     }
 
@@ -486,7 +488,7 @@ function configurarAcoesEmMassa(callbackSucesso) {
         bulkPdfBtn.addEventListener('click', () => {
             const linhasSelecionadas = obterLinhasParaExportacao();
             if (linhasSelecionadas.length === 0) return;
-            gerarPDF(linhasSelecionadas);
+            gerarPDF(linhasSelecionadas, todosInscritos);
         });
     }
 
@@ -495,7 +497,7 @@ function configurarAcoesEmMassa(callbackSucesso) {
         bulkChecklistBtn.addEventListener('click', () => {
             const linhasSelecionadas = obterLinhasParaExportacao();
             if (linhasSelecionadas.length === 0) return;
-            gerarChecklist(linhasSelecionadas);
+            gerarChecklist(linhasSelecionadas, todosInscritos);
         });
     }
 
@@ -666,7 +668,10 @@ function configurarAcoesTabela(callbackSucesso) {
             );
 
             if (confirmado) {
-                await atualizarStatusInscrito(inscritoId, true, callbackSucesso);
+                const sucesso = await atualizarStatusInscrito(inscritoId, true);
+                if (sucesso) {
+                    callbackSucesso();
+                }
             }
         } else if (targetButton.classList.contains('btn-restaurar')) {
             // Restaurando da lixeira (não precisa de confirmação)
@@ -680,7 +685,10 @@ function configurarAcoesTabela(callbackSucesso) {
             );
 
             if (confirmado) {
-                await deletarInscritoPermanentemente(inscritoId, callbackSucesso);
+                const sucesso = await deletarInscritoPermanentemente(inscritoId);
+                if (sucesso) {
+                    callbackSucesso();
+                }
             }
         } else if (targetButton.classList.contains('btn-editar')) {
             const { data, error } = await supabase.from('cadastro_workshop').select('*').eq('id', inscritoId).single();
@@ -695,7 +703,7 @@ function configurarAcoesTabela(callbackSucesso) {
     });
 }
 
-async function atualizarStatusInscrito(id, isDeleted, callbackSucesso) {
+async function atualizarStatusInscrito(id, isDeleted) {
     const { error } = await supabase
         .from('cadastro_workshop')
         .update({ is_deleted: isDeleted })
@@ -704,17 +712,18 @@ async function atualizarStatusInscrito(id, isDeleted, callbackSucesso) {
     if (error) {
         mostrarNotificacao('Ocorreu um erro ao atualizar o status do inscrito.', 'erro');
         console.error('Erro ao atualizar:', error);
+        return false;
     } else {
         const mensagem = isDeleted
             ? 'Inscrito movido para a lixeira com sucesso.'
             : 'Inscrito restaurado com sucesso.';
 
         mostrarNotificacao(mensagem, 'sucesso');
-        callbackSucesso(); // Atualiza a UI buscando os dados novamente.
+        return true;
     }
 }
 
-async function deletarInscritoPermanentemente(id, callbackSucesso) {
+async function deletarInscritoPermanentemente(id) {
     const { error } = await supabase
         .from('cadastro_workshop')
         .delete()
@@ -723,9 +732,10 @@ async function deletarInscritoPermanentemente(id, callbackSucesso) {
     if (error) {
         mostrarNotificacao('Ocorreu um erro ao excluir o inscrito permanentemente.', 'erro');
         console.error('Erro na exclusão permanente:', error);
+        return false;
     } else {
         mostrarNotificacao('Inscrito excluído permanentemente.', 'sucesso');
-        callbackSucesso(); // Atualiza a UI buscando os dados novamente.
+        return true;
     }
 }
 
@@ -1229,14 +1239,14 @@ function configurarExportacaoCSV() {
     const exportBtn = document.getElementById('export-csv-btn');
     if (!exportBtn) return;
 
-    exportBtn.addEventListener('click', () => gerarCSV(obterLinhasParaExportacao()));
+    exportBtn.addEventListener('click', () => gerarCSV(obterLinhasParaExportacao(), todosInscritos));
 }
 
 /**
  * Gera e baixa um arquivo CSV com base nas linhas da tabela fornecidas.
  * @param {Element[]} linhasTabela 
  */
-function gerarCSV(linhasTabela) {
+function gerarCSV(linhasTabela, todosInscritos) {
         let csvContent = "";
 
         // Cabeçalho do CSV
@@ -1278,14 +1288,14 @@ function configurarExportacaoPDF() {
     const exportBtn = document.getElementById('export-pdf-btn');
     if (!exportBtn) return;
 
-    exportBtn.addEventListener('click', () => gerarPDF(obterLinhasParaExportacao()));
+    exportBtn.addEventListener('click', () => gerarPDF(obterLinhasParaExportacao(), todosInscritos));
 }
 
 /**
  * Gera e baixa um arquivo PDF com a lista de inscritos.
  * @param {Element[]} linhasTabela 
  */
-function gerarPDF(linhasTabela) {
+function gerarPDF(linhasTabela, todosInscritos) {
     const { jsPDF } = window.jspdf; // Acessa o jsPDF do objeto global
         const doc = new jsPDF();
         const dataAtual = new Date().toLocaleDateString('pt-BR');
@@ -1341,14 +1351,18 @@ function configurarExportacaoChecklist() {
     const exportBtn = document.getElementById('export-checklist-btn');
     if (!exportBtn) return;
 
-    exportBtn.addEventListener('click', () => gerarChecklist(obterLinhasParaExportacao()));
+    exportBtn.addEventListener('click', async () => {
+        // Garante que estamos usando os dados mais recentes antes de exportar.
+        todosInscritos = await buscarInscritos();
+        gerarChecklist(obterLinhasParaExportacao(), todosInscritos);
+    });
 }
 
 /**
  * Gera e baixa um arquivo PDF formatado como lista de chamada.
  * @param {Element[]} linhasTabela 
  */
-function gerarChecklist(linhasTabela) {
+function gerarChecklist(linhasTabela, todosInscritos) {
     const { jsPDF } = window.jspdf; // Acessa o jsPDF do objeto global
         const doc = new jsPDF();
         const dataAtual = new Date().toLocaleDateString('pt-BR');
@@ -1362,16 +1376,17 @@ function gerarChecklist(linhasTabela) {
         doc.text(`Gerado em: ${dataAtual}`, 14, 28);
 
         // Prepara os dados para a autoTable
-        const head = [['#', 'Nome Completo', 'Empresa / Instituição', 'Assinatura']];
+        const head = [['#', 'Código', 'Nome Completo', 'Empresa / Instituição', 'Assinatura']];
         const body = [];
 
         let contador = 1;
         linhasTabela.forEach(linha => {
             const colunas = linha.querySelectorAll('td');
-            const nome = colunas[1] ? colunas[1].innerText : '';
-            const empresa = colunas[4] ? colunas[4].innerText : '';
+            const nome = colunas[1] ? colunas[1].innerText : 'N/A';
+            const codigo = colunas[2] ? colunas[2].innerText : 'N/A'; // Pega o código direto da nova coluna
+            const empresa = colunas[7] ? colunas[7].innerText : 'N/A'; // O índice da empresa mudou para 7
             
-            body.push([contador, nome, empresa, '']); // Adiciona uma coluna vazia para assinatura
+            body.push([contador, codigo, nome, empresa, '']); // Adiciona o código e a coluna de assinatura
             contador++;
         });
 
@@ -1386,7 +1401,7 @@ function gerarChecklist(linhasTabela) {
             },
             styles: { fontSize: 9, cellPadding: 3 },
             columnStyles: {
-                3: { cellWidth: 50 }, // Aumenta a largura da coluna "Assinatura"
+                4: { cellWidth: 50 }, // Aumenta a largura da coluna "Assinatura" (agora é a 5ª coluna)
             },
             didDrawPage: function (data) {
                 // Rodapé

@@ -64,6 +64,7 @@ serve(async (req: Request) => {
       const { data: participante, error: fetchError } = await supabaseAdmin
         .from("cadastro_workshop")
         .select("id, nome_completo, status_pagamento") // Pega também o status atual
+        .select("id, nome_completo, status_pagamento")
         .eq("cpf", cpfLimpo)
         .single();
 
@@ -73,6 +74,8 @@ serve(async (req: Request) => {
 
       // 5. Atualiza o status do pagamento apenas se ele ainda não for 'pago'
       if (participante.status_pagamento !== 'pago') {
+      // 5. Verificação de Idempotência: Atualiza o status apenas se ele ainda não for 'pago'
+      if (participante.status_pagamento !== "pago") {
         const { error: updateError } = await supabaseAdmin
           .from("cadastro_workshop")
           .update({ status_pagamento: "pago" })
@@ -83,6 +86,7 @@ serve(async (req: Request) => {
         console.log(`Pagamento confirmado para "${participante.nome_completo}" (ID: ${participante.id}). Status atualizado para 'pago'.`);
       } else {
         console.log(`Pagamento para "${participante.nome_completo}" (ID: ${participante.id}) já estava confirmado. Nenhuma ação necessária.`);
+        console.log(`Pagamento para "${participante.nome_completo}" (ID: ${participante.id}) já estava confirmado. Nenhuma ação necessária (Idempotência).`);
       }
     }
 

@@ -107,7 +107,8 @@ Para rodar este projeto localmente, você precisará configurar o Supabase.
       quer_certificado boolean DEFAULT false,
       status_pagamento text DEFAULT 'nao_solicitado'::text,
       is_deleted boolean NOT NULL DEFAULT false,
-      CONSTRAINT cadastro_workshop_pkey PRIMARY KEY (id),
+      codigo_inscricao text,
+      CONSTRAINT cadastro_workshop_pkey PRIMARY KEY (id),      
       CONSTRAINT cadastro_workshop_email_key UNIQUE (email),
       CONSTRAINT cadastro_workshop_cpf_key UNIQUE (cpf)
     );

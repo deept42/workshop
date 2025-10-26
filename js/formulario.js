@@ -105,9 +105,57 @@ export function configurarMascaraCPF() {
 export function configurarValidacaoFormulario() {
     const form = document.getElementById('lead-form');
     const mensagensForm = document.getElementById('form-messages');
-    const botaoSubmit = form ? form.querySelector('button[type="submit"]') : null;
+    const step1 = document.getElementById('form-step-1');
+    const step2 = document.getElementById('form-step-2');
+    const nextBtn = document.getElementById('next-step-btn');
+    const prevBtn = document.getElementById('prev-step-btn');
+    const progressBar = document.getElementById('form-progress-bar');
+    const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
 
-    if (!form || !mensagensForm || !botaoSubmit) return;
+    if (!form || !mensagensForm || !submitBtn || !step1 || !step2 || !nextBtn || !prevBtn) return;
+
+    // --- Lógica de Múltiplos Passos ---
+    nextBtn.addEventListener('click', () => {
+        // Valida apenas os campos do Passo 1
+        const nomeValido = validarCampo(form.elements['nome']);
+        const emailValido = validarCampo(form.elements['email']);
+        const cpfValido = validarCampo(form.elements['cpf']);
+        const diasValidos = validarGrupoDias();
+
+        if (nomeValido && emailValido && cpfValido && diasValidos) {
+            step1.classList.add('hidden');
+            step2.classList.remove('hidden');
+            if (progressBar) progressBar.style.width = '100%';
+
+        } else {
+            mostrarNotificacao('Por favor, preencha os campos corretamente para continuar.', 'aviso');
+        }
+    });
+
+    prevBtn.addEventListener('click', () => {
+        step2.classList.add('hidden');
+        step1.classList.remove('hidden');
+        if (progressBar) progressBar.style.width = '50%';
+    });
+
+    // Função para resetar o formulário para o passo 1
+    const resetarParaPasso1 = () => {
+        form.reset();
+        step2.classList.add('hidden');
+        step1.classList.remove('hidden');
+        // Limpa todas as classes de validação
+        form.querySelectorAll('.form-group, .days-selection-group').forEach(el => {
+            el.classList.remove('error', 'success');
+        });
+        // Reseta o indicador de progresso
+        if (progressBar) progressBar.style.width = '50%';
+    };
+
+    // --- Fim da Lógica de Múltiplos Passos ---
+
+    // Adiciona o campo de cargo, que é opcional
+    const inputCargo = document.getElementById('cargo');
+    if (inputCargo) inputCargo.addEventListener('blur', () => validarCampo(inputCargo));
 
     // --- Validação em Tempo Real ---
     const camposParaValidar = ['nome', 'cargo', 'cpf', 'empresa', 'email', 'telefone', 'municipio', 'cep'];
@@ -127,18 +175,19 @@ export function configurarValidacaoFormulario() {
 
     form.addEventListener('submit', async (evento) => {
         evento.preventDefault();
-        mensagensForm.innerHTML = ''; // Limpa mensagens anteriores
-        botaoSubmit.disabled = true;
-        botaoSubmit.textContent = 'Enviando...';
+        mensagensForm.innerHTML = '';
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>Enviando...</span>'; // Adiciona span para o z-index funcionar
+        submitBtn.classList.add('is-loading');
 
         const nome = form.elements['nome'].value.trim();
-        const cargo = form.elements['cargo'].value.trim();
+        const cargo = form.elements['cargo'] ? form.elements['cargo'].value.trim() : '';
         const cpf = form.elements['cpf'].value.trim();
         const empresa = form.elements['empresa'].value.trim();
         const email = form.elements['email'].value.trim();
         const telefone = form.elements['telefone'].value.trim();
         const municipio = form.elements['municipio'].value.trim();
-        const cep = form.elements['cep'].value.trim();
+        const cep = form.elements['cep'] ? form.elements['cep'].value.trim() : '';
         const consentimento = form.elements['consent'].checked;
         const participaDia13 = form.elements['dia13'].checked;
         const participaDia14 = form.elements['dia14'].checked;
@@ -161,8 +210,13 @@ export function configurarValidacaoFormulario() {
         }
 
         // Valida campo Cargo (opcional, mas adiciona classe 'success' se preenchido)
-        const cargoGroup = form.elements['cargo'].closest('.form-group');
-        if (cargo) cargoGroup.classList.add('success');
+        const cargoGroup = form.elements['cargo'] ? form.elements['cargo'].closest('.form-group') : null;
+        if (cargoGroup && cargo) {
+            cargoGroup.classList.add('success');
+        } else if (cargoGroup) {
+            cargoGroup.classList.add('error');
+            isFormValid = false;
+        }
 
         // Valida campo CPF (obrigatório e formato válido)
         const cpfGroup = form.elements['cpf'].closest('.form-group');
@@ -209,11 +263,11 @@ export function configurarValidacaoFormulario() {
             isFormValid = false;
         }
 
-        // Valida campo CEP (obrigatório e formato válido)
-        const cepGroup = form.elements['cep'].closest('.form-group');
-        if (cep && validarCEP(cep)) {
+        // Valida campo CEP (obrigatório)
+        const cepGroup = form.elements['cep'] ? form.elements['cep'].closest('.form-group') : null;
+        if (cepGroup && cep && validarCEP(cep)) {
             cepGroup.classList.add('success');
-        } else {
+        } else if (cepGroup) {
             cepGroup.classList.add('error');
             isFormValid = false;
         }
@@ -224,18 +278,27 @@ export function configurarValidacaoFormulario() {
             if (daysGroup) daysGroup.classList.add('error');
             isFormValid = false;
         }
-        if (!consentimento) {
-            isFormValid = false;
-        }
 
         // Se algum campo for inválido, mostra o modal e para a execução.
         if (!isFormValid) {
             mostrarNotificacao('Por favor, corrija os campos destacados em vermelho.', 'aviso');
-            botaoSubmit.disabled = false;
-            botaoSubmit.textContent = 'Inscrever-se Agora';
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('is-loading');
+            submitBtn.textContent = 'Inscrever-se Agora';
             return;
         }
         // --- Fim da Lógica de Validação Aprimorada ---
+
+        // Gera um código de inscrição único
+        const gerarCodigoInscricao = () => {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let codigo = 'WMRD-';
+            for (let i = 0; i < 5; i++) {
+                codigo += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return codigo;
+        };
+        const codigoInscricao = gerarCodigoInscricao();
 
         // Envio para o Supabase
         const { data, error } = await supabase
@@ -243,16 +306,18 @@ export function configurarValidacaoFormulario() {
             .insert([{
                 nome_completo: formatarParaTitulo(nome),
                 cargo_funcao: formatarParaTitulo(cargo),
-                cpf: cpf.replace(/\D/g, ''), // Salva apenas os números
+                cpf: cpf.replace(/\D/g, ''),
                 empresa: formatarParaTitulo(empresa),
-                email: email.toLowerCase(), // E-mail sempre em minúsculas
+                email: email.toLowerCase(),
                 telefone: telefone,
                 municipio: formatarParaTitulo(municipio),
                 cep: cep,
                 participa_dia_13: participaDia13,
                 participa_dia_14: participaDia14,
+                concorda_comunicacoes: consentimento,
                 quer_certificado: false,
-                status_pagamento: 'nao_solicitado'
+                status_pagamento: 'nao_solicitado',
+                codigo_inscricao: codigoInscricao
             }])
             .select();
 
@@ -263,35 +328,38 @@ export function configurarValidacaoFormulario() {
             } else {
                 mostrarNotificacao('Ocorreu um erro inesperado na inscrição. Tente novamente.', 'erro');
             }
-            botaoSubmit.disabled = false;
-            botaoSubmit.textContent = 'Inscrever-se Agora';
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('is-loading');
+            submitBtn.textContent = 'Inscrever-se Agora';
         } else {
             // Coleta os dados ANTES de limpar o formulário
-            const dadosInscrito = { id: data[0].id, nome, email, cpf, telefone, municipio, cep };
+            const dadosInscrito = { id: data[0].id, nome, email, cpf, telefone, municipio, cep, codigo_inscricao: codigoInscricao };
 
             mostrarNotificacao('Inscrição confirmada! Verifique as opções de certificado.', 'sucesso');
             mostrarFeedbackSucessoTopo(); // Reativando a barra de sucesso no topo
-            form.reset();
+            resetarParaPasso1(); // Reseta o formulário e volta para o passo 1
 
             // Passa os dados coletados para a função do modal
             mostrarModalCertificado(dadosInscrito);
 
             // Tenta enviar o e-mail de confirmação chamando a Edge Function
             try {
-                await supabase.functions.invoke('send-confirmation-email', {
-                    body: { nome, email },
+                const { error: emailError } = await supabase.functions.invoke('send-confirmation-email', {
+                    body: { nome, email, codigo_inscricao: codigoInscricao },
                 });
-                // Não precisa mostrar notificação de sucesso do e-mail para não poluir a tela.
-                // O importante é a confirmação da inscrição.
-            } catch (emailError) {
+                if (emailError) {
+                    throw emailError;
+                }
+            } catch (invokeError) {
                 // Se o envio do e-mail falhar, apenas loga no console para não confundir o usuário,
                 // pois a inscrição em si foi um sucesso.
-                console.error("Falha ao enviar e-mail de confirmação:", emailError);
+                console.error("Falha ao enviar e-mail de confirmação:", invokeError);
             }
 
             setTimeout(() => {
-                botaoSubmit.disabled = false;
-                botaoSubmit.textContent = 'Inscrever-se Agora';
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('is-loading');
+                submitBtn.textContent = 'Inscrever-se Agora';
             }, 3000);
         }
     });
@@ -336,10 +404,9 @@ export function configurarValidacaoFormulario() {
             case 'cep':
                 ehValido = valor && validarCEP(valor);
                 break;
-            case 'cargo': // Cargo é opcional, então sempre é "válido" para o blur
-                ehValido = true; break;
             default: // Para nome, empresa, municipio
-                ehValido = !!valor; // Verifica se não está vazio
+                ehValido = !!valor;
+                break;
         }
 
         grupo.classList.remove('success', 'error');
@@ -347,7 +414,7 @@ export function configurarValidacaoFormulario() {
             grupo.classList.add('success');
         } else {
             // Não marca erro no blur para campos opcionais ou se o campo estiver vazio
-            if (input.name !== 'cargo' && valor) {
+            if (valor && !ehValido) {
                 grupo.classList.add('error');
             }
         }
@@ -356,7 +423,7 @@ export function configurarValidacaoFormulario() {
 
     function validarGrupoDias() {
         const grupo = form.querySelector('.days-selection-group');
-        const dia13 = form.elements['dia13'].checked;
+        const dia13 = form.elements['dia13'] ? form.elements['dia13'].checked : false;
         const dia14 = form.elements['dia14'].checked;
         const ehValido = dia13 || dia14;
 
@@ -371,12 +438,16 @@ export function configurarValidacaoFormulario() {
 /**
  * Exibe um modal de confirmação para o certificado.
  * @param {string} idRegistro - O ID do registro no Supabase.
- * @param {object} dadosInscrito - Objeto com os dados do inscrito { id, nome, email, cpf, telefone }.
+ * @param {object} dadosInscrito - Objeto com os dados do inscrito { id, nome, email, cpf, telefone, codigo_inscricao }.
  */
 export async function mostrarModalCertificado(dadosInscrito) {
     const modal = document.getElementById('certificate-modal');
     const botaoSim = document.getElementById('cert-btn-yes');
     const botaoNao = document.getElementById('cert-btn-no');
+    const displayCodigo = document.getElementById('codigo-inscricao-display');
+
+    // Exibe o código de inscrição gerado
+    if (displayCodigo) displayCodigo.textContent = dadosInscrito.codigo_inscricao;
 
     if (!modal || !botaoSim || !botaoNao) return;
 

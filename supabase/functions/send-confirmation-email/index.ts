@@ -25,9 +25,9 @@ serve(async (req: Request) => {
       throw new Error("As credenciais SMTP não estão configuradas corretamente nos segredos da Supabase.");
     }
 
-    const { nome, email } = await req.json();
-    if (!nome || !email) {
-      throw new Error("Nome e e-mail são obrigatórios.");
+    const { nome, email, codigo_inscricao } = await req.json();
+    if (!nome || !email || !codigo_inscricao) {
+      throw new Error("Nome, e-mail e código de inscrição são obrigatórios.");
     }
 
     // Cria o "transportador" do Nodemailer com as credenciais
@@ -57,6 +57,7 @@ serve(async (req: Request) => {
             .email-container { max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.05); }
             .header { background-color: #B30000; color: #ffffff; padding: 40px 20px; text-align: center; border-bottom: 4px solid #FFC107; }
             .header h1 { margin: 0; font-size: 28px; font-weight: 800; }
+            .codigo-box { background-color: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 8px; padding: 15px; text-align: center; margin: 25px 0; }
             .content { padding: 35px; color: #374151; line-height: 1.7; }
             .content h2 { color: #111827; margin-top: 0; font-size: 22px; font-weight: 700; }
             .button { display: inline-block; background-color: #B30000; color: #ffffff !important; padding: 12px 25px; text-decoration: none; border-radius: 8px; font-weight: bold; transition: background-color 0.3s; }
@@ -79,6 +80,11 @@ serve(async (req: Request) => {
             <div class="content">
               <h2 style="font-weight: 800;">Olá, ${nome}!</h2>
               <p>É com grande satisfação que confirmamos sua inscrição para o <strong>WORKSHOP: Municípios Mais Resilientes em Desastres</strong>. Prepare-se para dois dias de muito aprendizado e networking.</p>
+              
+              <div class="codigo-box">
+                <p style="margin: 0 0 5px 0; font-size: 14px; color: #6b7280;">Guarde este código, ele é sua identificação no evento:</p>
+                <p style="margin: 0; font-size: 24px; font-weight: bold; color: #B30000; letter-spacing: 2px;">${codigo_inscricao}</p>
+              </div>
               
               <h3 style="color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; margin-top: 30px; margin-bottom: 15px;">Informações Essenciais:</h3>
               <p><strong>Data:</strong> 13 e 14 de novembro de 2025<br><strong>Local:</strong> ISULPAR, Paranaguá - PR</p>

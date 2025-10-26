@@ -136,7 +136,7 @@ body {
     background-image: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
 }
 #inscricao {
-    background-image: linear-gradient(rgba(240, 242, 245, 0.95), rgba(240, 242, 245, 0.95)), url('https://images.pexels.com/photos/1595385/pexels-photo-1595385.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+    background-image: linear-gradient(rgba(240, 242, 245, 0.6), rgba(240, 242, 245, 0.6)), url('https://images.pexels.com/photos/1595385/pexels-photo-1595385.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
 }
 
 /* --- Tipografia Fluida --- */
@@ -639,6 +639,59 @@ body {
     /* transform: translateY(0); */
 }
 /* --- Media Queries para Responsividade --- */
+
+/* --- Estilo Glassmorphism para o Formulário --- */
+.form-glass {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* Suporte para Safari */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+    position: relative; /* Essencial para a animação de líquido */
+    overflow: hidden;   /* Contém o líquido dentro do card */
+    z-index: 1;
+}
+
+/* --- Animação de Líquido no Fundo do Formulário --- */
+.form-glass::before,
+.form-glass::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    width: 250%; /* Mais largo que o container para a onda parecer natural */
+    height: 250%;
+    border-radius: 45%; /* Forma a onda */
+    transform-origin: center;
+    z-index: -1; /* Fica atrás do conteúdo do formulário */
+    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Transição elástica apenas no transform */
+}
+
+/* Onda 1 */
+.form-glass::before {
+    background-color: rgba(230, 57, 70, 0.7); /* Vermelho do tema */
+    animation: wave-rotate 10s infinite linear;
+}
+
+/* Onda 2 (para dar mais profundidade) */
+.form-glass::after {
+    background-color: rgba(6, 46, 81, 0.7); /* Azul do tema */
+    animation: wave-rotate 12s infinite linear reverse;
+}
+
+/* Estado inicial: Passo 1 Ativo */
+.form-glass.step-1-active::before { transform: translate(-50%, 65%); } /* Onda vermelha sobe */
+.form-glass.step-1-active::after  { transform: translate(-50%, 100%); } /* Onda azul fica escondida */
+
+/* Estado de transição: Passo 2 Ativo */
+.form-glass.step-2-active::before { transform: translate(-50%, 100%); } /* Onda vermelha desce */
+.form-glass.step-2-active::after  { transform: translate(-50%, 65%); } /* Onda azul sobe */
+
+
+@keyframes wave-rotate {
+    from { transform: translate(-50%, 65%) rotate(0deg); }
+    to { transform: translate(-50%, 65%) rotate(360deg); }
+}
+
 /* Tablets e Desktops (md e acima) */
 @media (min-width: 768px) { .panel-content { padding-left: 1.5rem; padding-right: 1.5rem; } }
 @media (max-width: 1023px) { .scroll-indicator-container { display: none; } }
@@ -652,52 +705,53 @@ body {
 }
 
 .form-icon {
-    position: absolute;
-    left: 1rem;
-    color: #9ca3af; /* gray-400 */
-    transition: color 0.2s;
+    position: absolute; /* Mantém o ícone dentro do campo */
+    left: 0.75rem; /* 12px */
+    color: #9ca3af; /* cinza-400 */
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .form-input {
     width: 100%;
-    border: 1px solid #d1d5db; /* gray-300 */
-    border-radius: 0.5rem;
-    padding: 1rem 1rem 1rem 3rem; /* Espaço para o ícone e label */
-    background-color: #f9fafb; /* gray-50 */
-    color: #111827; /* gray-900 */
-    transition: border-color 0.2s, box-shadow 0.2s;
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Borda sutil para o efeito de vidro */
+    border-radius: 0.5rem; /* Bordas arredondadas */
+    padding: 1rem 1rem 1rem 2.75rem; /* Padding para ícone e label */
+    background-color: rgba(255, 255, 255, 0.6); /* Fundo mais opaco para melhor contraste */
+    color: #111827; /* cinza-900 */
+    transition: all 0.3s ease;
+    position: relative;
 }
 
 .form-label {
     position: absolute;
-    left: 3rem;
+    left: 2.75rem; /* Alinhado com o padding do input */
     top: 50%;
     transform: translateY(-50%);
-    color: #6b7280; /* gray-500 */
-    background-color: #f9fafb; /* Mesmo fundo do input */
+    color: #6b7280; /* cinza-500 */
+    background-color: transparent; /* Remove o fundo do label */
     padding: 0 0.25rem;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
     pointer-events: none; /* Permite cliques através do label */
 }
 
 /* Efeito de label flutuante */
 .form-input:focus + .form-label,
 .form-input:not(:placeholder-shown) + .form-label {
-    top: 0;
-    left: 2.75rem;
+    top: 0; /* Sobe o label para o topo */
     font-size: 0.75rem;
-    color: #062E51; /* Cor principal do tema */
+    color: #062E51; /* Cor azul escura para destaque */
     font-weight: 600;
+    background-color: rgba(255, 255, 255, 0.6); /* Mesmo fundo do input para criar o recorte */
 }
 
 .form-input:focus {
     outline: none;
-    border-color: #062E51;
-    box-shadow: 0 0 0 3px rgba(6, 46, 81, 0.2);
+    border-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.3); /* Brilho vermelho sutil */
 }
 
 .form-input:focus ~ .form-icon {
-    color: #062E51;
+    color: #062E51; /* Cor azul escura para destaque */
 }
 
 /* --- Estilos para o Autocomplete do Formulário --- */
@@ -736,7 +790,7 @@ body {
 /* --- Estilos para Erro no Formulário --- */
 .form-group.error .form-input {
     border-color: #DC2626; /* red-600 */
-    background-color: #FEF2F2; /* red-50 */
+    background-color: rgba(254, 242, 242, 0.8); /* Fundo avermelhado mais sólido (red-50) */
 }
 .form-group.error .form-label {
     color: #DC2626; /* red-600 */
@@ -748,7 +802,7 @@ body {
 /* --- Estilos para Sucesso no Formulário --- */
 .form-group.success .form-input {
     border-color: #16A34A; /* green-600 */
-    background-color: #F0FDF4; /* green-50 */
+    background-color: rgba(240, 253, 244, 0.8); /* Fundo esverdeado mais sólido (green-50) */
 }
 .form-group.success .form-label {
     color: #15803D; /* green-700 */
@@ -955,6 +1009,48 @@ body {
     transform: translateY(-2px);
 }
 
+/* --- Estilos Modernos para Botões do Formulário --- */
+#next-step-btn, button[type="submit"] {
+    position: relative;
+    overflow: hidden;
+    /* Estilo de vidro fosco para os botões */
+    background-color: rgba(230, 57, 70, 0.6); /* Vermelho principal com transparência */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    transition: background-color 0.3s ease;
+}
+
+/* Efeito de carregamento líquido no botão */
+button[type="submit"].is-loading::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #062E51; /* Cor azul escura para o preenchimento */
+    border-radius: inherit;
+    animation: liquid-fill 1.5s ease-in-out infinite;
+    z-index: 0;
+}
+
+button[type="submit"].is-loading span {
+    position: relative;
+    z-index: 1;
+    color: white;
+}
+
+
+#next-step-btn:hover::after, button[type="submit"]:hover::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 200%; height: 100%;
+    background-image: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+    animation: shine 1.5s infinite;
+}
+
 /* --- Animação para o título "Workshop" --- */
 .animated-gradient {
     background: linear-gradient(90deg, #E63946, #ffffff, #E63946, #ffffff);
@@ -963,6 +1059,17 @@ body {
     background-clip: text;
     color: transparent;
     animation: move-gradient 4s linear infinite;
+}
+
+@keyframes liquid-fill {
+    0% { transform: translateY(100%); }
+    50% { transform: translateY(0); }
+    100% { transform: translateY(-100%); }
+}
+
+@keyframes shine {
+    0% { left: -100%; }
+    100% { left: 100%; }
 }
 
 @keyframes move-gradient {
@@ -1000,3 +1107,154 @@ body {
 /* Destaques para eventos específicos */
 .program-list li.event-highlight-meta { background-color: #EFF6FF; /* azul-50 do Tailwind */ }
 .program-list li.event-highlight-break { background-color: #FFFBEB; /* amber-50 do Tailwind */ }
+
+/* --- NOVO DESIGN DO FORMULÁRIO --- */
+
+/* Container do formulário */
+.form-container-modern {
+    background-color: white;
+    padding: 2.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Nova Barra de Progresso */
+.form-progress-bar-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background-color: #e5e7eb; /* Fundo da barra */
+}
+
+#form-progress-bar {
+    height: 100%;
+    width: 50%; /* Começa na metade */
+    background-color: #E63946; /* Cor principal */
+    transition: width 0.4s ease-in-out;
+}
+
+/* Estilo dos Grupos de Formulário */
+.form-group {
+    position: relative;
+}
+
+.form-icon {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af; /* cinza-400 */
+    transition: color 0.3s ease;
+}
+
+.form-input {
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid #d1d5db; /* Linha inferior */
+    padding: 0.75rem 0.75rem 0.75rem 2.5rem; /* Padding para ícone e texto */
+    font-size: 1rem;
+    background-color: transparent;
+    color: #111827;
+    transition: border-color 0.3s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #E63946; /* Destaque vermelho ao focar */
+}
+
+.form-label {
+    position: absolute;
+    left: 2.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280; /* cinza-500 */
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+/* Animação do Label Flutuante */
+.form-input:focus + .form-label,
+.form-input:not(:placeholder-shown) + .form-label {
+    top: -0.5rem;
+    left: 2.5rem;
+    font-size: 0.75rem;
+    color: #E63946;
+}
+
+.form-input:focus ~ .form-icon {
+    color: #E63946;
+}
+
+/* Estilos de Validação */
+.form-group.error .form-input {
+    border-color: #ef4444; /* red-500 */
+}
+.form-group.error .form-label,
+.form-group.error .form-icon {
+    color: #ef4444;
+}
+
+.form-group.success .form-input {
+    border-color: #22c55e; /* green-500 */
+}
+
+/* Botões com novo estilo */
+#next-step-btn, button[type="submit"] {
+    background-color: #E63946;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+#next-step-btn:hover, button[type="submit"]:hover {
+    background-color: #c9323d;
+    transform: translateY(-2px);
+}
+button[type="submit"].is-loading {
+    background-color: #062E51;
+}
+
+/* --- Estilos para o Indicador de Passos do Formulário --- */
+.progress-step {
+    width: 2.5rem; /* 40px */
+    height: 2.5rem; /* 40px */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.125rem; /* 18px */
+    color: #9ca3af; /* gray-400 */
+    border: 2px solid #d1d5db; /* gray-300 */
+    transition: all 0.4s ease-in-out;
+    background-color: white;
+    position: relative;
+    z-index: 1;
+}
+
+.progress-step span {
+    transition: opacity 0.3s ease;
+}
+
+.progress-step.active {
+    border-color: #E63946;
+    background-color: #E63946;
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Ajuste na linha de progresso */
+#progress-line {
+    background-color: #E63946; /* A barra de progresso será vermelha */
+    box-shadow: 0 0 8px rgba(230, 57, 70, 0.5);
+    /* A mágica acontece aqui: a largura será animada */
+    transition: width 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+    transform-origin: left; /* Garante que a animação padrão seja da esquerda para a direita */
+}
+
+/* O container da linha de progresso */
+.progress-line-container {
+    background-color: #e5e7eb; /* Fundo cinza para a barra vazia */
+}
