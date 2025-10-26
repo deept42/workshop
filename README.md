@@ -1,5 +1,7 @@
 # Workshop: Municípios Mais Resilientes (WMRD-PR)
 
+![Workshop WMRD-PR](https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXhkOXJjaHg1YjE4aXI4M3hyc3g0MTE4NG04cHY1bmxjdWZ5N2lqdiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ToQqmXCkJZG0MUlYJe/giphy.gif)
+
 Este é o repositório oficial do site para o evento "Workshop: Municípios Mais Resilientes em Desastres", uma iniciativa do Corpo de Bombeiros Militar do Paraná. O projeto consiste em uma página pública para informações e inscrições, e um painel de administração completo para o gerenciamento do evento.
 
 ## ✨ Funcionalidades

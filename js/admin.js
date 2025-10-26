@@ -1214,7 +1214,7 @@ function configurarCardCertificadoInterativo(inscritos) {
     if (!wrapper || cards.some(c => !c) || valores.some(v => !v) || indicators.length === 0) return;
 
     let isAnimating = false;
-    let estadoAtual = 0; // 0: Percentual, 1: Contagem, 2: Receita Estimada, 3: Receita Paga
+    let estadoAtual = 0; // 0: Percentual, 1: Contagem, 2: Receita Pendente, 3: Receita Confirmada
     let autoRotateTimeout; // Variável para controlar o setTimeout
     const progressBar = wrapper.querySelector('.card-progress-bar');
     const autoRotateDelay = 10000; // 10 segundos
@@ -1223,14 +1223,15 @@ function configurarCardCertificadoInterativo(inscritos) {
     const preencherDados = () => {
         const totalInscritos = inscritos.length;
         const comCertificado = inscritos.filter(i => i.quer_certificado).length;
+        const pendentes = inscritos.filter(i => i.quer_certificado && i.status_pagamento === 'pendente').length;
         const pagos = inscritos.filter(i => i.status_pagamento === 'pago').length;
-        const receitaEstimada = comCertificado * 5.00;
+        const receitaPendente = pendentes * 5.00;
         const receitaPaga = pagos * 5.00;
         const taxa = totalInscritos > 0 ? (comCertificado / totalInscritos) * 100 : 0;
 
         valores[0].textContent = `${taxa.toFixed(0)}%`;
         valores[1].textContent = comCertificado;
-        valores[2].textContent = `R$ ${receitaEstimada.toFixed(2).replace('.', ',')}`;
+        valores[2].textContent = `R$ ${receitaPendente.toFixed(2).replace('.', ',')}`;
         valores[3].textContent = `R$ ${receitaPaga.toFixed(2).replace('.', ',')}`;
     };
 
