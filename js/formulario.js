@@ -300,13 +300,29 @@ export function configurarValidacaoFormulario() {
         };
         const codigoInscricao = gerarCodigoInscricao();
 
+        // --- VERIFICAÇÃO DE CPF DUPLICADO ANTES DE INSERIR ---
+        const cpfLimpo = cpf.replace(/\D/g, '');
+        const { data: cpfExistente, error: cpfError } = await supabase
+            .from('cadastro_workshop')
+            .select('cpf')
+            .eq('cpf', cpfLimpo)
+            .single();
+
+        if (cpfExistente) {
+            mostrarNotificacao('Este CPF já foi cadastrado. Verifique os dados ou entre em contato.', 'erro');
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('is-loading');
+            submitBtn.textContent = 'Inscrever-se Agora';
+            return; // Interrompe a execução
+        }
+
         // Envio para o Supabase
         const { data, error } = await supabase
             .from('cadastro_workshop')
             .insert([{
                 nome_completo: formatarParaTitulo(nome),
                 cargo_funcao: formatarParaTitulo(cargo),
-                cpf: cpf.replace(/\D/g, ''),
+                cpf: cpfLimpo,
                 empresa: formatarParaTitulo(empresa),
                 email: email.toLowerCase(),
                 telefone: telefone,
@@ -323,8 +339,12 @@ export function configurarValidacaoFormulario() {
 
         if (error) {
             console.error('Objeto completo do erro do Supabase:', error);
-            if (error.code === '23505') { // Código de violação de chave única (e-mail duplicado)
+            // Agora, a verificação de CPF já foi feita. O erro 23505 provavelmente será de e-mail.
+            if (error.code === '23505') {
                 mostrarNotificacao('Este e-mail já foi cadastrado. Por favor, utilize outro.', 'erro');
+            } else if (cpfError) {
+                // Se a busca pelo CPF falhou por outro motivo
+                mostrarNotificacao('Erro ao verificar CPF. Tente novamente.', 'erro');
             } else {
                 mostrarNotificacao('Ocorreu um erro inesperado na inscrição. Tente novamente.', 'erro');
             }
