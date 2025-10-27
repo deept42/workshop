@@ -2,9 +2,8 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 // Pega as chaves de API do Asaas para poder consultar os dados do cliente.
-const ASAAS_API_KEY_SANDBOX = Deno.env.get("ASAAS_SANDBOX_API_KEY_ASAAS_API");
+const ASAAS_API_KEY_SANDBOX = Deno.env.get("ASAAS_SANDBOX_API_KEY");
 const ASAAS_API_KEY_PROD = Deno.env.get("ASAAS_API_KEY_PROD");
-
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -29,9 +28,9 @@ serve(async (req: Request) => {
         throw new Error("ID do cliente não encontrado no payload do webhook.");
       }
 
-      // Determina qual chave de API e URL base do Asaas usar.
-      const asaasApiKey = ASAAS_API_KEY_SANDBOX || ASAAS_API_KEY_PROD;
-      const asaasBaseUrl = ASAAS_API_KEY_SANDBOX ? "https://sandbox.asaas.com/api/v3" : "https://api.asaas.com/api/v3";
+      // Determina qual chave de API e URL base do Asaas usar. Prioriza a produção.
+      const asaasApiKey = ASAAS_API_KEY_PROD || ASAAS_API_KEY_SANDBOX;
+      const asaasBaseUrl = ASAAS_API_KEY_PROD ? "https://api.asaas.com/api/v3" : "https://sandbox.asaas.com/api/v3";
 
       if (!asaasApiKey) {
         throw new Error("Chave de API do Asaas não configurada para a função de webhook.");
@@ -63,17 +62,14 @@ serve(async (req: Request) => {
       // 4. Busca o participante pelo CPF
       const { data: participante, error: fetchError } = await supabaseAdmin
         .from("cadastro_workshop")
-        .select("id, nome_completo, status_pagamento") // Pega também o status atual
         .select("id, nome_completo, status_pagamento")
         .eq("cpf", cpfLimpo)
         .single();
 
       if (fetchError || !participante) {
-        throw new Error(`Nenhum participante encontrado com o CPF: ${cpfLimpo}. Erro: ${fetchError?.message}`);
+        throw new Error(`Webhook recebido, mas nenhum participante encontrado com o CPF: ${cpfLimpo}. Erro: ${fetchError?.message}`);
       }
 
-      // 5. Atualiza o status do pagamento apenas se ele ainda não for 'pago'
-      if (participante.status_pagamento !== 'pago') {
       // 5. Verificação de Idempotência: Atualiza o status apenas se ele ainda não for 'pago'
       if (participante.status_pagamento !== "pago") {
         const { error: updateError } = await supabaseAdmin
@@ -85,7 +81,6 @@ serve(async (req: Request) => {
 
         console.log(`Pagamento confirmado para "${participante.nome_completo}" (ID: ${participante.id}). Status atualizado para 'pago'.`);
       } else {
-        console.log(`Pagamento para "${participante.nome_completo}" (ID: ${participante.id}) já estava confirmado. Nenhuma ação necessária.`);
         console.log(`Pagamento para "${participante.nome_completo}" (ID: ${participante.id}) já estava confirmado. Nenhuma ação necessária (Idempotência).`);
       }
     }

@@ -895,12 +895,10 @@ async function iniciarDuplicacao(id) {
     delete novoInscrito.id; // Remove o ID antigo
     delete novoInscrito.created_at; // Deixa o Supabase gerar um novo timestamp
 
-    // Ao duplicar, o nome completo será o mesmo do original.
-    // O usuário deverá editá-lo no modal.
-    novoInscrito.nome_completo = original.nome_completo;
     // Ao duplicar, o campo de nome virá em branco para ser preenchido.
     // Todos os outros dados são mantidos.
     novoInscrito.nome_completo = '';
+    novoInscrito.email = ''; // Limpa o e-mail para evitar conflitos de unicidade, já que e-mails devem ser únicos
     // Mantém o e-mail original para o usuário editar.
 
     // 3. Abre o modal de "Adicionar" com os dados pré-preenchidos
@@ -1225,8 +1223,8 @@ function configurarCardCertificadoInterativo(inscritos) {
         const comCertificado = inscritos.filter(i => i.quer_certificado).length;
         const pendentes = inscritos.filter(i => i.quer_certificado && i.status_pagamento === 'pendente').length;
         const pagos = inscritos.filter(i => i.status_pagamento === 'pago').length;
-        const receitaPendente = pendentes * 5.00;
-        const receitaPaga = pagos * 5.00;
+        const receitaPendente = pendentes * 20.00;
+        const receitaPaga = pagos * 20.00;
         const taxa = totalInscritos > 0 ? (comCertificado / totalInscritos) * 100 : 0;
 
         valores[0].textContent = `${taxa.toFixed(0)}%`;

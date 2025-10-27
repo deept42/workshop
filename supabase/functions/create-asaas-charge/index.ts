@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 // Pega as chaves de API do Asaas dos segredos do Supabase.
-const ASAAS_API_KEY_SANDBOX = Deno.env.get("ASAAS_SANDBOX_API_KEY_ASAAS_API");
+const ASAAS_API_KEY_SANDBOX = Deno.env.get("ASAAS_SANDBOX_API_KEY"); // Chave para ambiente de testes
 const ASAAS_API_KEY_PROD = Deno.env.get("ASAAS_API_KEY_PROD");
 
 const corsHeaders = {
@@ -21,9 +21,9 @@ serve(async (req: Request) => {
       throw new Error("Dados do inscrito incompletos para gerar a cobrança.");
     }
 
-    // Determina qual chave de API e URL base do Asaas usar. Prioriza o Sandbox se a chave estiver definida.
-    const asaasApiKey = ASAAS_API_KEY_SANDBOX || ASAAS_API_KEY_PROD;
-    const asaasBaseUrl = ASAAS_API_KEY_SANDBOX ? "https://sandbox.asaas.com/api/v3" : "https://api.asaas.com/api/v3";
+    // Determina qual chave de API e URL base do Asaas usar. Prioriza a produção.
+    const asaasApiKey = ASAAS_API_KEY_PROD || ASAAS_API_KEY_SANDBOX;
+    const asaasBaseUrl = ASAAS_API_KEY_PROD ? "https://api.asaas.com/api/v3" : "https://sandbox.asaas.com/api/v3";
 
     if (!asaasApiKey) {
       throw new Error("Chave de API do Asaas não configurada para o ambiente.");
@@ -111,7 +111,7 @@ serve(async (req: Request) => {
         body: JSON.stringify({
           customer: customerId,
           billingType: "UNDEFINED", // Permite que o cliente escolha (Boleto, Pix, Cartão)
-          value: 5.00, // Valor mínimo para boleto/pix no Asaas
+          value: 20.00, // Novo valor do certificado
           dueDate: new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().split('T')[0], // Vencimento em 7 dias
           description: `Certificado de participação - Workshop WMRD-PR`,
           externalReference: id,
