@@ -33,6 +33,13 @@ body {
     position: relative; /* Necessário para posicionar os indicadores de rolagem */
 }
 
+/* Variação do painel para seções mais compactas */
+.panel-compact {
+    min-height: auto; /* Remove a altura mínima de tela cheia */
+    padding-top: 2.5rem; /* Reduzido para 2.5rem (40px) */
+    padding-bottom: 2.5rem; /* Reduzido para 2.5rem (40px) */
+}
+
 /* Wrapper de conteúdo dentro de cada painel */
 .panel-content {
     /* Define uma largura fluida que vai de 95% em telas pequenas até um máximo de 1280px */
@@ -132,6 +139,13 @@ body {
 #programacao {
     background-image: linear-gradient(rgba(230, 240, 255, 0.95), rgba(230, 240, 255, 0.95)), url('https://images.pexels.com/photos/7988086/pexels-photo-7988086.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
 }
+#patrocinadores {
+    background-color: #f9fafb; /* Um cinza ainda mais claro */
+    /* Padrão de grade de pontos sutil para um visual mais sofisticado */
+    background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.08) 1px, transparent 0);
+    background-size: 20px 20px;
+}
+
 #palestrantes {
     background-image: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
 }
@@ -618,7 +632,8 @@ body {
 }
 
 .logo-to-black {
-    filter: brightness(0) invert(0);
+    /* Inverte a cor (branco vira preto) e ajusta o brilho para garantir que fique preto sólido */
+    filter: invert(1) brightness(0);
 }
 
 /* --- Estilos para Animação na Rolagem --- */
@@ -938,7 +953,20 @@ body {
     font-size: 0.9rem;
     color: #4B5563; /* gray-600 */
     line-height: 1.5;
+    word-wrap: break-word; /* Garante que textos longos quebrem a linha */
 }
+/* Estilos para a biografia expansível */
+.bio-full {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out, margin-top 0.5s ease-in-out;
+    margin-top: 0;
+}
+.bio-full.expanded {
+    max-height: 500px; /* Altura suficiente para a maioria das biografias */
+    margin-top: 0.5rem; /* Adiciona um espaço quando expandido */
+}
+
 
 .badge-footer {
     background-color: #f3f4f6; /* gray-100 */
@@ -1252,6 +1280,46 @@ button[type="submit"].is-loading {
     /* A mágica acontece aqui: a largura será animada */
     transition: width 0.5s cubic-bezier(0.65, 0, 0.35, 1);
     transform-origin: left; /* Garante que a animação padrão seja da esquerda para a direita */
+}
+
+/* --- Estilos para o Carrossel de Logos --- */
+.logo-carousel {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    /* Adiciona um gradiente nas laterais para um efeito de fade suave */
+    -webkit-mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
+}
+
+.logo-track {
+    display: flex;
+    width: calc(250px * 12); /* Largura de cada logo * número total de logos (6 originais + 6 duplicados) */
+    animation: scroll-logos 40s linear infinite;
+}
+
+.carousel-logo {
+    height: 80px; /* Altura padrão para os logos */
+    width: 250px; /* Largura fixa para cada "slot" de logo */
+    object-fit: contain; /* Garante que o logo não seja distorcido */
+    margin: 0 40px; /* Espaçamento entre os logos */
+    /* filter: grayscale(100%); */ /* Filtro de escala de cinza removido */
+    opacity: 0.6;
+    transition: filter 0.3s ease, opacity 0.3s ease;
+}
+
+.logo-carousel:hover .logo-track {
+    animation-play-state: paused; /* Pausa a animação ao passar o mouse */
+}
+
+.carousel-logo:hover {
+    /* filter: grayscale(0%); */ /* Filtro de escala de cinza removido */
+    opacity: 1;
+}
+
+@keyframes scroll-logos {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); } /* Rola até a metade (onde começam os logos duplicados) */
 }
 
 /* O container da linha de progresso */

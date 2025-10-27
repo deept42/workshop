@@ -44,14 +44,15 @@ export function configurarContagemRegressiva() {
  * Configura a funcionalidade de clique para ampliar a imagem do palestrante.
  */
 export function configurarZoomImagem() {
-    const imagemPalestrante = document.getElementById('speaker-image-paula');
+    // Seleciona todas as imagens de palestrante em vez de apenas uma
+    const imagensPalestrantes = document.querySelectorAll('.badge-photo');
     const overlay = document.getElementById('image-zoom-overlay');
     const imagemAmpliada = document.getElementById('zoomed-image');
 
-    if (!imagemPalestrante || !overlay || !imagemAmpliada) return;
+    if (imagensPalestrantes.length === 0 || !overlay || !imagemAmpliada) return;
 
-    const abrirZoom = () => {
-        imagemAmpliada.src = imagemPalestrante.src;
+    const abrirZoom = (src) => {
+        imagemAmpliada.src = src;
         overlay.classList.remove('hidden');
         overlay.classList.add('flex');
     };
@@ -59,14 +60,47 @@ export function configurarZoomImagem() {
     const fecharZoom = () => {
         overlay.classList.add('hidden');
         overlay.classList.remove('flex');
-        setTimeout(() => {
-            imagemAmpliada.src = ""; // Limpa a imagem para economizar memória
-        }, 300);
+        // Limpa a imagem após a transição para economizar memória
+        setTimeout(() => { imagemAmpliada.src = ""; }, 300);
     };
 
-    imagemPalestrante.addEventListener('click', abrirZoom);
+    // Adiciona o evento de clique a cada imagem de palestrante
+    imagensPalestrantes.forEach(img => {
+        img.addEventListener('click', () => abrirZoom(img.src));
+    });
+
     overlay.addEventListener('click', fecharZoom);
 }
+
+/**
+ * Configura a funcionalidade de expandir/recolher a biografia dos palestrantes.
+ */
+export function configurarBioExpansivel() {
+    const speakerBadges = document.querySelectorAll('.speaker-badge');
+
+    speakerBadges.forEach(badge => {
+        const toggleBtn = badge.querySelector('.toggle-bio-btn');
+        const fullBio = badge.querySelector('.bio-full');
+        const summaryBio = badge.querySelector('.bio-summary');
+        const btnText = toggleBtn ? toggleBtn.querySelector('span:first-child') : null;
+        const btnIcon = toggleBtn ? toggleBtn.querySelector('.material-symbols-outlined') : null;
+
+        if (toggleBtn && fullBio && summaryBio && btnText && btnIcon) {
+            toggleBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const isExpanded = fullBio.style.display === 'block';
+
+                fullBio.style.display = isExpanded ? 'none' : 'block';
+                summaryBio.style.display = isExpanded ? 'block' : 'none';
+                
+                // Atualiza o texto e o ícone
+                btnText.textContent = isExpanded ? 'Mostrar Mais' : 'Mostrar Menos';
+                btnIcon.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(180deg)';
+            });
+        }
+    });
+}
+
 
 /**
  * Configura um player de vídeo customizado com uma sobreposição de "play".

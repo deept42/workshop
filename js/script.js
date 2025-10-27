@@ -6,10 +6,9 @@
 import { configurarControlesAcessibilidade } from './acessibilidade.js';
 import { atualizarLinkNavegacaoAtivo, configurarRecalculoIndicadorAoRedimensionar } from './animacoes.js';
 import { configurarValidacaoFormulario, configurarAutocompletar, configurarMascaraTelefone, configurarMascaraCPF, configurarMascaraCEP, configurarAutocompletarComDadosSalvos } from './formulario.js';
-import { configurarRolagemSuave, configurarNavegacaoMouseMeio, configurarMenuMobile, configurarBarraProgressoRolagem, configurarBotaoLogout } from './navegacao.js';
-import { configurarContagemRegressiva, configurarZoomImagem, configurarPlayerCustomizado } from './ui.js';
+import { configurarRolagemSuave, configurarNavegacaoMouseMeio, configurarMenuMobile, configurarBarraProgressoRolagem } from './navegacao.js';
+import { configurarContagemRegressiva, configurarZoomImagem, configurarPlayerCustomizado, configurarBioExpansivel } from './ui.js';
 import { configurarLoginAdmin, fazerLogout } from './auth.js';
-import { configurarPlayersYoutube } from './video.js';
 import './notificacoes.js'; // Importa para registrar a função globalmente, se necessário
 import { supabase } from './supabaseClient.js';
 
@@ -52,17 +51,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (rodape) rodape.style.display = 'none';
                 if (navLateralEsquerda) navLateralEsquerda.style.display = 'none';
                 if (bottomNav) bottomNav.style.display = 'none'; // Oculta a nova navegação inferior
-                // Adiciona a classe 'is-active' para iniciar a animação de entrada (já em português)
+                // Adiciona a classe 'is-active' para iniciar a animação de entrada
                 setTimeout(() => {
                     leftPane?.classList.add('is-active');
                     rightPane?.classList.add('is-active');
                 }, 10); // Pequeno delay para garantir que a transição ocorra
             } else {
-                // Remove a classe 'is-active' para a animação de saída (já em português)
                 // Quando a tela de login é escondida
                 leftPane?.classList.remove('is-active');
                 rightPane?.classList.remove('is-active');
-                // Esconde a tela de login e mostra o site após a animação (já em português)
+                // Esconde a tela de login e mostra o site após a animação
                 setTimeout(() => {
                     if (areaLogin) areaLogin.style.display = 'none';
                     if (areaPrincipal) areaPrincipal.style.display = 'block';
@@ -71,42 +69,40 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (navLateralEsquerda) navLateralEsquerda.style.display = ''; // Remove o estilo inline para que as classes do CSS (hidden lg:flex) voltem a funcionar
                     if (bottomNav) bottomNav.style.display = ''; // Remove o estilo inline para que as classes do CSS (lg:hidden) voltem a funcionar
                 }, ehInstantaneo ? 0 : 600); // 600ms corresponde à duração da transição no CSS
-            } // Fim da função alternarTelaLogin
-        }; // Fim da função alternarTelaLogin
+            }
+        };
 
         // Se o usuário estiver logado, esconde a tela de login.
         if (estaLogado) {
-            alternarTelaLogin(false, true); // Esconde instantaneamente ao carregar a página se já estiver logado (e mostra as navs apropriadas)
+            alternarTelaLogin(false, true); // Esconde instantaneamente ao carregar a página se já estiver logado
         }
 
         // Função para configurar um botão de autenticação
-        const configurarBotaoAuth = (btn, icon, text) => {
+        const configurarBotaoAuth = (btn, icon, text, logado, acaoLogout, acaoLogin) => {
             if (btn && icon && text) {
-                icon.textContent = estaLogado ? 'logout' : 'login';
-                text.textContent = estaLogado ? 'Sair' : 'Entrar';
+                icon.textContent = logado ? 'logout' : 'login';
+                text.textContent = logado ? 'Sair' : 'Entrar';
                 btn.onclick = (e) => { 
                     e.preventDefault();
-                    if (estaLogado) {
-                        fazerLogout().then(() => {
-                            alternarTelaLogin(true);
-                        });
+                    if (logado) {
+                        acaoLogout().then(() => alternarTelaLogin(true));
                     } else {
-                        alternarTelaLogin(true);
+                        acaoLogin();
                     }
                 };
             }
         }
 
         // Configura ambos os botões de autenticação (desktop e mobile)
-        configurarBotaoAuth(authBtn, authIcon, authText);
-        configurarBotaoAuth(authBtnMobile, authIconMobile, authTextMobile);
+        configurarBotaoAuth(authBtn, authIcon, authText, estaLogado, fazerLogout, () => alternarTelaLogin(true));
+        configurarBotaoAuth(authBtnMobile, authIconMobile, authTextMobile, estaLogado, fazerLogout, () => alternarTelaLogin(true));
 
         // --- LÓGICA PARA O BOTÃO "VOLTAR AO SITE" ---
         const backToSiteBtn = document.getElementById('back-to-site-btn');
         if (backToSiteBtn) {
             backToSiteBtn.onclick = (e) => {
                 e.preventDefault();
-                alternarTelaLogin(false); // Chama a função em português
+                alternarTelaLogin(false);
             };
         }
     });
@@ -123,19 +119,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Formulário
         configurarValidacaoFormulario();
-        configurarAutocompletar();
-        configurarMascaraTelefone();
         configurarMascaraCPF();
+        configurarMascaraTelefone();
+        configurarAutocompletar();
         configurarMascaraCEP();
         configurarAutocompletarComDadosSalvos();
 
         // Componentes de UI
         configurarContagemRegressiva();
         configurarZoomImagem();
+        configurarBioExpansivel();
         configurarPlayerCustomizado();
-        configurarPlayersYoutube();
-        configurarLoginAdmin();
-        configurarBotaoLogout(fazerLogout);
+
+        // Outros
         configurarControlesAcessibilidade();
+        configurarLoginAdmin();
     }
 });

@@ -17,14 +17,24 @@ function formatarParaTitulo(str) {
     return str.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
 }
 
-function exibirMensagem(mensagem, tipo) {
+/**
+ * Exibe uma lista de mensagens de erro no div de mensagens do formulário.
+ * @param {string[]} erros - Um array de strings, cada uma sendo uma mensagem de erro.
+ */
+function exibirErrosFormulario(erros) {
     const mensagensForm = document.getElementById('form-messages');
     if (!mensagensForm) return;
-    const elementoMensagem = document.createElement('p');
-    elementoMensagem.textContent = mensagem;
-    elementoMensagem.className = tipo === 'error' ? 'form-message-error' : 'form-message-success';
-    mensagensForm.innerHTML = ''; // Limpa mensagens anteriores antes de adicionar uma nova
-    mensagensForm.appendChild(elementoMensagem);
+
+    mensagensForm.innerHTML = ''; // Limpa mensagens anteriores
+
+    const ul = document.createElement('ul');
+    ul.className = 'list-disc list-inside text-red-600 text-sm mt-2 space-y-1'; // Tailwind classes for a red bullet list
+    erros.forEach(erro => {
+        const li = document.createElement('li');
+        li.textContent = erro;
+        ul.appendChild(li);
+    });
+    mensagensForm.appendChild(ul);
 }
 
 function validarEmail(email) {
@@ -297,9 +307,11 @@ export function configurarValidacaoFormulario() {
 
         if (error) {
             console.error('Objeto completo do erro do Supabase:', error);
-            // As verificações de duplicidade já foram feitas.
-            // Se houver outro erro (como falha na conexão), mostramos uma mensagem genérica.
-            if (cpfError || emailError) {
+            // Se houver um erro de banco de dados que não seja de duplicidade (já tratado acima)
+            // ou se a busca por CPF/e-mail falhou por outro motivo (ex: rede)
+            if (error.code === '23505') { // Fallback para erro de unicidade que pode ter passado
+                mostrarNotificacao('Erro de duplicidade inesperado. CPF ou E-mail já cadastrado.', 'erro');
+            } else if (cpfError || emailError) { // Erro na busca de duplicidade
                 mostrarNotificacao('Erro ao verificar CPF. Tente novamente.', 'erro');
             } else {
                 mostrarNotificacao('Ocorreu um erro inesperado na inscrição. Tente novamente.', 'erro');
@@ -360,71 +372,54 @@ export function configurarValidacaoFormulario() {
         subtitle.style.display = 'block'; // Garante que o subtítulo esteja visível
     }
 
-    /**
-     * Valida um campo de formulário e aplica classes visuais de sucesso/erro.
-     * Retorna uma string com a mensagem de erro se o campo for inválido, ou uma string vazia se for válido.
-     * @param {HTMLInputElement} input - O elemento input a ser validado.
-     * @returns {string} Mensagem de erro ou string vazia.
-     */
     function validarCampo(input) {
         const grupo = input.closest('.form-group');
-        if (!grupo) return ''; // Se não há grupo, não há feedback visual específico
+        if (!grupo) return true;
 
-        let mensagemErro = '';
+        let ehValido = false;
         const valor = input.value.trim();
-        const isRequired = input.hasAttribute('required');
+
+        switch (input.name) {
+            case 'email':
+                ehValido = valor && validarEmail(valor);
+                break;
+            case 'telefone':
+                ehValido = valor && validarTelefone(valor);
+                break;
+            case 'cpf':
+                ehValido = valor && validarCPF(valor);
+                break;
+            case 'cep':
+                ehValido = valor && validarCEP(valor);
+                break;
+            default: // Para nome, empresa, municipio
+                ehValido = !!valor;
+                break;
+        }
 
         grupo.classList.remove('success', 'error');
-
-        if (isRequired && !valor) {
-            mensagemErro = `O campo ${input.placeholder.replace('*', '').trim()} é obrigatório.`;
+        if (ehValido) {
+            grupo.classList.add('success');
         } else {
-            switch (input.name) {
-                case 'email':
-                    if (valor && !validarEmail(valor)) mensagemErro = 'O e-mail informado não é válido.';
-                    break;
-                case 'telefone':
-                    if (valor && !validarTelefone(valor)) mensagemErro = 'O telefone informado não é válido (mínimo 10 dígitos).';
-                    break;
-                case 'cpf':
-                    if (valor && !validarCPF(valor)) mensagemErro = 'O CPF informado não é válido.';
-                    break;
-                case 'cep':
-                    if (valor && !validarCEP(valor)) mensagemErro = 'O CEP informado não é válido (formato XXXXX-XXX).';
-                    break;
-                // 'nome', 'empresa', 'municipio' são cobertos por `isRequired && !valor`
-                // 'cargo' é opcional e não tem validação de formato específica
+            // Não marca erro no blur para campos opcionais ou se o campo estiver vazio
+            if (valor && !ehValido) {
+                grupo.classList.add('error');
             }
         }
-
-        if (mensagemErro) {
-            grupo.classList.add('error');
-        } else if (valor) { // Só adiciona 'success' se houver valor e for válido
-            grupo.classList.add('success');
-        }
-        return mensagemErro; // Retorna a mensagem de erro ou string vazia
+        return ehValido;
     }
 
-    /**
-     * Valida o grupo de checkboxes de dias de participação.
-     * Retorna uma string com a mensagem de erro se nenhum dia for selecionado, ou uma string vazia se for válido.
-     * @returns {string} Mensagem de erro ou string vazia.
-     */
     function validarGrupoDias() {
         const grupo = form.querySelector('.days-selection-group');
         const dia13 = form.elements['dia13'] ? form.elements['dia13'].checked : false;
         const dia14 = form.elements['dia14'].checked;
         const ehValido = dia13 || dia14;
-        let mensagemErro = '';
 
         if (grupo) {
             grupo.classList.remove('error');
-            if (!ehValido) {
-                grupo.classList.add('error');
-                mensagemErro = 'Selecione pelo menos um dia de participação.';
-            }
+            if (!ehValido) grupo.classList.add('error');
         }
-        return mensagemErro;
+        return ehValido;
     }
 }
 

@@ -159,3 +159,7 @@ A forma mais recomendada é conectar seu repositório do GitHub a uma dessas pla
 
 ---
 *Documentação gerada por Gemini Code Assist.*
+
+## 📝 Anotações de Desenvolvimento
+
+Esta seção serve como um lembrete para tarefas de limpeza ou revisões futuras no código.
