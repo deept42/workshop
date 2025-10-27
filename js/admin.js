@@ -899,6 +899,7 @@ async function iniciarDuplicacao(id) {
     // Todos os outros dados são mantidos.
     novoInscrito.nome_completo = '';
     novoInscrito.email = ''; // Limpa o e-mail para evitar conflitos de unicidade, já que e-mails devem ser únicos
+    novoInscrito.cpf = ''; // Limpa o CPF para evitar conflitos de unicidade
     // Mantém o e-mail original para o usuário editar.
 
     // 3. Abre o modal de "Adicionar" com os dados pré-preenchidos

@@ -116,19 +116,28 @@ export function configurarValidacaoFormulario() {
 
     // --- Lógica de Múltiplos Passos ---
     nextBtn.addEventListener('click', () => {
-        // Valida apenas os campos do Passo 1
-        const nomeValido = validarCampo(form.elements['nome']);
-        const emailValido = validarCampo(form.elements['email']);
-        const cpfValido = validarCampo(form.elements['cpf']);
-        const diasValidos = validarGrupoDias();
+        const errosPasso1 = [];
 
-        if (nomeValido && emailValido && cpfValido && diasValidos) {
+        const nomeErro = validarCampo(form.elements['nome']);
+        if (nomeErro) errosPasso1.push(nomeErro);
+
+        const emailErro = validarCampo(form.elements['email']);
+        if (emailErro) errosPasso1.push(emailErro);
+
+        const cpfErro = validarCampo(form.elements['cpf']);
+        if (cpfErro) errosPasso1.push(cpfErro);
+
+        const diasErro = validarGrupoDias();
+        if (diasErro) errosPasso1.push(diasErro);
+
+        if (errosPasso1.length > 0) {
+            exibirErrosFormulario(errosPasso1);
+            // Não avança para o próximo passo se houver erros
+        } else {
+            mensagensForm.innerHTML = ''; // Limpa quaisquer erros anteriores
             step1.classList.add('hidden');
             step2.classList.remove('hidden');
             if (progressBar) progressBar.style.width = '100%';
-
-        } else {
-            mostrarNotificacao('Por favor, preencha os campos corretamente para continuar.', 'aviso');
         }
     });
 
@@ -147,6 +156,7 @@ export function configurarValidacaoFormulario() {
         form.querySelectorAll('.form-group, .days-selection-group').forEach(el => {
             el.classList.remove('error', 'success');
         });
+        mensagensForm.innerHTML = ''; // Clear form messages
         // Reseta o indicador de progresso
         if (progressBar) progressBar.style.width = '50%';
     };
@@ -175,7 +185,7 @@ export function configurarValidacaoFormulario() {
 
     form.addEventListener('submit', async (evento) => {
         evento.preventDefault();
-        mensagensForm.innerHTML = '';
+        mensagensForm.innerHTML = ''; // Limpa mensagens anteriores
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<span>Enviando...</span>'; // Adiciona span para o z-index funcionar
         submitBtn.classList.add('is-loading');
@@ -192,102 +202,35 @@ export function configurarValidacaoFormulario() {
         const participaDia13 = form.elements['dia13'].checked;
         const participaDia14 = form.elements['dia14'].checked;
 
-        // --- Lógica de Validação Aprimorada ---
-        let isFormValid = true;
+        const errosFormulario = [];
+
         // Reseta todos os erros e sucessos visuais antes de validar novamente
         form.querySelectorAll('.form-group, .days-selection-group').forEach(el => {
             el.classList.remove('error');
             el.classList.remove('success');
         });
 
-        // Valida campo Nome (obrigatório)
-        const nomeGroup = form.elements['nome'].closest('.form-group');
-        if (nome) {
-            nomeGroup.classList.add('success');
-        } else {
-            nomeGroup.classList.add('error');
-            isFormValid = false;
-        }
+        // Validações e coleta de erros para todos os campos
+        const camposParaValidar = ['nome', 'email', 'cpf', 'empresa', 'telefone', 'municipio', 'cep', 'cargo'];
+        camposParaValidar.forEach(nomeCampo => {
+            const input = form.elements[nomeCampo];
+            if (input) {
+                const erro = validarCampo(input);
+                if (erro) errosFormulario.push(erro);
+            }
+        });
 
-        // Valida campo Cargo (opcional, mas adiciona classe 'success' se preenchido)
-        const cargoGroup = form.elements['cargo'] ? form.elements['cargo'].closest('.form-group') : null;
-        if (cargoGroup && cargo) {
-            cargoGroup.classList.add('success');
-        } else if (cargoGroup) {
-            cargoGroup.classList.add('error');
-            isFormValid = false;
-        }
+        const diasErro = validarGrupoDias();
+        if (diasErro) errosFormulario.push(diasErro);
 
-        // Valida campo CPF (obrigatório e formato válido)
-        const cpfGroup = form.elements['cpf'].closest('.form-group');
-        if (cpf && validarCPF(cpf)) {
-            cpfGroup.classList.add('success');
-        } else {
-            cpfGroup.classList.add('error');
-            isFormValid = false;
-        }
-
-        // Valida campo Empresa (obrigatório)
-        const empresaGroup = form.elements['empresa'].closest('.form-group');
-        if (empresa) {
-            empresaGroup.classList.add('success');
-        } else {
-            empresaGroup.classList.add('error');
-            isFormValid = false;
-        }
-
-        // Valida campo E-mail (obrigatório e formato válido)
-        const emailGroup = form.elements['email'].closest('.form-group');
-        if (email && validarEmail(email)) {
-            emailGroup.classList.add('success');
-        } else {
-            emailGroup.classList.add('error');
-            isFormValid = false;
-        }
-
-        // Valida campo Telefone (obrigatório e formato válido)
-        const telefoneGroup = form.elements['telefone'].closest('.form-group');
-        if (telefone && validarTelefone(telefone)) {
-            telefoneGroup.classList.add('success');
-        } else {
-            telefoneGroup.classList.add('error');
-            isFormValid = false;
-        }
-
-        // Valida campo Município (obrigatório)
-        const municipioGroup = form.elements['municipio'].closest('.form-group');
-        if (municipio) {
-            municipioGroup.classList.add('success');
-        } else {
-            municipioGroup.classList.add('error');
-            isFormValid = false;
-        }
-
-        // Valida campo CEP (obrigatório)
-        const cepGroup = form.elements['cep'] ? form.elements['cep'].closest('.form-group') : null;
-        if (cepGroup && cep && validarCEP(cep)) {
-            cepGroup.classList.add('success');
-        } else if (cepGroup) {
-            cepGroup.classList.add('error');
-            isFormValid = false;
-        }
-
-        // Validações sem feedback visual direto no campo, mas que invalidam o formulário
-        const daysGroup = form.querySelector('.days-selection-group');
-        if (!participaDia13 && !participaDia14) {
-            if (daysGroup) daysGroup.classList.add('error');
-            isFormValid = false;
-        }
-
-        // Se algum campo for inválido, mostra o modal e para a execução.
-        if (!isFormValid) {
-            mostrarNotificacao('Por favor, corrija os campos destacados em vermelho.', 'aviso');
+        // Se houver erros de validação, exibe-os e interrompe o envio
+        if (errosFormulario.length > 0) {
+            exibirErrosFormulario(errosFormulario);
             submitBtn.disabled = false;
             submitBtn.classList.remove('is-loading');
             submitBtn.textContent = 'Inscrever-se Agora';
             return;
         }
-        // --- Fim da Lógica de Validação Aprimorada ---
 
         // Gera um código de inscrição único
         const gerarCodigoInscricao = () => {
@@ -300,8 +243,11 @@ export function configurarValidacaoFormulario() {
         };
         const codigoInscricao = gerarCodigoInscricao();
 
-        // --- VERIFICAÇÃO DE CPF DUPLICADO ANTES DE INSERIR ---
+        // --- VERIFICAÇÃO DE CPF E E-MAIL DUPLICADOS ANTES DE INSERIR ---
         const cpfLimpo = cpf.replace(/\D/g, '');
+        const emailLimpo = email.toLowerCase();
+
+        // 1. Verifica se o CPF já existe
         const { data: cpfExistente, error: cpfError } = await supabase
             .from('cadastro_workshop')
             .select('cpf')
@@ -310,10 +256,22 @@ export function configurarValidacaoFormulario() {
 
         if (cpfExistente) {
             mostrarNotificacao('Este CPF já foi cadastrado. Verifique os dados ou entre em contato.', 'erro');
-            submitBtn.disabled = false;
-            submitBtn.classList.remove('is-loading');
-            submitBtn.textContent = 'Inscrever-se Agora';
-            return; // Interrompe a execução
+            // Reseta o botão e interrompe a execução
+            submitBtn.disabled = false; submitBtn.classList.remove('is-loading'); submitBtn.textContent = 'Inscrever-se Agora';
+            return;
+        }
+
+        // 2. Verifica se o E-mail já existe
+        const { data: emailExistente, error: emailError } = await supabase
+            .from('cadastro_workshop')
+            .select('email')
+            .eq('email', emailLimpo)
+            .single();
+
+        if (emailExistente) {
+            mostrarNotificacao('Este e-mail já foi cadastrado. Por favor, utilize outro.', 'erro');
+            submitBtn.disabled = false; submitBtn.classList.remove('is-loading'); submitBtn.textContent = 'Inscrever-se Agora';
+            return;
         }
 
         // Envio para o Supabase
@@ -324,7 +282,7 @@ export function configurarValidacaoFormulario() {
                 cargo_funcao: formatarParaTitulo(cargo),
                 cpf: cpfLimpo,
                 empresa: formatarParaTitulo(empresa),
-                email: email.toLowerCase(),
+                email: emailLimpo,
                 telefone: telefone,
                 municipio: formatarParaTitulo(municipio),
                 cep: cep,
@@ -339,11 +297,9 @@ export function configurarValidacaoFormulario() {
 
         if (error) {
             console.error('Objeto completo do erro do Supabase:', error);
-            // Agora, a verificação de CPF já foi feita. O erro 23505 provavelmente será de e-mail.
-            if (error.code === '23505') {
-                mostrarNotificacao('Este e-mail já foi cadastrado. Por favor, utilize outro.', 'erro');
-            } else if (cpfError) {
-                // Se a busca pelo CPF falhou por outro motivo
+            // As verificações de duplicidade já foram feitas.
+            // Se houver outro erro (como falha na conexão), mostramos uma mensagem genérica.
+            if (cpfError || emailError) {
                 mostrarNotificacao('Erro ao verificar CPF. Tente novamente.', 'erro');
             } else {
                 mostrarNotificacao('Ocorreu um erro inesperado na inscrição. Tente novamente.', 'erro');
@@ -404,54 +360,71 @@ export function configurarValidacaoFormulario() {
         subtitle.style.display = 'block'; // Garante que o subtítulo esteja visível
     }
 
+    /**
+     * Valida um campo de formulário e aplica classes visuais de sucesso/erro.
+     * Retorna uma string com a mensagem de erro se o campo for inválido, ou uma string vazia se for válido.
+     * @param {HTMLInputElement} input - O elemento input a ser validado.
+     * @returns {string} Mensagem de erro ou string vazia.
+     */
     function validarCampo(input) {
         const grupo = input.closest('.form-group');
-        if (!grupo) return true;
+        if (!grupo) return ''; // Se não há grupo, não há feedback visual específico
 
-        let ehValido = false;
+        let mensagemErro = '';
         const valor = input.value.trim();
-
-        switch (input.name) {
-            case 'email':
-                ehValido = valor && validarEmail(valor);
-                break;
-            case 'telefone':
-                ehValido = valor && validarTelefone(valor);
-                break;
-            case 'cpf':
-                ehValido = valor && validarCPF(valor);
-                break;
-            case 'cep':
-                ehValido = valor && validarCEP(valor);
-                break;
-            default: // Para nome, empresa, municipio
-                ehValido = !!valor;
-                break;
-        }
+        const isRequired = input.hasAttribute('required');
 
         grupo.classList.remove('success', 'error');
-        if (ehValido) {
-            grupo.classList.add('success');
+
+        if (isRequired && !valor) {
+            mensagemErro = `O campo ${input.placeholder.replace('*', '').trim()} é obrigatório.`;
         } else {
-            // Não marca erro no blur para campos opcionais ou se o campo estiver vazio
-            if (valor && !ehValido) {
-                grupo.classList.add('error');
+            switch (input.name) {
+                case 'email':
+                    if (valor && !validarEmail(valor)) mensagemErro = 'O e-mail informado não é válido.';
+                    break;
+                case 'telefone':
+                    if (valor && !validarTelefone(valor)) mensagemErro = 'O telefone informado não é válido (mínimo 10 dígitos).';
+                    break;
+                case 'cpf':
+                    if (valor && !validarCPF(valor)) mensagemErro = 'O CPF informado não é válido.';
+                    break;
+                case 'cep':
+                    if (valor && !validarCEP(valor)) mensagemErro = 'O CEP informado não é válido (formato XXXXX-XXX).';
+                    break;
+                // 'nome', 'empresa', 'municipio' são cobertos por `isRequired && !valor`
+                // 'cargo' é opcional e não tem validação de formato específica
             }
         }
-        return ehValido;
+
+        if (mensagemErro) {
+            grupo.classList.add('error');
+        } else if (valor) { // Só adiciona 'success' se houver valor e for válido
+            grupo.classList.add('success');
+        }
+        return mensagemErro; // Retorna a mensagem de erro ou string vazia
     }
 
+    /**
+     * Valida o grupo de checkboxes de dias de participação.
+     * Retorna uma string com a mensagem de erro se nenhum dia for selecionado, ou uma string vazia se for válido.
+     * @returns {string} Mensagem de erro ou string vazia.
+     */
     function validarGrupoDias() {
         const grupo = form.querySelector('.days-selection-group');
         const dia13 = form.elements['dia13'] ? form.elements['dia13'].checked : false;
         const dia14 = form.elements['dia14'].checked;
         const ehValido = dia13 || dia14;
+        let mensagemErro = '';
 
         if (grupo) {
             grupo.classList.remove('error');
-            if (!ehValido) grupo.classList.add('error');
+            if (!ehValido) {
+                grupo.classList.add('error');
+                mensagemErro = 'Selecione pelo menos um dia de participação.';
+            }
         }
-        return ehValido;
+        return mensagemErro;
     }
 }
 

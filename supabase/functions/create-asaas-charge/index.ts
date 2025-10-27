@@ -23,7 +23,7 @@ serve(async (req: Request) => {
 
     // Determina qual chave de API e URL base do Asaas usar. Prioriza a produção.
     const asaasApiKey = ASAAS_API_KEY_PROD || ASAAS_API_KEY_SANDBOX;
-    const asaasBaseUrl = ASAAS_API_KEY_PROD ? "https://api.asaas.com/api/v3" : "https://sandbox.asaas.com/api/v3";
+    const asaasBaseUrl = ASAAS_API_KEY_PROD ? "https://www.asaas.com/api/v3" : "https://sandbox.asaas.com/api/v3";
 
     if (!asaasApiKey) {
       throw new Error("Chave de API do Asaas não configurada para o ambiente.");
@@ -39,26 +39,40 @@ serve(async (req: Request) => {
           "access_token": asaasApiKey,
         },
       });
+      if (!searchCustomerResponse.ok) {
+        const errorText = await searchCustomerResponse.text();
+        throw new Error(`Asaas API search customer failed: ${searchCustomerResponse.status} - ${errorText}`);
+      }
 
-      const searchCustomerData = await searchCustomerResponse.json();
+      // Verifica se a resposta é HTML, o que indica um erro de autenticação ou rota
+      const responseText = await searchCustomerResponse.text();
+      if (responseText.trim().startsWith("<!doctype")) {
+        throw new Error("A API do Asaas retornou um HTML inesperado. Verifique se a chave de API está correta e válida.");
+      }
+      const searchCustomerData = JSON.parse(responseText);
 
       if (searchCustomerData.data && searchCustomerData.data.length > 0) {
         // Cliente encontrado, vamos ATUALIZAR seus dados para garantir consistência
         const existingCustomerId = searchCustomerData.data[0].id;
         console.log(`Cliente Asaas encontrado (${existingCustomerId}). Atualizando dados...`);
-        await fetch(`${asaasBaseUrl}/customers/${existingCustomerId}`, {
+        const updateCustomerResponse = await fetch(`${asaasBaseUrl}/customers/${existingCustomerId}`, {
           method: "POST", // A API do Asaas usa POST para atualizar
           headers: {
             "Content-Type": "application/json",
             "access_token": asaasApiKey,
           },
           body: JSON.stringify({
-            // Atualiza apenas os campos que podem mudar
+            // Garante que os dados essenciais sejam sempre atualizados
             name: nome,
             email: email,
             phone: telefone.replace(/\D/g, ''),
+            mobilePhone: telefone.replace(/\D/g, ''),
           }),
         });
+        if (!updateCustomerResponse.ok) {
+            const errorText = await updateCustomerResponse.text();
+            throw new Error(`Asaas API update customer failed: ${updateCustomerResponse.status} - ${errorText}`);
+        }
         customerId = existingCustomerId;
       } else {
         // Se não encontrou, cria um novo cliente com dados mais completos
@@ -84,6 +98,10 @@ serve(async (req: Request) => {
             externalReference: id,
           }),
         });
+        if (!createCustomerResponse.ok) {
+            const errorText = await createCustomerResponse.text();
+            throw new Error(`Asaas API create customer failed: ${createCustomerResponse.status} - ${errorText}`);
+        }
 
         const createCustomerData = await createCustomerResponse.json();
         if (createCustomerData.id) {
@@ -97,7 +115,7 @@ serve(async (req: Request) => {
       }
     } catch (customerError) {
       console.error("Erro na etapa de cliente Asaas:", customerError);
-      throw new Error("Falha ao buscar ou criar cliente no Asaas.");
+      throw new Error(`Falha ao buscar/criar cliente no Asaas: ${customerError.message}`);
     }
 
     // 2. Criar Cobrança
@@ -117,6 +135,10 @@ serve(async (req: Request) => {
           externalReference: id,
         }),
       });
+      if (!createChargeResponse.ok) {
+          const errorText = await createChargeResponse.text();
+          throw new Error(`Asaas API create charge failed: ${createChargeResponse.status} - ${errorText}`);
+      }
 
       const chargeData = await createChargeResponse.json();
 
@@ -132,7 +154,7 @@ serve(async (req: Request) => {
       }
     } catch (chargeError) {
       console.error("Erro na etapa de cobrança Asaas:", chargeError);
-      throw new Error("Falha ao criar cobrança no Asaas.");
+      throw new Error(`Falha ao criar cobrança no Asaas: ${chargeError.message}`);
     }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Erro desconhecido ao gerar boleto.";
