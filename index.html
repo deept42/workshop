@@ -8,34 +8,40 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <!-- Link para os Ícones do Google (Material Symbols) -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
-    <!-- SDK do Player de Vídeo da Cloudinary -->
-    <link href="https://unpkg.com/cloudinary-video-player@1.10.0/dist/cld-video-player.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/cloudinary-video-player@1.10.0/dist/cld-video-player.min.js" type="text/javascript"></script>
-    <!-- Caminho para o arquivo CSS dentro da pasta 'css' -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-    <!-- Barra de Topo Fixa com Contagem Regressiva -->
+    <div class="wrapper">
+      <div class="box">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+
     <div id="top-bar" class="fixed top-0 left-0 w-full z-50">
         <div class="top-bar-content text-center">
             <h2 class="top-bar-title">EVENTO IMPERDÍVEL</h2>
             <div id="countdown-timer"></div>
             <p class="top-bar-subtitle">Vagas se esgotando!</p>
         </div>
-        <!-- Barra de Progresso de Rolagem -->
         <div id="progress-bar-container">
             <div id="progress-bar"></div>
         </div>
     </div>
 
 
-    <!-- Container do Folder com Rolagem Horizontal -->
     <main id="folder-container">
 
-        <!-- Painel 1: Início (Hero) -->
         <section id="inicio" class="folder-panel text-white">
             <div class="video-background">
                 <div class="video-overlay"></div>
@@ -52,132 +58,112 @@
                     <a href="#inscricao" class="hero-button animate-on-scroll bg-[#E63946] hover:bg-[#c9323d] text-white font-bold py-4 px-8 rounded-lg text-lg transition duration-300" style="--animation-delay: 0.2s;">Garanta sua Vaga</a>
                 </div>
                 
-                <!-- <div class="hero-logos-container animate-on-scroll mt-12 hidden lg:inline-block" style="--animation-delay: 0.3s;">
-                    <p class="text-sm uppercase tracking-widest mb-4 opacity-70">Realização e Apoio</p>
-                    <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-6 gap-x-8 gap-y-6 items-center hero-logos">
-                        <div class="flex items-center justify-start gap-2">
-                            <img src="https://www.defesacivil.pr.gov.br/sites/defesa-civil/arquivos_restritos/files/imagem/2019-05/1769_Defesa_Civil__PR.PNG" alt="Logo Defesa Civil Paraná" class="logo-apoio h-12">
-                            <span class="text-gray-800 font-semibold text-sm leading-tight uppercase">Defesa Civil<br>Paraná</span>
-                        </div>
-                        <div class="flex items-center justify-start gap-2">
-                            <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo Corpo de Bombeiros Militar Paraná" class="logo-apoio h-12">
-                            <span class="text-gray-800 font-semibold text-sm leading-tight uppercase">Corpo de<br>Bombeiros PR</span>
-                        </div>
-                        <img src="https://web.celepar.pr.gov.br/drupal/images/seil/portos/logo_portos_300x86.png" alt="Logo Portos do Paraná" class="logo-apoio">
-                        <img src="https://portal.isulpar.edu.br/wp-content/uploads/2024/10/logo-texto-1024x378.png" alt="Logo ISULPAR" class="logo-apoio">
-                        <img src="https://maximizados.com.br/_next/image?url=%2Fimages%2FLogo.png&w=128&q=75" alt="Logo Maximizados" class="logo-apoio logo-to-black">
-                        <img src="https://talentosbrasil.com.br/img/logotipo/logotipo.png" alt="Logo Talentos Brasil" class="logo-apoio">
-                    </div>
-                </div> -->
                 </div>
             </div>
         </section>
 
-        <!-- Painel 2: Sobre -->
-        <section id="sobre" class="folder-panel">
-            <div class="panel-content-full grid grid-rows-[1fr_auto] gap-8 md:items-center">
-                <!-- Container para o conteúdo da seção "Sobre" -->
-                <div class="w-full md:w-4/5 lg:w-3/4 mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12 bg-white/90 md:bg-transparent p-6 md:p-0 rounded-lg md:rounded-none shadow-lg md:shadow-none">
-                    <!-- Coluna da Esquerda (Vídeo) - ocupa 50% do container pai -->
-                    <div class="w-full md:w-1/2 flex justify-center">
-                        <div id="planning-video-container" class="animate-on-scroll w-full shadow-xl rounded-lg overflow-hidden" style="--animation-delay: 0s;">
-                            <!-- O player da Cloudinary será injetado aqui -->
-                            <video id="sobre-player" class="cld-video-player cld-fluid"></video>
-                        </div>
+        <section id="sobre" class="folder-panel section-with-gradient-bg">
+            <div class="panel-content text-center">
+                <div class="w-full lg:w-3/4 xl:w-2/3 mx-auto mb-10">
+                    <div id="planning-video-container" class="animate-on-scroll w-full shadow-xl rounded-lg overflow-hidden" style="--animation-delay: 0s;">
+                        <video id="sobre-player" class="cld-video-player cld-fluid"></video>
                     </div>
-                    <div class="w-full md:w-1/2 animate-on-scroll text-center md:text-left" style="--animation-delay: 0.1s;">
-                        <!-- Elemento decorativo para o título -->
-                        <div class="w-16 h-1 bg-[#062E51] mb-4 mx-auto md:mx-0"></div>
-                        <h2 class="section-title font-bold text-[#062E51] mb-6">Um Encontro para Fortalecer o Litoral Paranaense</h2>
-                        <p class="text-gray-700 mb-4">
-                            Nos dias <strong>13 e 14 de novembro de 2025</strong>, o Corpo de Bombeiros Militar do Paraná, com o apoio da Portos do Paraná e da Defesa Civil Estadual, promove o <strong>WMRD-PR</strong>. O evento busca discutir estratégias e capacitar profissionais para aumentar a resiliência dos nossos municípios frente aos desastres.
-                        </p>
-                        <div class="space-y-4">
-                            <div class="flex flex-col sm:flex-row items-center text-center sm:text-left gap-3">
-                                <span class="material-symbols-outlined h-6 w-6 text-[#E63946] mt-1 flex-shrink-0">info</span>
-                                <div><h3 class="font-bold text-lg text-[#062E51]">Objetivo Principal</h3><p class="text-gray-600">Capacitar gestores e equipes de resposta para mitigar riscos e proteger comunidades, considerando o histórico de desastres na região.</p></div>
+                </div>
+
+                <div class="max-w-3xl mx-auto mb-12 animate-on-scroll" style="--animation-delay: 0.1s;">
+                    <div class="w-16 h-1 bg-[#062E51] mb-4 mx-auto"></div>
+                    <h2 class="section-title font-bold text-[#062E51] mb-6">Um Encontro para Fortalecer o Litoral Paranaense</h2>
+                    <p class="text-gray-700">
+                        Nos dias <strong>13 e 14 de novembro de 2025</strong>, o Corpo de Bombeiros Militar do Paraná, com o apoio da Portos do Paraná e da Defesa Civil Estadual, promove o <strong>WMRD-PR</strong>. O evento busca discutir estratégias e capacitar profissionais para aumentar a resiliência dos nossos municípios frente aos desastres.
+                    </p>
+                </div>
+
+                <div class="w-full max-w-4xl mx-auto">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                            <div class="highlight-card">
+                                <span class="material-symbols-outlined highlight-icon">calendar_month</span>
+                                <p class="highlight-number" data-target="2">0</p>
+                                <p class="highlight-text">Dias de Imersão</p>
                             </div>
-                            <div class="flex flex-col sm:flex-row items-center text-center sm:text-left gap-3">
-                                <span class="material-symbols-outlined h-6 w-6 text-[#E63946] mt-1 flex-shrink-0">checklist</span>
-                                <div><h3 class="font-bold text-lg text-[#062E51]">Eixos Temáticos</h3><p class="text-gray-600">Produtos Perigosos, Movimentação de Massas, Planos de Auxílio Mútuo (PAM), Eventos Marítimos e Prevenção de Afogamentos.</p></div>
+                            <div class="highlight-card">
+                                <span class="material-symbols-outlined highlight-icon">groups</span>
+                                <p class="highlight-number" data-target="20">0</p>
+                                <p class="highlight-text">Palestrantes Especialistas</p>
                             </div>
-                        </div>
+                            <div class="highlight-card">
+                                <span class="material-symbols-outlined highlight-icon">checklist</span>
+                                <p class="highlight-number" data-target="5">0</p>
+                                <p class="highlight-text">Eixos Temáticos</p>
+                            </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Painel 3: Programação -->
-        <section id="programacao" class="folder-panel">
+        <section id="programacao" class="folder-panel section-with-gradient-bg">
             <div class="panel-content text-[#062E51]">
                 <div class="text-center md:text-left">
-                    <!-- Elemento decorativo para o título -->
                     <div class="w-16 h-1 bg-[#E63946] mb-4 mx-auto md:mx-0"></div>
 
                     <h2 class="animate-on-scroll section-title font-bold mb-10" style="--animation-delay: 0s;">Programação do WORKSHOP</h2>
                     <div class="grid lg:grid-cols-2 gap-8">
-                       <!-- Dia 1 -->
-                       <div class="animate-on-scroll bg-white p-6 rounded-lg shadow-lg" style="--animation-delay: 0.1s;">
-                           <h3 class="text-2xl font-bold mb-6 border-b pb-2">Dia 13 (Auditório)</h3>
-                           <ul class="program-list text-gray-700">
+                        <div class="animate-on-scroll bg-white p-6 rounded-lg shadow-lg" style="--animation-delay: 0.1s;">
+                            <h3 class="text-2xl font-bold mb-6 border-b pb-2">Dia 13 (Auditório)</h3>
+                            <ul class="program-list text-gray-700">
                                 <li class="event-highlight-meta"><strong>08h00:</strong> Credenciamento</li>
                                 <li class="event-highlight-meta"><strong>09h00:</strong> Abertura</li>
-                               <li><strong>09h30:</strong> Cel Barros - Tema: Águas de Março, eventos de 2011</li>
+                                <li><strong>09h30:</strong> Cel Barros - Tema: Águas de Março, eventos de 2011</li>
                                 <li class="event-highlight-break"><strong>10h15:</strong> Coffee Break</li>
-                               <li><strong>10h30:</strong> TC Pinheiro / TC Frazatto - Cidades Resilientes</li>
-                               <li><strong>11h00:</strong> Maj Gomes (CEGERD) - Tema: Gerenciamento de Desastres</li>
-                               <li><strong>11h30:</strong> Reinaldo Olmar Kneib (SIMEPAR) - Tema: Monitoramento e previsão de chuva</li>
-                               <li><strong>12h00:</strong> Almoço</li>
+                                <li><strong>10h30:</strong> TC Pinheiro / TC Frazatto - Cidades Resilientes</li>
+                                <li><strong>11h00:</strong> Maj Gomes (CEGERD) - Tema: Gerenciamento de Desastres</li>
+                                <li><strong>11h30:</strong> Reinaldo Olmar Kneib (SIMEPAR) - Tema: Monitoramento e previsão de chuva</li>
+                                <li><strong>12h00:</strong> Almoço</li>
                                 <li><strong>13h30:</strong> Rogerio da Silva Felipe - Tema: Movimentação de Massas na Serra do Mar</li>
                                 <li><strong>14h15:</strong> EPR Litoral Sul - Plano de Contingência e Operações</li>
                                 <li class="event-highlight-break"><strong>15h00:</strong> Coffee Break</li>
-                               <li><strong>15h15:</strong> GOST / Felipe APPA - Gerenciamento de Riscos dos Portos do Paraná</li>
+                                <li><strong>15h15:</strong> GOST / Felipe APPA - Gerenciamento de Riscos dos Portos do Paraná</li>
                                 <li><strong>16h00:</strong> Prof. Fernanda de Souza Sezerino - Tema: Apresentação do Plano Diretor de Paranaguá</li>
-                               <li class="event-highlight-meta"><strong>16h45:</strong> Encerramento</li>
-                           </ul>
-                       </div>
-   
-                       <!-- Dia 2 -->
-                       <div class="animate-on-scroll bg-white p-6 rounded-lg shadow-lg" style="--animation-delay: 0.2s;">
-                           <h3 class="text-2xl font-bold mb-6 border-b pb-2">Dia 14 (auditório e salas temáticas)</h3>
-                           <div class="space-y-6">
-                               <!-- Sala Auditório -->
-                               <div>
-                                   <h4 class="text-xl font-semibold text-[#E63946] mb-2">Auditório (PAM e PP)</h4>
-                                   <ul class="program-list text-gray-700">
-                                       <li class="event-highlight-meta"><strong>08h00:</strong> Credenciamento</li>
+                                <li class="event-highlight-meta"><strong>16h45:</strong> Encerramento</li>
+                            </ul>
+                        </div>
+    
+                        <div class="animate-on-scroll bg-white p-6 rounded-lg shadow-lg" style="--animation-delay: 0.2s;">
+                            <h3 class="text-2xl font-bold mb-6 border-b pb-2">Dia 14 (auditório e salas temáticas)</h3>
+                            <div class="space-y-6">
+                                <div>
+                                    <h4 class="text-xl font-semibold text-[#E63946] mb-2">Auditório (PAM e PP)</h4>
+                                    <ul class="program-list text-gray-700">
+                                        <li class="event-highlight-meta"><strong>08h00:</strong> Credenciamento</li>
                                         <li><strong>08h30:</strong> Cel Emmanuel</li>
-                                       <li><strong>09h30:</strong> João Carlos Hermenegildo - Tema: Implantação e Boas práticas do PAM</li>
+                                        <li><strong>09h30:</strong> João Carlos Hermenegildo - Tema: Implantação e Boas práticas do PAM</li>
                                         <li class="event-highlight-break"><strong>10h30:</strong> Coffee Break</li>
                                         <li><strong>10h45:</strong> João Carlos Hermenegildo</li>
-                                       <li><strong>12h00:</strong> Almoço</li>
+                                        <li><strong>12h00:</strong> Almoço</li>
                                         <li><strong>13h30:</strong> Paula Scardino - Tema: Espaço Confinado</li>
                                         <li><strong>15h15:</strong> Osvaldo Nogueira - Tema: Plano de Contingência</li>
-                                       <li class="event-highlight-meta"><strong>16h00:</strong> Encerramento</li>
+                                        <li class="event-highlight-meta"><strong>16h00:</strong> Encerramento</li>
                                         <li class="event-highlight-break"><strong>16h30:</strong> Coffee Break</li>
-                                   </ul>
-                               </div>
+                                    </ul>
+                                </div>
                                 
-                                <!-- Separador Visual -->
                                 <hr class="border-gray-200">
 
-                                <!-- Sala 1 -->
-                               <div>
-                                   <h4 class="text-xl font-semibold text-[#062E51] mb-2">Sala 1 (Cidades Resilientes - Afogamento)</h4>
-                                   <ul class="program-list text-gray-700">
+                                <div>
+                                    <h4 class="text-xl font-semibold text-[#062E51] mb-2">Sala 1 (Cidades Resilientes - Afogamento)</h4>
+                                    <ul class="program-list text-gray-700">
                                         <li><strong>09h00:</strong> Cel Schinda, TC Frazatto e Dr Angelo - Prevenção de áreas de risco e afogamento</li>
                                         <li class="event-highlight-break"><strong>10h30:</strong> Coffee Break</li>
                                         <li><strong>11h00:</strong> Cel Schinda, TC Frazatto e Dr Angelo</li>
-                                       <li><strong>12h00:</strong> Almoço</li>
+                                        <li><strong>12h00:</strong> Almoço</li>
                                         <li><strong>13h30:</strong> Cel Ivan - Tema: Recursos para COMPDECs</li>
-                                       <li><strong>14h15:</strong> Profa Dra Luciene Pimentel - Tema: A capacidade de gestão local e redução dos riscos de desastres climáticos</li>
-                                       <li><strong>14h35:</strong> Luis Augusto Moraes Tavares - Tema: Mapeamento dos registros de desastres climáticos na Região Hidrográfica do Litoral do Paraná</li>
-                                       <li><strong>14h55:</strong> Ana Flavia Fogaça Zilli - Tema: Mitigação e adaptação climática: Construindo Cidades Resilientes</li>
+                                        <li><strong>14h15:</strong> Profa Dra Luciene Pimentel - Tema: A capacidade de gestão local e redução dos riscos de desastres climáticos</li>
+                                        <li><strong>14h35:</strong> Luis Augusto Moraes Tavares - Tema: Mapeamento dos registros de desastres climáticos na Região Hidrográfica do Litoral do Paraná</li>
+                                        <li><strong>14h55:</strong> Ana Flavia Fogaça Zilli - Tema: Mitigação e adaptação climática: Construindo Cidades Resilientes</li>
                                         <li><strong>15h15:</strong> Dr Rangel - Eventos marítimos</li>
                                         <li class="event-highlight-meta"><strong>16h00:</strong> Encerramento no auditório</li>
                                         <li class="event-highlight-break"><strong>16h30:</strong> Coffee Break no auditório</li>
-                                   </ul>
-                               </div>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -185,16 +171,13 @@
             </div>
         </section>
 
-        <!-- Painel 4: Palestrantes -->
-        <section id="palestrantes" class="folder-panel">
+        <section id="palestrantes" class="folder-panel section-with-gradient-bg">
              <div class="panel-content grid grid-rows-[1fr_auto] gap-8">
                 <div class="text-center md:text-left">
-                    <!-- Elemento decorativo para o título -->
                     <div class="w-16 h-1 bg-[#E63946] mb-4 mx-auto md:mx-0"></div>
 
                     <h2 class="animate-on-scroll section-title font-bold text-[#062E51] mb-10" style="--animation-delay: 0s;">Palestrantes Confirmados</h2>
                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
-                    <!-- Crachá Palestrante 1: Paula Scardino -->
                     <div class="speaker-badge animate-on-scroll" style="--animation-delay: 0.1s;">
                         <div class="badge-top-part">
                             <div class="badge-header"></div>
@@ -206,23 +189,24 @@
                             <h3 class="badge-name">Paula Scardino</h3>
                             <p class="badge-title">PALESTRANTE</p>
                             <div class="badge-details">
-                                <p class="bio-summary">Coordenação Nacional NBR 14.787 e 16.577 ABNT, Membro GT Tripartite NR-33...</p>
-                                <div class="bio-full">
-                                    <p>Coordenação Nacional NBR 14.787 e 16.577 ABNT, Membro GT Tripartite NR-33, Comendadora Prevencionista 2024.</p>
-                                    <a href="http://www.paulascardino.com.br" target="_blank" rel="noopener noreferrer" class="text-[#062E51] hover:text-[#E63946] font-semibold transition-colors mt-2 inline-block">www.paulascardino.com.br</a>
+                                <div class="bio-full" style="display: none;">
+                                    <ul class="list-none list-inside space-y-2">
+                                        <li>Coordenação Nacional NBR 14.787 e 16.577 ABNT.</li>
+                                        <li>Membro do Grupo de Trabalho Tripartite da NR-33.</li>
+                                        <li>Comendadora Prevencionista 2024.</li>
+                                        <li><a href="http://www.paulascardino.com.br" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-semibold">www.paulascardino.com.br</a></li>
+                                    </ul>
                                 </div>
-                                <a href="#" class="toggle-bio-btn text-sm font-semibold text-blue-600 hover:underline mt-2 inline-flex items-center gap-1">
-                                    <span>Mostrar Mais</span>
-                                    <span class="material-symbols-outlined text-base transition-transform">expand_more</span>
-                                </a>
                             </div>
                         </div>
-                        <div class="badge-footer">
-                            <span>WMRD-PR 2025</span>
+                        <div class="px-6 pb-6">
+                            <a href="#" class="toggle-bio-btn w-full text-sm font-semibold bg-[#E63946] text-white hover:bg-[#c9323d] py-2 px-4 rounded-md mt-4 inline-flex items-center justify-center gap-1 transition-all duration-300 hover:gap-2">
+                                <span>Ver Bio</span>
+                                <span class="material-symbols-outlined text-base transition-transform">arrow_forward</span>
+                            </a>
                         </div>
                     </div>
 
-                    <!-- Crachá Palestrante 2: Major Gomes -->
                     <div class="speaker-badge animate-on-scroll" style="--animation-delay: 0.2s;">
                         <div class="badge-top-part">
                             <div class="badge-header"></div>
@@ -234,22 +218,26 @@
                             <h3 class="badge-name">Maj QOBM Anderson Gomes das Neves</h3>
                             <p class="badge-title">PALESTRANTE</p>
                             <div class="badge-details">
-                                <p class="bio-summary">Major do Corpo de Bombeiros Militar do Paraná, especialista em Gestão de Risco de Desastres...</p>
-                                <div class="bio-full">
-                                    <p>Graduado em Segurança Pública pela Academia Policial Militar do Guatupê (2009). É Major do Corpo de Bombeiros Militar do Paraná. Presta serviços na Coordenadoria Estadual de Proteção e Defesa Civil desde 2017, tendo atuado como chefe do Centro Estadual de gerenciamento de riscos e desastres. Possui especialização sobre gestao de Risco de Desastres para sustentabilidade e resiliência (Disaster Risk Reduction for Sustainability and Resilience) pela Agência de Cooperação Internacional do Japão - JICA (2018). É instrutor dos cursos de formação e especialização do Corpo de Bombeiros e Polícia, dentre eles as disciplinas de Climatologia e Fenômenos Naturais para o Curso de Formação de Oficiais. É graduado em Física pela Universidade Federal do Paraná e Teologia pela Faculdade Batista do Paraná.</p>
+                                <div class="bio-full" style="display: none;">
+                                    <ul class="list-none list-inside space-y-2">
+                                        <li>Graduado em Segurança Pública pela Academia Policial Militar do Guatupê (2009).</li>
+                                        <li>Major do Corpo de Bombeiros Militar do Paraná.</li>
+                                        <li>Atua na Coordenadoria Estadual de Proteção e Defesa Civil desde 2017.</li>
+                                        <li>Especialista em Gestão de Risco de Desastres (JICA, Japão, 2018).</li>
+                                        <li>Instrutor de Climatologia e Fenômenos Naturais nos cursos de formação do CBMPR.</li>
+                                        <li>Graduado em Física pela Universidade Federal do Paraná (UFPR).</li>
+                                    </ul>
                                 </div>
-                                <a href="#" class="toggle-bio-btn text-sm font-semibold text-blue-600 hover:underline mt-2 inline-flex items-center gap-1">
-                                    <span>Mostrar Mais</span>
-                                    <span class="material-symbols-outlined text-base transition-transform">expand_more</span>
-                                </a>
                             </div>
                         </div>
-                        <div class="badge-footer">
-                            <span>WMRD-PR 2025</span>
+                        <div class="px-6 pb-6">
+                            <a href="#" class="toggle-bio-btn w-full text-sm font-semibold bg-[#E63946] text-white hover:bg-[#c9323d] py-2 px-4 rounded-md mt-4 inline-flex items-center justify-center gap-1 transition-all duration-300 hover:gap-2">
+                                <span>Ver Bio</span>
+                                <span class="material-symbols-outlined text-base transition-transform">arrow_forward</span>
+                            </a>
                         </div>
                     </div>
 
-                    <!-- Crachá Palestrante 4: Rogerio da Silva Felipe -->
                     <div class="speaker-badge animate-on-scroll" style="--animation-delay: 0.4s;">
                         <div class="badge-top-part">
                             <div class="badge-header"></div>
@@ -261,22 +249,22 @@
                             <h3 class="badge-name">Rogerio da Silva Felipe</h3>
                             <p class="badge-title">PALESTRANTE</p>
                             <div class="badge-details">
-                                <p class="bio-summary">Geólogo do Núcleo de Especialistas da CEDEC PR, especialista em Gestão em Técnica Urbana...</p>
-                                <div class="bio-full">
-                                    <p>Geólogo - Núcleo de Especialistas da CEDEC PR. - Especialista GTU, Gestão em Técnica Urbana.</p>
+                                <div class="bio-full" style="display: none;">
+                                    <ul class="list-none list-inside space-y-2">
+                                        <li>Geólogo no Núcleo de Especialistas da Coordenadoria Estadual de Proteção e Defesa Civil (CEDEC PR).</li>
+                                        <li>Especialista em Gestão em Técnica Urbana (GTU).</li>
+                                    </ul>
                                 </div>
-                                <a href="#" class="toggle-bio-btn text-sm font-semibold text-blue-600 hover:underline mt-2 inline-flex items-center gap-1">
-                                    <span>Mostrar Mais</span>
-                                    <span class="material-symbols-outlined text-base transition-transform">expand_more</span>
-                                </a>
                             </div>
                         </div>
-                        <div class="badge-footer">
-                            <span>WMRD-PR 2025</span>
+                        <div class="px-6 pb-6">
+                            <a href="#" class="toggle-bio-btn w-full text-sm font-semibold bg-[#E63946] text-white hover:bg-[#c9323d] py-2 px-4 rounded-md mt-4 inline-flex items-center justify-center gap-1 transition-all duration-300 hover:gap-2">
+                                <span>Ver Bio</span>
+                                <span class="material-symbols-outlined text-base transition-transform">arrow_forward</span>
+                            </a>
                         </div>
                     </div>
 
-                    <!-- Crachá Palestrante 5: Luciene Pimentel -->
                     <div class="speaker-badge animate-on-scroll" style="--animation-delay: 0.5s;">
                         <div class="badge-top-part">
                             <div class="badge-header"></div>
@@ -288,22 +276,26 @@
                             <h3 class="badge-name">Luciene Pimentel</h3>
                             <p class="badge-title">PALESTRANTE</p>
                             <div class="badge-details">
-                                <p class="bio-summary">Ph.D. pela Universidade de Newcastle, Pós-doutora na PUCPR e Vice-Presidente da ABES-PR...</p>
-                                <div class="bio-full">
-                                    <p>Ph.D. pela Universidade de Newcastle na Inglaterra (1997). Pós-doutora na Pontifícia Universidade Católica do Paraná (PUCPR) em Gestão e Tecnologias Ambientais. Professora do Programa de Pós-Graduação em Gestão Urbana (PPGTU/PUCPR). Coordenadora local na PUCPR da participação na Rede NAPI – Emergências Climáticas fomentada pela Fundação Araucária. Os interesses de pesquisa se voltam sobretudo para a Gestão e Redução dos Riscos de Desastres Climáticos nas Cidades dentro dos princípios do desenvolvimento sustentável, resiliência e do sócio-ambientalismo. Atualmente, é Vice-Presidente da ABES-PR (Associação Brasileira de Engenharia Sanitária no Paraná).</p>
+                                <div class="bio-full" style="display: none;">
+                                    <ul class="list-none list-inside space-y-2">
+                                        <li>Ph.D. pela Universidade de Newcastle, Inglaterra (1997).</li>
+                                        <li>Pós-doutora em Gestão e Tecnologias Ambientais (PUCPR).</li>
+                                        <li>Professora do Programa de Pós-Graduação em Gestão Urbana (PPGTU/PUCPR).</li>
+                                        <li>Coordenadora na PUCPR da Rede NAPI – Emergências Climáticas.</li>
+                                        <li>Pesquisadora em Gestão e Redução de Riscos de Desastres Climáticos.</li>
+                                        <li>Vice-Presidente da ABES-PR (Associação Brasileira de Engenharia Sanitária no Paraná).</li>
+                                    </ul>
                                 </div>
-                                <a href="#" class="toggle-bio-btn text-sm font-semibold text-blue-600 hover:underline mt-2 inline-flex items-center gap-1">
-                                    <span>Mostrar Mais</span>
-                                    <span class="material-symbols-outlined text-base transition-transform">expand_more</span>
-                                </a>
                             </div>
                         </div>
-                        <div class="badge-footer">
-                            <span>WMRD-PR 2025</span>
+                        <div class="px-6 pb-6">
+                            <a href="#" class="toggle-bio-btn w-full text-sm font-semibold bg-[#E63946] text-white hover:bg-[#c9323d] py-2 px-4 rounded-md mt-4 inline-flex items-center justify-center gap-1 transition-all duration-300 hover:gap-2">
+                                <span>Ver Bio</span>
+                                <span class="material-symbols-outlined text-base transition-transform">arrow_forward</span>
+                            </a>
                         </div>
                     </div>
 
-                    <!-- Crachá Palestrante 3: Cel. Ivan -->
                     <div class="speaker-badge animate-on-scroll" style="--animation-delay: 0.3s;">
                         <div class="badge-top-part">
                             <div class="badge-header"></div>
@@ -315,22 +307,24 @@
                             <h3 class="badge-name">Cel QOBM Ivan Ricardo Ricardo Fernandes</h3>
                             <p class="badge-title">PALESTRANTE</p>
                             <div class="badge-details">
-                                <p class="bio-summary">Coordenador Executivo da Defesa Civil Estadual, Doutor em Meio Ambiente e Desenvolvimento...</p>
-                                <div class="bio-full">
-                                    <p>Coordenador Executivo da Defesa Civil Estadual. Doutor em Meio Ambiente e Desenvolvimento Urbano. Mestre em Engenharia da Construção Civil. Graduado em Física e Engenharia Civil.</p>
+                                <div class="bio-full" style="display: none;">
+                                    <ul class="list-none list-inside space-y-2">
+                                        <li>Coordenador Executivo da Defesa Civil Estadual.</li>
+                                        <li>Doutor em Meio Ambiente e Desenvolvimento Urbano.</li>
+                                        <li>Mestre em Engenharia da Construção Civil.</li>
+                                        <li>Graduado em Física e Engenharia Civil.</li>
+                                    </ul>
                                 </div>
-                                <a href="#" class="toggle-bio-btn text-sm font-semibold text-blue-600 hover:underline mt-2 inline-flex items-center gap-1">
-                                    <span>Mostrar Mais</span>
-                                    <span class="material-symbols-outlined text-base transition-transform">expand_more</span>
-                                </a>
                             </div>
                         </div>
-                        <div class="badge-footer">
-                            <span>WMRD-PR 2025</span>
+                        <div class="px-6 pb-6">
+                            <a href="#" class="toggle-bio-btn w-full text-sm font-semibold bg-[#E63946] text-white hover:bg-[#c9323d] py-2 px-4 rounded-md mt-4 inline-flex items-center justify-center gap-1 transition-all duration-300 hover:gap-2">
+                                <span>Ver Bio</span>
+                                <span class="material-symbols-outlined text-base transition-transform">arrow_forward</span>
+                            </a>
                         </div>
                     </div>
 
-                    <!-- Crachá Palestrante 6: Ana Flávia Fogaça Zilli -->
                     <div class="speaker-badge animate-on-scroll" style="--animation-delay: 0.6s;">
                         <div class="badge-top-part">
                             <div class="badge-header"></div>
@@ -342,22 +336,25 @@
                             <h3 class="badge-name">Ana Flávia Fogaça Zilli</h3>
                             <p class="badge-title">PALESTRANTE</p>
                             <div class="badge-details">
-                                <p class="bio-summary">Mestranda em Gestão Urbana (PUCPR) e Analista de Informação no IPPUC...</p>
-                                <div class="bio-full">
-                                    <p>Ana Flavia é mestranda no Programa de Pós-Graduação em Gestão Urbana da Pontifícia Universidade Católica do Paraná (PUCPR). É graduada em Gestão Pública pelo Instituto Federal do Paraná (IFPR) e especialista em Gestão de Cidades Inteligentes pelo Instituto Municipal de Administração Pública de Curitiba (IMAP). Atua como Analista da Informação no Instituto de Pesquisa e Planejamento Urbano de Curitiba (IPPUC), na Diretoria do Hipervisor Curitiba, desenvolvendo pesquisas aplicadas e análises de dados voltadas à gestão pública, planejamento urbano e governança. Tem interesse em temas relacionados à resiliência urbana, cidades inteligentes, participação cidadã e uso de dados para políticas públicas baseadas em evidências.</p>
+                                <div class="bio-full" style="display: none;">
+                                    <ul class="list-none list-inside space-y-2">
+                                        <li>Mestranda em Gestão Urbana (PUCPR).</li>
+                                        <li>Graduada em Gestão Pública (IFPR).</li>
+                                        <li>Especialista em Gestão de Cidades Inteligentes (IMAP).</li>
+                                        <li>Analista da Informação no Instituto de Pesquisa e Planejamento Urbano de Curitiba (IPPUC).</li>
+                                        <li>Pesquisadora em resiliência urbana, cidades inteligentes e governança de dados.</li>
+                                    </ul>
                                 </div>
-                                <a href="#" class="toggle-bio-btn text-sm font-semibold text-blue-600 hover:underline mt-2 inline-flex items-center gap-1">
-                                    <span>Mostrar Mais</span>
-                                    <span class="material-symbols-outlined text-base transition-transform">expand_more</span>
-                                </a>
                             </div>
                         </div>
-                        <div class="badge-footer">
-                            <span>WMRD-PR 2025</span>
+                        <div class="px-6 pb-6">
+                            <a href="#" class="toggle-bio-btn w-full text-sm font-semibold bg-[#E63946] text-white hover:bg-[#c9323d] py-2 px-4 rounded-md mt-4 inline-flex items-center justify-center gap-1 transition-all duration-300 hover:gap-2">
+                                <span>Ver Bio</span>
+                                <span class="material-symbols-outlined text-base transition-transform">arrow_forward</span>
+                            </a>
                         </div>
                     </div>
 
-                    <!-- Crachá Palestrante 7: Luís Augusto Moraes Tavares -->
                     <div class="speaker-badge animate-on-scroll" style="--animation-delay: 0.7s;">
                         <div class="badge-top-part">
                             <div class="badge-header"></div>
@@ -369,22 +366,25 @@
                             <h3 class="badge-name">Luís Augusto M. Tavares</h3>
                             <p class="badge-title">PALESTRANTE</p>
                             <div class="badge-details">
-                                <p class="bio-summary">Designer de Produto e bolsista de iniciação científica em Arquitetura e Urbanismo...</p>
-                                <div class="bio-full">
-                                    <p>Designer de produto. Bolsista de iniciação científica de Arquitetura e Urbanismo no Grupo de Estudos Cidades Verdes. Graduado em Segurança Pública pela Academia Policial Militar do Guatupê (2009). É Major do Corpo de Bombeiros Militar do Paraná. Presta serviços na Coordenadoria Estadual de Proteção e Defesa Civil desde 2017, tendo atuado como chefe do Centro Estadual de gerenciamento de riscos e desastres. Possui especialização sobre gestao de Risco de Desastres para sustentabilidade e resiliência (Disaster Risk Reduction for Sustainability and Resilience) pela Agência de Cooperação Internacional do Japão - JICA (2018). É instrutor dos cursos de formação e especialização do Corpo de Bombeiros e Polícia, dentre eles as disciplinas de Climatologia e Fenômenos Naturais para o Curso de Formação de Oficiais. É graduado em Física pela Universidade Federal do Paraná e Teologia pela Faculdade Batista do Paraná.</p>
+                                <div class="bio-full" style="display: none;">
+                                    <ul class="list-none list-inside space-y-2">
+                                        <li>Designer de Produto.</li>
+                                        <li>Bolsista de iniciação científica em Arquitetura e Urbanismo no Grupo de Estudos Cidades Verdes.</li>
+                                        <li>Graduado em Segurança Pública pela Academia Policial Militar do Guatupê (2009).</li>
+                                        <li>Major do Corpo de Bombeiros Militar do Paraná.</li>
+                                        <li>Especialista em Gestão de Risco de Desastres (JICA, Japão, 2018).</li>
+                                    </ul>
                                 </div>
-                                <a href="#" class="toggle-bio-btn text-sm font-semibold text-blue-600 hover:underline mt-2 inline-flex items-center gap-1">
-                                    <span>Mostrar Mais</span>
-                                    <span class="material-symbols-outlined text-base transition-transform">expand_more</span>
-                                </a>
                             </div>
                         </div>
-                        <div class="badge-footer">
-                            <span>WMRD-PR 2025</span>
+                        <div class="px-6 pb-6">
+                            <a href="#" class="toggle-bio-btn w-full text-sm font-semibold bg-[#E63946] text-white hover:bg-[#c9323d] py-2 px-4 rounded-md mt-4 inline-flex items-center justify-center gap-1 transition-all duration-300 hover:gap-2">
+                                <span>Ver Bio</span>
+                                <span class="material-symbols-outlined text-base transition-transform">arrow_forward</span>
+                            </a>
                         </div>
                     </div>
 
-                    <!-- Crachá Palestrante 8: Edemilson de Barros -->
                     <div class="speaker-badge animate-on-scroll" style="--animation-delay: 0.8s;">
                         <div class="badge-top-part">
                             <div class="badge-header"></div>
@@ -396,22 +396,25 @@
                             <h3 class="badge-name">Edemilson de Barros</h3>
                             <p class="badge-title">PALESTRANTE</p>
                             <div class="badge-details">
-                                <p class="bio-summary">Coronel do Corpo de Bombeiros do Paraná, com Doutorado em Ciências Policiais...</p>
-                                <div class="bio-full">
-                                    <p>ANTONIO SCHINDA, Coronel do Corpo de Bombeiros do Paraná Possui Doutorado em Ciências Policiais de Segurança e Ordem Pública (Curso Superior de Polícia) realizado no Centro de Altos Estudos em Segurança (CAES) da Polícia Militar do Estado de São Paulo concluído no ano de 2021; Mestrado em Educação pela Universidade do Oeste do Paraná concluído em 2013; possui cursos complementares de Primeiros Socorros, Mergulhador de Resgate, Resgate em Corredeira, Combate a Incêndios Florestal, Combate a Incêndio Urbano ,Resgate em Montanha, Resgate com Jet-Ski, Condutor de Embarcação Pública, Instrutor de Mergulho Autônomo Internacional pela PADI .</p>
+                                <div class="bio-full" style="display: none;">
+                                    <ul class="list-none list-inside space-y-2">
+                                        <li>Coronel do Corpo de Bombeiros do Paraná.</li>
+                                        <li>Doutor em Ciências Policiais de Segurança e Ordem Pública (CAES/PMSP, 2021).</li>
+                                        <li>Mestre em Educação pela Universidade do Oeste do Paraná (2013).</li>
+                                        <li>Instrutor de Mergulho Autônomo Internacional (PADI).</li>
+                                        <li>Especialista em diversas áreas de resgate (Mergulho, Corredeira, Montanha).</li>
+                                    </ul>
                                 </div>
-                                <a href="#" class="toggle-bio-btn text-sm font-semibold text-blue-600 hover:underline mt-2 inline-flex items-center gap-1">
-                                    <span>Mostrar Mais</span>
-                                    <span class="material-symbols-outlined text-base transition-transform">expand_more</span>
-                                </a>
                             </div>
                         </div>
-                        <div class="badge-footer">
-                            <span>WMRD-PR 2025</span>
+                        <div class="px-6 pb-6">
+                            <a href="#" class="toggle-bio-btn w-full text-sm font-semibold bg-[#E63946] text-white hover:bg-[#c9323d] py-2 px-4 rounded-md mt-4 inline-flex items-center justify-center gap-1 transition-all duration-300 hover:gap-2">
+                                <span>Ver Bio</span>
+                                <span class="material-symbols-outlined text-base transition-transform">arrow_forward</span>
+                            </a>
                         </div>
                     </div>
 
-                    <!-- Crachá Palestrante 9: Cel. Antonio Schinda -->
                     <div class="speaker-badge animate-on-scroll" style="--animation-delay: 0.9s;">
                         <div class="badge-top-part">
                             <div class="badge-header"></div>
@@ -423,18 +426,18 @@
                             <h3 class="badge-name">Cel. Antonio Schinda</h3>
                             <p class="badge-title">PALESTRANTE</p>
                             <div class="badge-details">
-                                <p class="bio-summary">Vice-presidente da SOBRASA...</p>
-                                <div class="bio-full">
-                                    <p>Vice-presidente da SOBRASA (Sociedade Brasileira de Salvamento Aquático).</p>
+                                <div class="bio-full" style="display: none;">
+                                    <ul class="list-none list-inside space-y-2">
+                                        <li>Vice-presidente da SOBRASA (Sociedade Brasileira de Salvamento Aquático).</li>
+                                    </ul>
                                 </div>
-                                <a href="#" class="toggle-bio-btn text-sm font-semibold text-blue-600 hover:underline mt-2 inline-flex items-center gap-1">
-                                    <span>Mostrar Mais</span>
-                                    <span class="material-symbols-outlined text-base transition-transform">expand_more</span>
-                                </a>
                             </div>
                         </div>
-                        <div class="badge-footer">
-                            <span>WMRD-PR 2025</span>
+                        <div class="px-6 pb-6">
+                            <a href="#" class="toggle-bio-btn w-full text-sm font-semibold bg-[#E63946] text-white hover:bg-[#c9323d] py-2 px-4 rounded-md mt-4 inline-flex items-center justify-center gap-1 transition-all duration-300 hover:gap-2">
+                                <span>Ver Bio</span>
+                                <span class="material-symbols-outlined text-base transition-transform">arrow_forward</span>
+                            </a>
                         </div>
                     </div>
                  </div>
@@ -442,28 +445,23 @@
             </div>
         </section>
 
-        <!-- Painel 6: Patrocinadores (com classe compacta) -->
-        <section id="patrocinadores" class="folder-panel panel-compact">
+        <section id="patrocinadores" class="folder-panel panel-compact section-with-gradient-bg">
             <div class="panel-content text-center max-w-4xl">
-                <!-- Elemento decorativo para o título -->
                 <div class="w-16 h-1 bg-[#E63946] mb-4 mx-auto"></div>
                 <h2 class="section-title font-bold text-[#062E51] mb-8">Apoiadores</h2>
                 
-                <!-- Carrossel de Logos -->
                 <div class="logo-carousel">
                     <div class="logo-track">
-                        <!-- Logos são duplicados para criar o efeito de loop infinito -->
                         <img src="https://www.defesacivil.pr.gov.br/sites/defesa-civil/arquivos_restritos/files/imagem/2019-05/1769_Defesa_Civil__PR.PNG" alt="Logo Defesa Civil Paraná" class="carousel-logo">
                         <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo Corpo de Bombeiros Militar Paraná" class="carousel-logo">
                         <img src="https://web.celepar.pr.gov.br/drupal/images/seil/portos/logo_portos_300x86.png" alt="Logo Portos do Paraná" class="carousel-logo">
                         <img src="https://portal.isulpar.edu.br/wp-content/uploads/2024/10/logo-texto-1024x378.png" alt="Logo ISULPAR" class="carousel-logo">
                         <img src="https://maximizados.com.br/_next/image?url=%2Fimages%2FLogo.png&w=128&q=75" alt="Logo Maximizados" class="carousel-logo logo-to-black">
                         <img src="https://talentosbrasil.com.br/img/logotipo/logotipo.png" alt="Logo Talentos Brasil" class="carousel-logo">
-                        <!-- Duplicação dos logos -->
                         <img src="https://www.defesacivil.pr.gov.br/sites/defesa-civil/arquivos_restritos/files/imagem/2019-05/1769_Defesa_Civil__PR.PNG" alt="Logo Defesa Civil Paraná" class="carousel-logo">
                         <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo Corpo de Bombeiros Militar Paraná" class="carousel-logo">
                         <img src="https://web.celepar.pr.gov.br/drupal/images/seil/portos/logo_portos_300x86.png" alt="Logo Portos do Paraná" class="carousel-logo">
-                        <img src="https://portal.isulpar.edu.br/wp-content/uploads/2024/10/logo-texto-1024x378.png" alt="Logo ISULPAR" class="carousel-logo">
+                        <img src="httpsimg src="https://portal.isulpar.edu.br/wp-content/uploads/2024/10/logo-texto-1024x378.png" alt="Logo ISULPAR" class="carousel-logo">
                         <img src="https://maximizados.com.br/_next/image?url=%2Fimages%2FLogo.png&w=128&q=75" alt="Logo Maximizados" class="carousel-logo logo-to-black">
                         <img src="https://talentosbrasil.com.br/img/logotipo/logotipo.png" alt="Logo Talentos Brasil" class="carousel-logo">
                     </div>
@@ -471,13 +469,10 @@
             </div>
         </section>
 
-        <!-- Painel 5: Inscrição, Local e Apoio -->
-        <section id="inscricao" class="folder-panel">
+        <section id="inscricao" class="folder-panel section-with-gradient-bg">
             <div class="panel-content">
                 <div class="flex flex-col lg:flex-row items-center justify-center gap-10">
-                    <!-- Coluna do Formulário com Novo Design -->
                     <div class="form-container-modern animate-on-scroll w-full lg:w-1/2 text-center md:text-left" style="--animation-delay: 0s;">
-                        <!-- Nova Barra de Progresso -->
                         <div class="form-progress-bar-container">
                             <div id="form-progress-bar"></div>
                         </div>
@@ -486,7 +481,6 @@
                         <p class="text-center text-gray-600 mb-6">Preencha o formulário abaixo para confirmar sua participação.</p>
                         
                         <form id="lead-form" class="space-y-6" novalidate>
-                            <!-- Passo 1 do Formulário -->
                             <div id="form-step-1" class="space-y-6">
                                 <p class="text-center text-sm text-gray-500 italic">Olá! Para garantir sua vaga, vamos começar com o essencial.</p>
                                 <div class="form-group">
@@ -504,7 +498,6 @@
                                     <input type="text" id="cpf" name="cpf" class="form-input" placeholder=" " required>
                                     <label for="cpf" class="form-label">CPF</label>
                                 </div>
-                                <!-- Seleção de Dias de Participação -->
                                 <div class="days-selection-group">
                                     <label class="block text-sm font-semibold text-gray-700 mb-2 days-selection-label">Você participará de quais dias?</label>
                                     <div class="days-selection-container">
@@ -518,7 +511,6 @@
                                 <button type="button" id="next-step-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg text-lg transition-colors duration-300">Próximo Passo</button>
                             </div>
 
-                            <!-- Passo 2 do Formulário (inicialmente oculto) -->
                             <div id="form-step-2" class="hidden space-y-6">
                                 <p class="text-center text-sm text-gray-500 italic">Falta pouco! Estas informações nos ajudam a preparar tudo para a sua chegada.</p>
                                 <div class="form-group">
@@ -562,23 +554,17 @@
                             <div id="form-messages" class="text-center"></div>
                         </form>
                     </div>
-                    <!-- Coluna de Informações e Apoio -->
                     <div class="animate-on-scroll w-full lg:w-1/2 text-[#062E51]" style="--animation-delay: 0.1s;">
-                        <!-- Container para Data e Local lado a lado -->
                         <div class="flex flex-col sm:flex-row gap-6 mb-6 text-center">
-                            <!-- Link que envolve o card de Data -->
                             <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=WORKSHOP%3A+Munic%C3%ADpios+Mais+Resilientes+em+Desastres&dates=20251113T110000Z/20251114T210000Z&details=Participe+do+WORKSHOP%3A+Munic%C3%ADpios+Mais+Resilientes+em+Desastres%2C+uma+iniciativa+para+capacitar+gestores+e+comunidades+do+Litoral+do+Paran%C3%A1+para+um+futuro+mais+seguro.&location=ISULPAR+-+Instituto+Superior+do+Litoral+do+Paran%C3%A1%2C+Paranagu%C3%A1+-+PR&ctz=America/Sao_Paulo" target="_blank" rel="noopener noreferrer" class="flex-1 group">
                                 <div class="relative bg-white/50 p-4 rounded-lg shadow-sm border border-gray-200 h-full transition-all duration-300 group-hover:bg-white group-hover:shadow-md group-hover:-translate-y-1">
-                                    <!-- Ícone de link externo -->
                                     <span class="material-symbols-outlined absolute top-2 right-2 text-gray-400 group-hover:text-[#E63946] transition-colors opacity-0 group-hover:opacity-100">open_in_new</span>
                                     <h3 class="text-xl font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">calendar_month</span>Data</h3>
                                     <p class="text-lg text-gray-700 mt-2">13 e 14 de Novembro</p>
                                 </div>
                             </a>
-                            <!-- Link que envolve o card de localização -->
                             <a href="https://www.google.com/maps/dir/?api=1&destination=ISULPAR+-+Instituto+Superior+do+Litoral+do+Paraná" target="_blank" rel="noopener noreferrer" class="flex-1 group">
                                 <div class="relative bg-white/50 p-4 rounded-lg shadow-sm border border-gray-200 h-full transition-all duration-300 group-hover:bg-white group-hover:shadow-md group-hover:-translate-y-1">
-                                    <!-- Ícone de link externo -->
                                     <span class="material-symbols-outlined absolute top-2 right-2 text-gray-400 group-hover:text-[#E63946] transition-colors opacity-0 group-hover:opacity-100">open_in_new</span>
                                     <h3 class="text-xl font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">location_on</span>Local</h3>
                                     <p class="text-lg text-gray-700 mt-2">ISULPAR, Paranaguá - PR</p>
@@ -597,11 +583,10 @@
 
     </main>
 
-    <!-- Rodapé -->
     <footer class="bg-[#062E51] text-gray-300 py-6 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left">
             <p class="text-sm mb-2 md:mb-0">
-                &copy; 2025 - Todos os direitos reservados.
+                © 2025 - Todos os direitos reservados.
             </p>
             <p class="text-sm">
                 Desenvolvido por <a href="https://maximizados.com.br/" target="_blank" rel="noopener noreferrer" class="font-semibold text-white hover:text-[#E63946] transition-colors">Maximizados</a> e <a href="https://www.bombeiros.pr.gov.br/" target="_blank" rel="noopener noreferrer" class="font-semibold text-white hover:text-[#E63946] transition-colors">Corpo de Bombeiros</a>.
@@ -609,21 +594,17 @@
         </div>
     </footer>
 
-    <!-- Seção de Login -->
     <section id="login-admin" class="fixed inset-0 min-h-screen grid grid-cols-1 md:grid-cols-2 items-center">
-        <!-- Coluna Esquerda (Azul) -->
         <div class="login-pane-left h-full bg-[#062E51] text-white p-12 flex-col justify-center hidden md:flex text-right">
             <h2 class="text-4xl font-bold mb-4">Bem-vindo de volta!</h2>
             <p class="text-lg opacity-80">Esta é a área de acesso restrito para a administração do Workshop.</p>
         </div>
 
-        <!-- Link para voltar ao site (agora posicionado sobre toda a seção) -->
         <a href="#" id="back-to-site-btn" class="absolute top-8 right-8 text-gray-500 hover:text-[#062E51] font-semibold flex items-center gap-2 transition-colors group z-10">
             <span class="group-hover:-translate-x-1 transition-transform">Voltar ao site</span>
             <span class="material-symbols-outlined">arrow_forward</span>
         </a>
 
-        <!-- Coluna Direita (Branca com o formulário) -->
         <div class="login-pane-right w-full p-8 flex items-center justify-center">
             <div class="max-w-sm w-full">
                 <h2 class="text-3xl font-bold text-center text-[#062E51] mb-2">Área Restrita</h2>
@@ -645,7 +626,6 @@
         </div>
     </section>
 
-    <!-- Navegação Lateral em formato Timeline (Desktop) -->
     <nav id="side-nav" class="fixed left-0 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col">
         <div class="side-nav-header group">
             <span class="material-symbols-outlined nav-icon icon-menu">menu</span>
@@ -680,7 +660,6 @@
         </div>
     </nav>
 
-    <!-- Navegação Lateral Direita (Contato) -->
     <nav id="side-nav-right" class="fixed right-0 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col">
         <div class="side-nav-header group">
             <span class="material-symbols-outlined nav-icon icon-menu">accessibility_new</span>
@@ -700,7 +679,6 @@
                 <span class="material-symbols-outlined nav-icon">restart_alt</span>
                 <span class="nav-link-text">Fonte Padrão</span>
             </a>
-            <!-- Botão dinâmico de Login/Logout -->
             <a href="#" id="auth-btn" class="nav-link">
                 <span id="auth-icon" class="material-symbols-outlined nav-icon">login</span>
                 <span id="auth-text" class="nav-link-text">Entrar</span>
@@ -708,17 +686,6 @@
         </div>
     </nav>
 
-    <!-- Menu Overlay para Mobile -->
-    <!-- REMOVIDO: <div id="mobile-menu" class="fixed inset-0 bg-[#062E51]/90 backdrop-blur-lg items-center justify-center space-y-8 text-2xl z-40 lg:hidden">
-        <a href="#inicio" class="mobile-link"><span class="material-symbols-outlined w-7 h-7">home</span><span>Início</span></a>
-        <a href="#sobre" class="mobile-link"><span class="material-symbols-outlined w-7 h-7">info</span><span>Sobre</span></a>
-        <a href="#programacao" class="mobile-link"><span class="material-symbols-outlined w-7 h-7">calendar_month</span><span>Programação</span></a>
-        <a href="#palestrantes" class="mobile-link"><span class="material-symbols-outlined w-7 h-7">groups</span><span>Palestrantes</span></a>
-        <a href="#inscricao" class="mobile-link"><span class="material-symbols-outlined w-7 h-7">edit_square</span><span>Inscrição</span></a>
-    </div>
-    -->
-
-    <!-- Nova Navegação Inferior para Mobile e Tablet -->
     <nav id="mobile-tablet-bottom-nav" class="fixed bottom-0 left-0 right-0 bg-[#062E51] text-white shadow-lg z-50 grid grid-cols-7 items-center py-2 lg:hidden">
         <a href="#inicio" class="flex flex-col items-center text-xs font-medium text-gray-300 hover:text-white transition-colors p-1 col-span-1">
             <span class="material-symbols-outlined text-xl">home</span>
@@ -750,12 +717,6 @@
         </a>
     </nav>
 
-    <!-- Overlay para Zoom de Imagem -->
-    <div id="image-zoom-overlay" class="fixed inset-0 bg-black/80 z-[100] hidden items-center justify-center p-4 cursor-pointer">
-        <img id="zoomed-image" src="" alt="Imagem ampliada" class="max-w-full max-h-full object-contain rounded-lg">
-    </div>
-
-    <!-- Modal Customizado para Certificado -->
     <div id="certificate-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
         <div id="certificate-modal-content" class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full text-center">
             <span class="material-symbols-outlined text-6xl text-green-500 mx-auto mb-4">check_circle</span>
@@ -772,7 +733,6 @@
         </div>
     </div>
 
-    <!-- Modal Customizado para Erro -->
     <div id="error-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
         <div id="error-modal-content" class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full text-center">
             <span class="material-symbols-outlined text-6xl text-red-600 mx-auto mb-4">error</span>
@@ -784,7 +744,6 @@
         </div>
     </div>
 
-    <!-- Modal Customizado para Sucesso Genérico -->
     <div id="success-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
         <div id="success-modal-content" class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full text-center">
             <span class="material-symbols-outlined text-6xl text-green-500 mx-auto mb-4">check_circle</span>
@@ -796,11 +755,31 @@
         </div>
     </div>
 
-    <!-- Container para Notificações (Toast) -->
     <div id="notification-container" class="fixed bottom-4 right-4 z-[200] w-full max-w-sm space-y-3"></div>
 
-    <!-- Caminho para o arquivo JavaScript dentro da pasta 'js' -->
+    <div id="speaker-bio-modal" class="speaker-modal-overlay hidden">
+        <div class="speaker-modal-content">
+            <button id="speaker-modal-close-btn" class="speaker-modal-close-btn">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <div class="flex flex-col md:flex-row gap-8">
+                <div class="speaker-modal-photo-column text-center">
+                    <img id="modal-speaker-photo" src="" alt="Foto do palestrante" class="w-40 h-40 rounded-full object-cover mx-auto border-4 border-white shadow-lg">
+                    <h3 id="modal-speaker-name" class="text-2xl font-bold text-[#062E51] mt-4"></h3>
+                    <p id="modal-speaker-title" class="font-semibold text-[#E63946] uppercase tracking-wider"></p>
+                </div>
+                <div class="flex-grow">
+                    <h4 class="text-xl font-bold text-[#062E51] mb-3 border-b-2 border-[#E63946] pb-2">Sobre</h4>
+                    <div id="modal-speaker-bio" class="text-gray-700 space-y-3 text-left max-h-[60vh] overflow-y-auto pr-2">
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://unpkg.com/cloudinary-video-player@1.10.0/dist/cld-video-player.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/cloudinary-video-player@1.10.0/dist/cld-video-player.min.js" type="text/javascript" defer></script>
     <script src="https://www.youtube.com/iframe_api" defer></script>
     <script src="js/script.js" type="module"></script>
 </body>

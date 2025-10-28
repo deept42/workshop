@@ -7,16 +7,110 @@ body {
     padding: 0;
     overflow-x: hidden;
     font-family: 'Inter', sans-serif;
-    
-    /* Fundo gradiente para o efeito glassmorphism */
-    background-color: #000000; /* Fundo base preto */    
+    /* Fundo base escuro para o site, que complementa a animação */
+    background-color: #062E51;
 }
 
-/* Container principal que segura todos os painéis */
-#folder-container {
+/* --- NOVA LÓGICA: Fundo de Quadrados Flutuantes --- */
+.wrapper {
+    position: fixed; /* Fica fixo no fundo */
+    top: 0;
+    left: 0;
     width: 100%;
-    /* A rolagem agora é controlada pelo body, não mais por este container.
-       Isso remove a barra de rolagem interna. */
+    height: 100%;
+    overflow: hidden;
+    z-index: 0; /* Fica atrás do conteúdo (que tem z-index: 1) */
+    pointer-events: none; /* Garante que não interfira com cliques */
+    background: #24C6DC;
+    background: -webkit-linear-gradient(to bottom, #514A9D, #24C6DC);
+    background: linear-gradient(to bottom, #514A9D, #24C6DC);
+}
+
+.box div {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background-color: transparent;
+    border: 6px solid rgba(255, 255, 255, 0.8);
+}
+
+.box div:nth-child(1) {
+    top: 12%;
+    left: 42%;
+    animation: animate 10s linear infinite;
+}
+
+.box div:nth-child(2) {
+    top: 70%;
+    left: 50%;
+    animation: animate 7s linear infinite;
+}
+
+.box div:nth-child(3) {
+    top: 17%;
+    left: 6%;
+    animation: animate 9s linear infinite;
+}
+
+.box div:nth-child(4) {
+    top: 20%;
+    left: 60%;
+    animation: animate 10s linear infinite;
+}
+
+.box div:nth-child(5) {
+    top: 67%;
+    left: 10%;
+    animation: animate 6s linear infinite;
+}
+
+.box div:nth-child(6) {
+    top: 80%;
+    left: 70%;
+    animation: animate 12s linear infinite;
+}
+
+.box div:nth-child(7) {
+    top: 60%;
+    left: 80%;
+    animation: animate 15s linear infinite;
+}
+
+.box div:nth-child(8) {
+    top: 32%;
+    left: 25%;
+    animation: animate 16s linear infinite;
+}
+
+.box div:nth-child(9) {
+    top: 90%;
+    left: 25%;
+    animation: animate 9s linear infinite;
+}
+
+.box div:nth-child(10) {
+    top: 20%;
+    left: 80%;
+    animation: animate 5s linear infinite;
+}
+
+@keyframes animate {
+    0% {
+        transform: scale(0) translateY(-90px) rotate(360deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1.3) translateY(-90px) rotate(-180deg);
+        border-radius: 50%;
+        opacity: 0;
+    }
+}
+
+
+/* Garante que o conteúdo principal fique por cima da animação */
+#folder-container {
+    position: relative;
+    z-index: 1;
 }
 
 /* Estilo para cada painel/seção do folder */
@@ -96,19 +190,6 @@ body {
     height: 100%;
 }
 
-/* Estilos para o elemento de vídeo de fundo */
-.hero-video-element {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Garante que o vídeo cubra a área sem distorcer */
-    /* Aumenta a escala do vídeo em 10% para esconder a marca d'água nas bordas */
-    transform: translate(-50%, -50%) scale(1.2); /* Aumentado para 1.2 para cobrir a marca d'água */
-    z-index: 0;
-}
-
 /* --- Estilos para o Mapa Responsivo --- */
 .map-container {
     position: relative;
@@ -127,30 +208,43 @@ body {
     height: 100%;
 }
 
+/* Estilos para o elemento de vídeo de fundo */
+.hero-video-element {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Garante que o vídeo cubra a área sem distorcer */
+    /* Aumenta a escala do vídeo em 10% para esconder a marca d'água nas bordas */
+    transform: translate(-50%, -50%) scale(1.2);
+    z-index: 0;
+}
+
 /* Fundos para as outras seções com sobreposição para legibilidade */
 .folder-panel {
     background-size: cover;
     background-position: center;
 }
-#sobre {
-    /* Efeito de meia-tela vermelha e branca a pedido do usuário */
-    background: linear-gradient(to right, #E63946 50%, white 50%)
+
+/* --- NOVO: Estilo de Fundo Genérico para Seções --- */
+.section-with-gradient-bg {
+    /* Esta classe agora não precisa de estilos específicos,
+       mas a mantemos no HTML para futuras customizações. */
 }
+
 #programacao {
-    background-image: linear-gradient(rgba(230, 240, 255, 0.95), rgba(230, 240, 255, 0.95)), url('https://images.pexels.com/photos/7988086/pexels-photo-7988086.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+    /* O estilo agora vem da classe .section-with-gradient-bg */
 }
 #patrocinadores {
-    background-color: #f9fafb; /* Um cinza ainda mais claro */
-    /* Padrão de grade de pontos sutil para um visual mais sofisticado */
-    background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.08) 1px, transparent 0);
-    background-size: 20px 20px;
+    /* O estilo agora vem da classe .section-with-gradient-bg */
 }
 
 #palestrantes {
-    background-image: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+    /* O estilo agora vem da classe .section-with-gradient-bg */
 }
 #inscricao {
-    background-image: linear-gradient(rgba(240, 242, 245, 0.6), rgba(240, 242, 245, 0.6)), url('https://images.pexels.com/photos/1595385/pexels-photo-1595385.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+    /* O estilo agora vem da classe .section-with-gradient-bg */
 }
 
 /* --- Tipografia Fluida --- */
@@ -466,7 +560,7 @@ body {
         display: none !important;
     }
     #sobre {
-        background: #E63946; /* Fundo vermelho sólido em telas menores */
+        /* O fundo cinza claro padrão agora se aplica ao mobile também, mantendo a consistência. */
     }
 
     /* Reduz drasticamente o tamanho dos títulos */
@@ -508,11 +602,6 @@ body {
     /* Ajusta o painel "Programação" */
     #programacao .grid {
         gap: 1.5rem; /* Aumenta o espaço entre os cards */
-    }
-    /* Ajuste fino no padding da seção "Sobre" para telas bem pequenas */
-    #sobre .w-full.md\:w-4\/5 {
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
     }
     #programacao .text-2xl {
         font-size: 1.25rem; /* Reduz o título dos cards */
@@ -884,35 +973,64 @@ body {
 .form-message-success { color: #16A34A; /* green-600 */ font-weight: 500; }
 
 /* --- Estilos para o Crachá do Palestrante --- */
+/* Container do card para o efeito de elevação */
 .speaker-badge {
     background-color: white;
     border-radius: 1rem; /* 16px */
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     width: 100%;
     max-width: 22.5rem; /* 360px */
-    overflow: hidden;
     position: relative;
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+
+.speaker-badge:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .badge-top-part {
     background-color: #062E51; /* Azul escuro do tema */
     height: 6.25rem; /* 100px */
     position: relative;
+    border-radius: 1rem 1rem 0 0; /* Arredonda cantos superiores */
 }
 
 .badge-header {
     /* Elemento decorativo, pode ser usado para logos ou texto */
 }
 
+/* Container da foto para o efeito de anel */
 .badge-photo-container {
     position: absolute;
     bottom: -60px; /* Puxa a foto para baixo, centralizando na divisão */
     left: 50%;
     transform: translateX(-50%);
-    background-color: white;
     border-radius: 50%;
-    padding: 0.375rem; /* 6px */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 0.25rem; /* 4px de espaço para o anel */
+    background-color: white; /* Fundo branco para separar a foto do anel */
+    transition: transform 0.3s ease;
+}
+
+/* O anel colorido que aparece no hover */
+.badge-photo-container::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #E63946, #f77f00); /* Gradiente do vermelho para um laranja */
+    transform: translate(-50%, -50%) scale(0.95);
+    z-index: -1;
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease;
+}
+
+.speaker-badge:hover .badge-photo-container::before {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 1;
 }
 
 .badge-photo {
@@ -920,40 +1038,37 @@ body {
     height: 7.5rem; /* 120px */
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #E63946; /* Borda vermelha na foto */
-    cursor: pointer; /* Indica que a imagem é clicável para zoom */
-    transition: transform 0.3s ease;
-}
-
-.badge-photo:hover {
-    transform: scale(1.05);
+    position: relative; /* Garante que a imagem fique acima do anel */
+    z-index: 1;
 }
 
 .badge-content {
-    padding: 5rem 1.5rem 1.5rem 1.5rem; /* 80px */
+    padding: 4.5rem 1.5rem 1.5rem 1.5rem; /* 72px */
     text-align: center;
+    background-color: white;
+    border-radius: 0 0 1rem 1rem; /* Arredonda cantos inferiores */
 }
 
 .badge-name {
-    font-size: 1.75rem; /* 28px */
+    font-size: 1.5rem; /* 24px */
     font-weight: 800;
     color: #062E51;
+    line-height: 1.2;
 }
 
 .badge-title {
     font-size: 0.875rem; /* 14px */
     font-weight: 700;
     color: #E63946;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.05em;
     margin-top: 0.25rem;
 }
 
 .badge-details {
     margin-top: 1rem;
-    font-size: 0.9rem;
+    font-size: 0.875rem; /* 14px */
     color: #4B5563; /* gray-600 */
     line-height: 1.5;
-    word-wrap: break-word; /* Garante que textos longos quebrem a linha */
 }
 /* Estilos para a biografia expansível */
 .bio-full {
@@ -961,22 +1076,86 @@ body {
     overflow: hidden;
     transition: max-height 0.5s ease-in-out, margin-top 0.5s ease-in-out;
     margin-top: 0;
+    text-align: left; /* Alinha o texto da bio à esquerda para melhor legibilidade */
 }
 .bio-full.expanded {
     max-height: 500px; /* Altura suficiente para a maioria das biografias */
     margin-top: 0.5rem; /* Adiciona um espaço quando expandido */
 }
 
-
-.badge-footer {
-    background-color: #f3f4f6; /* gray-100 */
-    padding: 0.75rem;
-    text-align: center;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #6b7280; /* gray-500 */
-    border-top: 1px solid #e5e7eb; /* gray-200 */
+/* --- Estilos para o Modal de Biografia do Palestrante --- */
+.speaker-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(6, 46, 81, 0.7); /* Azul escuro com transparência */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 110; /* Acima de outros elementos */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
 }
+
+.speaker-modal-overlay.visible {
+    opacity: 1;
+}
+
+.speaker-modal-content {
+    background-color: #f8fafc; /* Um branco levemente acinzentado */
+    border-radius: 1rem; /* 16px */
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    max-width: 48rem; /* 768px */
+    width: 100%;
+    position: relative;
+    transform: scale(0.95);
+    transition: transform 0.3s ease-in-out;
+}
+
+.speaker-modal-overlay.visible .speaker-modal-content {
+    transform: scale(1);
+}
+
+.speaker-modal-close-btn {
+    position: absolute;
+    top: 0.75rem; /* 12px */
+    right: 0.75rem; /* 12px */
+    background-color: #e5e7eb;
+    color: #4b5563;
+    border-radius: 50%;
+    width: 2.5rem; /* 40px */
+    height: 2.5rem; /* 40px */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, color 0.2s;
+}
+.speaker-modal-close-btn:hover {
+    background-color: #E63946;
+    color: white;
+}
+
+/* --- Melhorias no Modal de Biografia do Palestrante --- */
+
+/* Ajusta o container da foto para ter uma largura base e não encolher */
+.speaker-modal-photo-column {
+    flex-basis: 12rem; /* 192px - Largura base */
+    flex-shrink: 0;
+}
+
+/* Permite que o nome quebre em múltiplas linhas se for muito longo */
+#modal-speaker-name {
+    word-break: break-word;
+}
+
+/* Estiliza a barra de rolagem da biografia para ser mais sutil */
+#modal-speaker-bio::-webkit-scrollbar { width: 6px; }
+#modal-speaker-bio::-webkit-scrollbar-track { background: #e5e7eb; border-radius: 3px; }
+#modal-speaker-bio::-webkit-scrollbar-thumb { background: #9ca3af; border-radius: 3px; }
+#modal-speaker-bio::-webkit-scrollbar-thumb:hover { background: #6b7280; }
 
 /* --- Estilos para a Lista de Programação Simplificada --- */
 .program-list {
@@ -1219,7 +1398,7 @@ button[type="submit"].is-loading span {
 }
 
 /* Estilos de Validação */
-.form-group.error .form-input {
+.form-grop.error .form-input {
     border-color: #ef4444; /* red-500 */
 }
 .form-group.error .form-label,
@@ -1325,4 +1504,40 @@ button[type="submit"].is-loading {
 /* O container da linha de progresso */
 .progress-line-container {
     background-color: #e5e7eb; /* Fundo cinza para a barra vazia */
+}
+
+/* --- Estilos para os Cards de Destaque (Sobre) --- */
+.highlight-card {
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(229, 231, 235, 0.8);
+    border-radius: 0.75rem; /* 12px */
+    padding: 1.5rem; /* 24px */
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.highlight-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+.highlight-icon {
+    font-size: 2.5rem; /* 40px */
+    color: #E63946;
+    margin-bottom: 0.75rem; /* 12px */
+}
+
+.highlight-number {
+    font-size: 2.25rem; /* 36px */
+    font-weight: 800;
+    color: #062E51;
+    line-height: 1.1;
+}
+
+.highlight-text {
+    font-size: 0.875rem; /* 14px */
+    color: #4b5563; /* gray-600 */
+    font-weight: 500;
+    margin-top: 0.25rem;
 }

@@ -41,68 +41,6 @@ export function configurarContagemRegressiva() {
 }
 
 /**
- * Configura a funcionalidade de clique para ampliar a imagem do palestrante.
- */
-export function configurarZoomImagem() {
-    // Seleciona todas as imagens de palestrante em vez de apenas uma
-    const imagensPalestrantes = document.querySelectorAll('.badge-photo');
-    const overlay = document.getElementById('image-zoom-overlay');
-    const imagemAmpliada = document.getElementById('zoomed-image');
-
-    if (imagensPalestrantes.length === 0 || !overlay || !imagemAmpliada) return;
-
-    const abrirZoom = (src) => {
-        imagemAmpliada.src = src;
-        overlay.classList.remove('hidden');
-        overlay.classList.add('flex');
-    };
-
-    const fecharZoom = () => {
-        overlay.classList.add('hidden');
-        overlay.classList.remove('flex');
-        // Limpa a imagem após a transição para economizar memória
-        setTimeout(() => { imagemAmpliada.src = ""; }, 300);
-    };
-
-    // Adiciona o evento de clique a cada imagem de palestrante
-    imagensPalestrantes.forEach(img => {
-        img.addEventListener('click', () => abrirZoom(img.src));
-    });
-
-    overlay.addEventListener('click', fecharZoom);
-}
-
-/**
- * Configura a funcionalidade de expandir/recolher a biografia dos palestrantes.
- */
-export function configurarBioExpansivel() {
-    const speakerBadges = document.querySelectorAll('.speaker-badge');
-
-    speakerBadges.forEach(badge => {
-        const toggleBtn = badge.querySelector('.toggle-bio-btn');
-        const fullBio = badge.querySelector('.bio-full');
-        const summaryBio = badge.querySelector('.bio-summary');
-        const btnText = toggleBtn ? toggleBtn.querySelector('span:first-child') : null;
-        const btnIcon = toggleBtn ? toggleBtn.querySelector('.material-symbols-outlined') : null;
-
-        if (toggleBtn && fullBio && summaryBio && btnText && btnIcon) {
-            toggleBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const isExpanded = fullBio.style.display === 'block';
-
-                fullBio.style.display = isExpanded ? 'none' : 'block';
-                summaryBio.style.display = isExpanded ? 'block' : 'none';
-                
-                // Atualiza o texto e o ícone
-                btnText.textContent = isExpanded ? 'Mostrar Mais' : 'Mostrar Menos';
-                btnIcon.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(180deg)';
-            });
-        }
-    });
-}
-
-
-/**
  * Configura um player de vídeo customizado com uma sobreposição de "play".
  * Agora, inicializa o player de vídeo da Cloudinary.
  */
@@ -121,5 +59,63 @@ export function configurarPlayerCustomizado() {
         controls: true,
         // Define as novas cores para o player
         colors: { base: '#FF0000', accent: '#FF0007' }
+    });
+}
+
+/**
+ * Configura a abertura de um modal com a biografia completa do palestrante.
+ */
+export function configurarModalPalestrante() {
+    const modal = document.getElementById('speaker-bio-modal');
+    if (!modal) return;
+
+    const closeBtn = document.getElementById('speaker-modal-close-btn');
+    const modalPhoto = document.getElementById('modal-speaker-photo');
+    const modalName = document.getElementById('modal-speaker-name');
+    const modalTitle = document.getElementById('modal-speaker-title');
+    const modalBio = document.getElementById('modal-speaker-bio');
+
+    const openModal = (badge) => {
+        // Coleta os dados do card do palestrante
+        const photoSrc = badge.querySelector('.badge-photo')?.src;
+        const name = badge.querySelector('.badge-name')?.textContent;
+        const title = badge.querySelector('.badge-title')?.textContent;
+        const bioHtml = badge.querySelector('.bio-full')?.innerHTML;
+
+        // Preenche o modal com os dados
+        if (modalPhoto) modalPhoto.src = photoSrc || '';
+        if (modalName) modalName.textContent = name || 'Nome não encontrado';
+        if (modalTitle) modalTitle.textContent = title || 'Título não encontrado';
+        if (modalBio) modalBio.innerHTML = bioHtml || '<p>Biografia não disponível.</p>';
+
+        // Exibe o modal
+        modal.classList.remove('hidden');
+        setTimeout(() => modal.classList.add('visible'), 10); // Adiciona a classe para a transição de opacidade
+    };
+
+    const closeModal = () => {
+        modal.classList.remove('visible');
+        // Aguarda a transição de opacidade terminar antes de esconder o elemento
+        modal.addEventListener('transitionend', () => {
+            modal.classList.add('hidden');
+        }, { once: true });
+    };
+
+    // Adiciona evento de clique para cada botão "Ver Bio"
+    document.querySelectorAll('.toggle-bio-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const badge = btn.closest('.speaker-badge');
+            if (badge) openModal(badge);
+        });
+    });
+
+    // Eventos para fechar o modal
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        // Fecha se clicar no overlay (fundo), mas não no conteúdo
+        if (e.target === modal) {
+            closeModal();
+        }
     });
 }

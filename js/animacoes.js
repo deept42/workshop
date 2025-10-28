@@ -97,3 +97,41 @@ export function configurarRecalculoIndicadorAoRedimensionar() {
     if (navEsquerda) observador.observe(navEsquerda);
     if (navDireita) observador.observe(navDireita);
 }
+
+/**
+ * Anima os números dos cards de destaque (contadores) quando eles entram na tela.
+ */
+export function configurarAnimacaoContadores() {
+    const contadores = document.querySelectorAll('.highlight-number');
+    if (contadores.length === 0) return;
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const el = entry.target;
+                const target = +el.getAttribute('data-target');
+                let current = 0;
+                const increment = target / 100; // Controla a velocidade da animação
+
+                const updateCounter = () => {
+                    if (current < target) {
+                        current += increment;
+                        el.innerText = Math.ceil(current);
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        el.innerText = target;
+                    }
+                };
+
+                updateCounter();
+                observer.unobserve(el); // Anima apenas uma vez
+            }
+        });
+    }, {
+        threshold: 0.5 // Inicia a animação quando 50% do elemento estiver visível
+    });
+
+    contadores.forEach(contador => {
+        observer.observe(contador);
+    });
+}

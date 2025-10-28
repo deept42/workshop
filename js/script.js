@@ -4,10 +4,10 @@
  */
 
 import { configurarControlesAcessibilidade } from './acessibilidade.js';
-import { atualizarLinkNavegacaoAtivo, configurarRecalculoIndicadorAoRedimensionar } from './animacoes.js';
+import { atualizarLinkNavegacaoAtivo, configurarRecalculoIndicadorAoRedimensionar, configurarAnimacaoContadores } from './animacoes.js';
 import { configurarValidacaoFormulario, configurarAutocompletar, configurarMascaraTelefone, configurarMascaraCPF, configurarMascaraCEP, configurarAutocompletarComDadosSalvos } from './formulario.js';
 import { configurarRolagemSuave, configurarNavegacaoMouseMeio, configurarMenuMobile, configurarBarraProgressoRolagem } from './navegacao.js';
-import { configurarContagemRegressiva, configurarZoomImagem, configurarPlayerCustomizado, configurarBioExpansivel } from './ui.js';
+import { configurarContagemRegressiva, configurarPlayerCustomizado, configurarModalPalestrante } from './ui.js';
 import { configurarLoginAdmin, fazerLogout } from './auth.js';
 import './notificacoes.js'; // Importa para registrar a função globalmente, se necessário
 import { supabase } from './supabaseClient.js';
@@ -15,8 +15,35 @@ import { supabase } from './supabaseClient.js';
 // Aguarda o carregamento completo do HTML antes de executar os scripts.
 document.addEventListener('DOMContentLoaded', () => {
 
+    /**
+     * Função de Diagnóstico: Verifica se os elementos essenciais da UI existem.
+     * Ajuda a encontrar erros de HTML ou IDs ausentes.
+     */
+    function rodarDiagnosticoInicial() {
+        console.log("--- INICIANDO DIAGNÓSTICO DA INTERFACE ---");
+        const elementosEssenciais = [
+            'folder-container',
+            'inicio',
+            'sobre',
+            'programacao',
+            'palestrantes',
+            'patrocinadores',
+            'inscricao'
+        ];
+        elementosEssenciais.forEach(id => {
+            const elemento = document.getElementById(id);
+            if (elemento) {
+                console.log(`✅ Elemento #${id} encontrado.`);
+            } else {
+                console.error(`❌ ERRO CRÍTICO: Elemento #${id} NÃO foi encontrado. Verifique o HTML.`);
+            }
+        });
+        console.log("--- DIAGNÓSTICO FINALIZADO ---");
+    }
+
+    rodarDiagnosticoInicial(); // Executa o diagnóstico assim que a página carrega
+
     const folderContainer = document.getElementById('folder-container');
-    document.getElementById('login-admin').style.display = 'none';
 
     // --- GERENCIAMENTO DE ESTADO DE AUTENTICAÇÃO (onAuthStateChange) ---
     supabase.auth.onAuthStateChange((event, session) => {
@@ -115,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         configurarMenuMobile();
         configurarNavegacaoMouseMeio();
         configurarBarraProgressoRolagem();
+        configurarAnimacaoContadores();
         configurarRecalculoIndicadorAoRedimensionar();
 
         // Formulário
@@ -127,8 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Componentes de UI
         configurarContagemRegressiva();
-        configurarZoomImagem();
-        configurarBioExpansivel();
+        configurarModalPalestrante();
         configurarPlayerCustomizado();
 
         // Outros
