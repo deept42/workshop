@@ -77,6 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (barraTopo) barraTopo.style.display = 'none';
                 if (rodape) rodape.style.display = 'none';
                 if (navLateralEsquerda) navLateralEsquerda.style.display = 'none';
+                if (navLateralDireita) navLateralDireita.style.display = 'none'; // Esconde a navegação direita também
                 if (bottomNav) bottomNav.style.display = 'none'; // Oculta a nova navegação inferior
                 // Adiciona a classe 'is-active' para iniciar a animação de entrada
                 setTimeout(() => {
@@ -93,7 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (areaPrincipal) areaPrincipal.style.display = 'block';
                     if (barraTopo) barraTopo.style.display = 'block';
                     if (rodape) rodape.style.display = 'block';
-                    if (navLateralEsquerda) navLateralEsquerda.style.display = ''; // Remove o estilo inline para que as classes do CSS (hidden lg:flex) voltem a funcionar
+                    if (navLateralEsquerda) navLateralEsquerda.style.display = '';
+                    if (navLateralDireita) navLateralDireita.style.display = ''; // Reseta a navegação direita
                     if (bottomNav) bottomNav.style.display = ''; // Remove o estilo inline para que as classes do CSS (lg:hidden) voltem a funcionar
                 }, ehInstantaneo ? 0 : 600); // 600ms corresponde à duração da transição no CSS
             }

@@ -127,34 +127,54 @@ export function configurarValidacaoFormulario() {
     // --- Lógica de Múltiplos Passos ---
     nextBtn.addEventListener('click', () => {
         const errosPasso1 = [];
+        let temErro = false;
 
-        const nomeErro = validarCampo(form.elements['nome']);
-        if (nomeErro) errosPasso1.push(nomeErro);
+        // Validar Nome
+        if (!validarCampo(form.elements['nome'])) {
+            errosPasso1.push('O campo "Nome Completo" é obrigatório e deve ter pelo menos 3 caracteres.');
+            temErro = true;
+        }
 
-        const emailErro = validarCampo(form.elements['email']);
-        if (emailErro) errosPasso1.push(emailErro);
+        // Validar Email
+        if (!validarCampo(form.elements['email'])) {
+            errosPasso1.push('O campo "Seu melhor e-mail" é obrigatório e deve ser válido.');
+            temErro = true;
+        }
 
-        const cpfErro = validarCampo(form.elements['cpf']);
-        if (cpfErro) errosPasso1.push(cpfErro);
+        // Validar CPF
+        if (!validarCampo(form.elements['cpf'])) {
+            errosPasso1.push('O campo "CPF" é obrigatório e deve ser válido.');
+            temErro = true;
+        }
 
-        const diasErro = validarGrupoDias();
-        if (diasErro) errosPasso1.push(diasErro);
+        // Validar Dias de Participação
+        if (!validarGrupoDias()) {
+            errosPasso1.push('Selecione pelo menos um dia de participação.');
+            temErro = true;
+        }
 
-        if (errosPasso1.length > 0) {
+        if (temErro) {
             exibirErrosFormulario(errosPasso1);
             // Não avança para o próximo passo se houver erros
         } else {
             mensagensForm.innerHTML = ''; // Limpa quaisquer erros anteriores
             step1.classList.add('hidden');
             step2.classList.remove('hidden');
-            if (progressBar) progressBar.style.width = '100%';
+            if (progressBar) {
+                progressBar.style.width = '100%';
+            }
+            // Garante que o scroll vá para o topo do formulário no próximo passo
+            form.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     });
 
     prevBtn.addEventListener('click', () => {
         step2.classList.add('hidden');
         step1.classList.remove('hidden');
-        if (progressBar) progressBar.style.width = '50%';
+        if (progressBar) {
+            progressBar.style.width = '50%';
+        }
+        form.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
     // Função para resetar o formulário para o passo 1
@@ -167,8 +187,10 @@ export function configurarValidacaoFormulario() {
             el.classList.remove('error', 'success');
         });
         mensagensForm.innerHTML = ''; // Clear form messages
-        // Reseta o indicador de progresso
-        if (progressBar) progressBar.style.width = '50%';
+        if (progressBar) {
+            progressBar.style.width = '50%';
+        }
+        form.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 
     // --- Fim da Lógica de Múltiplos Passos ---
@@ -201,40 +223,68 @@ export function configurarValidacaoFormulario() {
         submitBtn.classList.add('is-loading');
 
         const nome = form.elements['nome'].value.trim();
-        const cargo = form.elements['cargo'] ? form.elements['cargo'].value.trim() : '';
+        const cargo = form.elements['cargo'].value.trim();
         const cpf = form.elements['cpf'].value.trim();
         const empresa = form.elements['empresa'].value.trim();
         const email = form.elements['email'].value.trim();
         const telefone = form.elements['telefone'].value.trim();
         const municipio = form.elements['municipio'].value.trim();
-        const cep = form.elements['cep'] ? form.elements['cep'].value.trim() : '';
+        const cep = form.elements['cep'].value.trim();
         const consentimento = form.elements['consent'].checked;
         const participaDia13 = form.elements['dia13'].checked;
         const participaDia14 = form.elements['dia14'].checked;
 
         const errosFormulario = [];
+        let temErroSubmit = false;
 
         // Reseta todos os erros e sucessos visuais antes de validar novamente
         form.querySelectorAll('.form-group, .days-selection-group').forEach(el => {
             el.classList.remove('error');
             el.classList.remove('success');
         });
+        
+        // Validações para o Step 1 (revalidar para segurança)
+        if (!validarCampo(form.elements['nome'])) {
+            errosFormulario.push('O campo "Nome Completo" é obrigatório e deve ter pelo menos 3 caracteres.');
+            temErroSubmit = true;
+        }
+        if (!validarCampo(form.elements['email'])) {
+            errosFormulario.push('O campo "Seu melhor e-mail" é obrigatório e deve ser válido.');
+            temErroSubmit = true;
+        }
+        if (!validarCampo(form.elements['cpf'])) {
+            errosFormulario.push('O campo "CPF" é obrigatório e deve ser válido.');
+            temErroSubmit = true;
+        }
+        if (!validarGrupoDias()) {
+            errosFormulario.push('Selecione pelo menos um dia de participação.');
+            temErroSubmit = true;
+        }
 
-        // Validações e coleta de erros para todos os campos
-        const camposParaValidar = ['nome', 'email', 'cpf', 'empresa', 'telefone', 'municipio', 'cep', 'cargo'];
-        camposParaValidar.forEach(nomeCampo => {
-            const input = form.elements[nomeCampo];
-            if (input) {
-                const erro = validarCampo(input);
-                if (erro) errosFormulario.push(erro);
-            }
-        });
-
-        const diasErro = validarGrupoDias();
-        if (diasErro) errosFormulario.push(diasErro);
+        // Validações para o Step 2
+        if (form.elements['cargo'].required && !validarCampo(form.elements['cargo'])) {
+             errosFormulario.push('O campo "Cargo / Função" é obrigatório.');
+             temErroSubmit = true;
+        }
+        if (!validarCampo(form.elements['telefone'])) {
+            errosFormulario.push('O campo "Telefone com WhatsApp" é obrigatório e deve ser válido.');
+            temErroSubmit = true;
+        }
+        if (!validarCampo(form.elements['empresa'])) {
+            errosFormulario.push('O campo "Empresa / Instituição" é obrigatório.');
+            temErroSubmit = true;
+        }
+        if (!validarCampo(form.elements['municipio'])) {
+            errosFormulario.push('O campo "Digite seu Município" é obrigatório.');
+            temErroSubmit = true;
+        }
+        if (!validarCampo(form.elements['cep'])) {
+            errosFormulario.push('O campo "CEP" é obrigatório e deve ser válido.');
+            temErroSubmit = true;
+        }
 
         // Se houver erros de validação, exibe-os e interrompe o envio
-        if (errosFormulario.length > 0) {
+        if (temErroSubmit) {
             exibirErrosFormulario(errosFormulario);
             submitBtn.disabled = false;
             submitBtn.classList.remove('is-loading');
@@ -411,7 +461,7 @@ export function configurarValidacaoFormulario() {
 
     function validarGrupoDias() {
         const grupo = form.querySelector('.days-selection-group');
-        const dia13 = form.elements['dia13'] ? form.elements['dia13'].checked : false;
+        const dia13 = form.elements['dia13'].checked;
         const dia14 = form.elements['dia14'].checked;
         const ehValido = dia13 || dia14;
 
@@ -633,13 +683,13 @@ export async function configurarAutocompletarComDadosSalvos() {
             const { data, error } = await supabase
                 .from('cadastro_workshop')
                 .select('nome_completo, cargo_funcao, cpf, empresa, telefone, municipio, cep')
-                .eq('email', email)
-                // Adiciona ordenação para pegar o mais recente e limita a 1 resultado
-                // para garantir que .single() não falhe se houver duplicados.
+                .eq('email', email)                
                 .order('created_at', { ascending: false })
                 .limit(1)
-                .single(); // .single() agora é seguro
+                .single();
 
+            // Se houver um erro (ex: e-mail não encontrado), simplesmente ignora e não faz nada.
+            // Isso evita que o site quebre para novos usuários.
             if (data && !error) {
                 // Se encontrou dados, preenche o formulário
                 form.elements['nome'].value = data.nome_completo || '';
