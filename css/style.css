@@ -285,93 +285,49 @@ body {
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1); /* Sombra mais sutil */
 }
 
-/* --- Estilos para a Navegação Lateral (TEMA CLARO) --- */
-/* Estilo do container da navegação lateral */
+/* --- NOVOS ESTILOS PARA NAVEGAÇÃO LATERAL (DESIGN DE ABAS) --- */
 #side-nav {
-    padding: 1rem;
-    /* NOVA COR: Fundo branco para o menu lateral */
-    background-color: #ffffff;
-    border-radius: 0 12px 12px 0;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.1); /* Sombra mais suave */
-    border: 1px solid rgba(0, 0, 0, 0.05); /* Borda sutil */
-    transition: width 0.4s ease-in-out;
-    width: 3.75rem;
-    overflow: hidden;
-}
-
-#side-nav:hover {
-    width: 12.5rem;
-}
-
-.side-nav-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    /* NOVA COR: Texto do header escuro */
-    color: #6b7280; /* cinza-500 */
-    opacity: 1; /* Opacidade total */
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 0.8rem;
+    border-right: 1px solid #e5e7eb; /* Borda sutil */
 }
 
 .nav-links {
     display: flex;
     flex-direction: column;
     position: relative;
-    gap: 0.5rem;
+    background-color: #ffffff;
+    padding: 0.5rem 0;
+    border-radius: 0 12px 12px 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .nav-link {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 0.75rem 0.5rem;
-    border-radius: 10px;
+    justify-content: center;
+    padding: 0.75rem; /* 12px */
     cursor: pointer;
-    /* NOVA COR: Texto do link escuro */
-    color: #374151; /* cinza-700 */
-    transition: background-color 0.3s ease, color 0.3s ease;
+    color: #6b7280; /* cinza-500 */
+    transition: color 0.3s ease;
     white-space: nowrap;
+    position: relative;
 }
 
 .nav-link:hover {
-    background-color: #f3f4f6; /* cinza-100 */
     color: #062E51; /* Azul escuro no hover */
 }
 
 .nav-link.active-link {
     font-weight: 700;
-    /* NOVA COR: Link ativo fica vermelho */
     color: #E63946;
-}
-
-/* Lógica de UI atualizada para Tema Claro */
-#side-nav:hover .nav-link.active-link {
-    color: #E63946; /* Mantém vermelho */
-    background-color: #fef2f2; /* Vermelho bem claro (red-50) */
 }
 
 .nav-indicator {
     position: absolute;
-    /* NOVA COR: Indicador vermelho */
     background-color: #E63946;
-    z-index: -1;
-    width: 0.3125rem;
-    left: -12px;
-    border-radius: 2px;
-    transition: all 0.4s ease-in-out;
-    opacity: 0;
-}
-
-#side-nav:hover .nav-indicator {
-    /* Estado expandido: fundo vermelho claro */
-    background-color: #fef2f2; /* red-50 */
+    width: 3px;
     left: 0;
-    width: 100%;
-    border-radius: 10px;
+    border-radius: 0 3px 3px 0;
+    transition: all 0.4s ease-in-out;
 }
 
 .nav-icon {
@@ -379,57 +335,50 @@ body {
     height: 1.5rem;
     flex-shrink: 0;
 }
-.icon-menu { display: block; }
-.nav-link-text { opacity: 0; transition: opacity 0.3s ease 0.1s; }
-.text-menu { display: none; }
-#side-nav:hover .nav-link-text { opacity: 1; }
-#side-nav:hover .icon-menu { display: none; }
-#side-nav:hover .text-menu { display: block; }
 
-/* --- Estilos para a Navegação Lateral Direita (TEMA CLARO) --- */
-#side-nav-right {
-    padding: 1rem;
-    /* NOVA COR: Fundo branco */
-    background-color: #ffffff;
-    border-radius: 12px 0 0 12px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    transition: width 0.4s ease-in-out;
-    width: 3.75rem;
-    overflow: hidden;
+.nav-link-text {
+    font-size: 0.75rem; /* 12px */
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #9ca3af; /* cinza-400 */
+    transition: color 0.3s ease;
 }
 
-#side-nav-right:hover {
-    width: 12.5rem;
+.nav-link:hover .nav-link-text {
+    color: #374151; /* cinza-700 */
+}
+
+.nav-link.active-link .nav-link-text {
+    color: #E63946;
+}
+
+/* --- Estilos para a Navegação Lateral Direita (NOVO DESIGN) --- */
+#side-nav-right {
+    border-left: 1px solid #e5e7eb;
+}
+
+#side-nav-right .nav-links {
+    border-radius: 12px 0 0 12px;
 }
 
 /* Link ativo no menu direito (azul) */
-#side-nav-right:hover .nav-link.active-link {
-    color: #062E51; /* Cor do ícone ativo (azul) */
-    background-color: #eff6ff; /* Fundo azul claro (blue-50) */
+#side-nav-right .nav-link.active-link {
+    color: #062E51;
+}
+
+#side-nav-right .nav-link.active-link .nav-link-text {
+    color: #062E51;
 }
 
 /* Indicador da navegação direita */
 #side-nav-right .nav-indicator {
     background-color: #062E51; /* Indicador azul */
-    width: 0.3125rem;
-    right: -12px;
-    left: auto;
-    border-radius: 2px;
-}
-
-#side-nav-right:hover .nav-indicator {
-    background-color: #eff6ff; /* Fundo azul claro (blue-50) */
     right: 0;
-    width: 100%;
+    left: auto;
+    border-radius: 3px 0 0 3px;
 }
 
-#side-nav-right:hover .nav-link-text { opacity: 1; }
-#side-nav-right:hover .icon-menu { display: none; }
-#side-nav-right:hover .text-menu { display: block; }
-
-/* --- Estilos para os Botões de Navegação Lateral --- */
-.side-nav-btn { display: none; }
 .vertical-text {
     writing-mode: vertical-rl;
     text-orientation: mixed;
@@ -1491,7 +1440,7 @@ button[type="submit"].is-loading {
 
 /* Classe Helper para esconder elementos */
 .hidden {
-    display: none !important; /* !important para garantir sobreposição */
-    visibility: hidden !important;
-    opacity: 0 !important;
+    display: none;
+    visibility: hidden;
+    opacity: 0;
 }

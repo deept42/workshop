@@ -593,92 +593,55 @@
         </div>
     </footer>
 
-    <section id="login-admin" class="fixed inset-0 min-h-screen grid grid-cols-1 md:grid-cols-2 items-center hidden"> <div class="login-pane-left h-full bg-[#062E51] text-white p-12 flex-col justify-center hidden md:flex text-right">
-            <h2 class="text-4xl font-bold mb-4">Bem-vindo de volta!</h2>
-            <p class="text-lg opacity-80">Esta é a área de acesso restrito para a administração do Workshop.</p>
-        </div>
-
-        <a href="#" id="back-to-site-btn" class="absolute top-8 right-8 text-gray-500 hover:text-[#062E51] font-semibold flex items-center gap-2 transition-colors group z-10">
-            <span class="group-hover:-translate-x-1 transition-transform">Voltar ao site</span>
-            <span class="material-symbols-outlined">arrow_forward</span>
-        </a>
-
-        <div class="login-pane-right w-full p-8 flex items-center justify-center">
-            <div class="max-w-sm w-full">
-                <h2 class="text-3xl font-bold text-center text-[#062E51] mb-2">Área Restrita</h2>
-                <p class="text-center text-gray-500 mb-8 text-sm">Acesso exclusivo para administradores.</p>
-                <form id="login-form" class="space-y-6">
-                    <div class="form-group">
-                        <span class="material-symbols-outlined form-icon">person</span>
-                        <input type="email" id="login-email" name="login-email" class="form-input" placeholder=" " required>
-                        <label for="login-email" class="form-label">E-mail</label>
-                    </div>
-                    <div class="form-group">
-                        <span class="material-symbols-outlined form-icon">lock</span>
-                        <input type="password" id="login-password" name="login-password" class="form-input" placeholder=" " required>
-                        <label for="login-password" class="form-label">Senha</label>
-                    </div>
-                    <button type="submit" class="w-full bg-[#062E51] hover:bg-[#001B3E] text-white font-bold py-3 rounded-lg text-lg transition-colors duration-300">Entrar</button>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <nav id="side-nav" class="fixed left-0 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col">
-        <div class="side-nav-header group">
-            <span class="material-symbols-outlined nav-icon icon-menu">menu</span>
-            <span class="nav-link-text text-menu">Menu</span>
-        </div>
+    <!-- NAVEGAÇÃO LATERAL ESQUERDA (NOVO DESIGN "PILL") -->
+    <nav id="side-nav" class="fixed left-4 top-1/2 -translate-y-1/2 z-50 hidden lg:block">
         <div class="nav-links">
             <div id="nav-indicator" class="nav-indicator"></div>
             <a href="#inicio" class="nav-link">
                 <span class="material-symbols-outlined nav-icon">home</span>
-                <span class="nav-link-text">Início</span>
+                <span class="nav-tooltip">Início</span>
             </a>
             <a href="#sobre" class="nav-link">
                 <span class="material-symbols-outlined nav-icon">info</span>
-                <span class="nav-link-text">Sobre</span>
+                <span class="nav-tooltip">Sobre</span>
             </a>
             <a href="#programacao" class="nav-link">
                 <span class="material-symbols-outlined nav-icon">calendar_month</span>
-                <span class="nav-link-text">Programação</span>
+                <span class="nav-tooltip">Programação</span>
             </a>
             <a href="#palestrantes" class="nav-link">
                 <span class="material-symbols-outlined nav-icon">groups</span>
-                <span class="nav-link-text">Palestrantes</span>
+                <span class="nav-tooltip">Palestrantes</span>
             </a>
             <a href="#patrocinadores" class="nav-link">
                 <span class="material-symbols-outlined nav-icon">handshake</span>
-                <span class="nav-link-text">Apoiadores</span> </a>
+                <span class="nav-tooltip">Apoiadores</span>
+            </a>
             <a href="#inscricao" class="nav-link">
                 <span class="material-symbols-outlined nav-icon">edit_square</span>
-                <span class="nav-link-text">Inscrição</span>
+                <span class="nav-tooltip">Inscrição</span>
             </a>
         </div>
     </nav>
 
-    <nav id="side-nav-right" class="fixed right-0 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col">
-        <div class="side-nav-header group">
-            <span class="material-symbols-outlined nav-icon icon-menu">accessibility_new</span>
-            <span class="nav-link-text text-menu">Acessibilidade</span>
-        </div>
+    <!-- NAVEGAÇÃO LATERAL DIREITA (NOVO DESIGN "PILL") -->
+    <nav id="side-nav-right" class="fixed right-4 top-1/2 -translate-y-1/2 z-50 hidden lg:block">
         <div class="nav-links">
             <div id="nav-indicator-right" class="nav-indicator"></div>
             <a href="#" id="font-increase-btn" class="nav-link">
                 <span class="material-symbols-outlined nav-icon">text_increase</span>
-                <span class="nav-link-text">A+ Aumentar</span>
+                <span class="nav-tooltip">Aumentar Fonte</span>
             </a>
             <a href="#" id="font-decrease-btn" class="nav-link">
                 <span class="material-symbols-outlined nav-icon">text_decrease</span>
-                <span class="nav-link-text">A- Diminuir</span>
+                <span class="nav-tooltip">Diminuir Fonte</span>
             </a>
             <a href="#" id="font-reset-btn" class="nav-link">
                 <span class="material-symbols-outlined nav-icon">restart_alt</span>
-                <span class="nav-link-text">Fonte Padrão</span>
             </a>
             <a href="#" id="auth-btn" class="nav-link">
                 <span id="auth-icon" class="material-symbols-outlined nav-icon">login</span>
-                <span id="auth-text" class="nav-link-text">Entrar</span>
+                <span class="nav-tooltip">Entrar</span>
             </a>
         </div>
     </nav>
