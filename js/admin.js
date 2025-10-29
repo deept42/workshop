@@ -65,7 +65,6 @@ async function inicializarPainelAdministrativo() {
         configurarExportacaoPDF(todosInscritos);
         configurarExportacaoChecklist(todosInscritos);
         configurarExclusaoDuplicados();
-        configurarControlesAcessibilidade();
         configurarModalAdicionarInscrito(async () => {
             todosInscritos = await buscarInscritos();
             atualizarUICompleta();
@@ -79,6 +78,7 @@ async function inicializarPainelAdministrativo() {
         configurarMenuFlutuante();
         configurarTutorialGuiado();
     }
+
 
     // 3. Configurar o Botão de Logout
     const logoutBtn = document.getElementById('admin-logout-btn');

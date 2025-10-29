@@ -4,9 +4,9 @@
  */
 
 import { configurarControlesAcessibilidade } from './acessibilidade.js';
-import { atualizarLinkNavegacaoAtivo, configurarRecalculoIndicadorAoRedimensionar, configurarAnimacaoContadores } from './animacoes.js';
+import { configurarAnimacaoContadores, atualizarLinkNavegacaoAtivo } from './animacoes.js';
 import { configurarValidacaoFormulario, configurarAutocompletar, configurarMascaraTelefone, configurarMascaraCPF, configurarMascaraCEP, configurarAutocompletarComDadosSalvos } from './formulario.js';
-import { configurarRolagemSuave, configurarNavegacaoMouseMeio, configurarMenuMobile, configurarBarraProgressoRolagem } from './navegacao.js';
+import { configurarRolagemSuave, configurarBarraProgressoRolagem, configurarMenuMobile } from './navegacao.js';
 import { configurarContagemRegressiva, configurarPlayerCustomizado, configurarModalPalestrante } from './ui.js';
 import { configurarLoginAdmin, fazerLogout } from './auth.js';
 import './notificacoes.js'; // Importa para registrar a função globalmente, se necessário
@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function rodarDiagnosticoInicial() {
         console.log("--- INICIANDO DIAGNÓSTICO DA INTERFACE ---");
         const elementosEssenciais = [
+            'main-header',
             'folder-container',
             'inicio',
             'sobre',
@@ -51,14 +52,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const areaPrincipal = document.querySelector('main');
         const barraTopo = document.getElementById('top-bar');
         const rodape = document.querySelector('footer');
-        const navLateralEsquerda = document.getElementById('side-nav');
-        const navLateralDireita = document.getElementById('side-nav-right'); // Acessibilidade
-        const bottomNav = document.getElementById('mobile-tablet-bottom-nav'); // Nova navegação inferior
-        // Elementos do botão de autenticação (Desktop)
+        const headerPrincipal = document.getElementById('main-header');
+
+        // Elementos do botão de autenticação (Desktop e Mobile)
         const authBtn = document.getElementById('auth-btn');
         const authIcon = document.getElementById('auth-icon');
         const authText = document.getElementById('auth-text');
-        // Elementos do botão de autenticação (Mobile)
         const authBtnMobile = document.getElementById('auth-btn-mobile');
         const authIconMobile = document.getElementById('auth-icon-mobile');
         const authTextMobile = document.getElementById('auth-text-mobile');
@@ -76,9 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (areaPrincipal) areaPrincipal.style.display = 'none';
                 if (barraTopo) barraTopo.style.display = 'none';
                 if (rodape) rodape.style.display = 'none';
-                if (navLateralEsquerda) navLateralEsquerda.style.display = 'none';
-                if (navLateralDireita) navLateralDireita.style.display = 'none'; // Esconde a navegação direita também
-                if (bottomNav) bottomNav.style.display = 'none'; // Oculta a nova navegação inferior
+                if (headerPrincipal) headerPrincipal.style.display = 'none';
                 // Adiciona a classe 'is-active' para iniciar a animação de entrada
                 setTimeout(() => {
                     leftPane?.classList.add('is-active');
@@ -88,16 +85,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Quando a tela de login é escondida
                 leftPane?.classList.remove('is-active');
                 rightPane?.classList.remove('is-active');
-                // Esconde a tela de login e mostra o site após a animação
-                setTimeout(() => {
+                
+                const mostrarConteudoPrincipal = () => {
                     if (areaLogin) areaLogin.style.display = 'none';
                     if (areaPrincipal) areaPrincipal.style.display = 'block';
-                    if (barraTopo) barraTopo.style.display = 'block';
+                    if (barraTopo) barraTopo.style.display = 'flex'; // Usa 'flex' para alinhar corretamente
                     if (rodape) rodape.style.display = 'block';
-                    if (navLateralEsquerda) navLateralEsquerda.style.display = '';
-                    if (navLateralDireita) navLateralDireita.style.display = ''; // Reseta a navegação direita
-                    if (bottomNav) bottomNav.style.display = ''; // Remove o estilo inline para que as classes do CSS (lg:hidden) voltem a funcionar
-                }, ehInstantaneo ? 0 : 600); // 600ms corresponde à duração da transição no CSS
+                    if (headerPrincipal) headerPrincipal.style.display = ''; // Reseta para o padrão
+                };
+
+                // Esconde a tela de login e mostra o site após a animação
+                setTimeout(mostrarConteudoPrincipal, ehInstantaneo ? 0 : 500); // Duração da transição
             }
         };
 
@@ -110,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const configurarBotaoAuth = (btn, icon, text, logado, acaoLogout, acaoLogin) => {
             if (btn && icon && text) {
                 icon.textContent = logado ? 'logout' : 'login';
-                text.textContent = logado ? 'Sair' : 'Entrar';
+                text.textContent = logado ? 'Sair' : 'Área do Admin';
                 btn.onclick = (e) => { 
                     e.preventDefault();
                     if (logado) {
@@ -120,9 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 };
             }
-        }
+        };
 
-        // Configura ambos os botões de autenticação (desktop e mobile)
         configurarBotaoAuth(authBtn, authIcon, authText, estaLogado, fazerLogout, () => alternarTelaLogin(true));
         configurarBotaoAuth(authBtnMobile, authIconMobile, authTextMobile, estaLogado, fazerLogout, () => alternarTelaLogin(true));
 
@@ -137,15 +134,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- INITIALIZATION ---
-    if (folderContainer) {
+    if (document.getElementById('folder-container')) { // Verificação simplificada e corrigida
         // Navegação e Animações
         configurarRolagemSuave();
-        atualizarLinkNavegacaoAtivo();
         configurarMenuMobile();
-        configurarNavegacaoMouseMeio();
         configurarBarraProgressoRolagem();
         configurarAnimacaoContadores();
-        configurarRecalculoIndicadorAoRedimensionar();
+        atualizarLinkNavegacaoAtivo();
 
         // Formulário
         configurarValidacaoFormulario();
@@ -163,5 +158,23 @@ document.addEventListener('DOMContentLoaded', () => {
         // Outros
         configurarControlesAcessibilidade();
         configurarLoginAdmin();
+    }
+
+    // --- LÓGICA PARA HEADER FLUTUANTE ---
+    const header = document.getElementById('main-header');
+    const topBar = document.getElementById('top-bar');
+    const floatingNav = document.getElementById('floating-nav-bottom');
+
+    if (header && topBar && floatingNav) {
+        window.addEventListener('scroll', () => {
+            // Adiciona/remove classes para mostrar/esconder os elementos com base na rolagem
+            if (window.scrollY > 10) {
+                header.classList.add('hidden-on-scroll'); // Esconde apenas o header principal
+                floatingNav.classList.add('visible');
+            } else {
+                header.classList.remove('hidden-on-scroll'); // Mostra apenas o header principal
+                floatingNav.classList.remove('visible');
+            }
+        });
     }
 });

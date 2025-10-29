@@ -13,6 +13,41 @@
 </head>
 <body>
 
+    <!-- NOVA BARRA DE NAVEGAÇÃO RESPONSIVA -->
+    <header id="main-header" class="fixed top-0 left-0 w-full bg-[#062E51]/90 backdrop-blur-md shadow-lg z-[60] transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0">
+                    <a href="#inicio" class="flex items-center gap-2 text-white font-bold">
+                        <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo CBMPR" class="h-8 w-auto">
+                        <span class="hidden sm:inline">WMRD-PR</span>
+                    </a>
+                </div>
+
+                <!-- Links de Navegação (Desktop) -->
+                <nav class="hidden md:flex md:items-center md:space-x-4">
+                    <a href="#sobre" class="nav-link-main">Sobre</a>
+                    <a href="#programacao" class="nav-link-main">Programação</a>
+                    <a href="#palestrantes" class="nav-link-main">Palestrantes</a>
+                    <a href="#inscricao" class="nav-link-main">Inscrição</a>
+                    <a href="#" id="auth-btn" class="nav-link-main-action"><span id="auth-icon" class="material-symbols-outlined text-xl">login</span><span id="auth-text">Área do Admin</span></a>
+                </nav>
+
+                <!-- Botão Hamburger (Mobile) -->
+                <div class="md:hidden flex items-center">
+                    <a href="#" id="auth-btn-mobile" class="nav-link-main-action mr-2"><span id="auth-icon-mobile" class="material-symbols-outlined text-xl">login</span><span id="auth-text-mobile" class="hidden">Entrar</span></a>
+                    <button id="hamburger-btn" class="inline-flex items-center justify-center p-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Menu Overlay (Mobile) -->
+    <div id="mobile-menu-overlay" class="hidden"></div>
+
     <div class="wrapper">
       <div class="box">
         <div></div>
@@ -28,7 +63,7 @@
       </div>
     </div>
 
-    <div id="top-bar" class="fixed top-0 left-0 w-full z-50">
+    <div id="top-bar" class="fixed top-16 left-0 w-full z-50 transition-transform duration-300"> <!-- Classe 'fixed' por padrão -->
         <div class="top-bar-content text-center">
             <h2 class="top-bar-title">EVENTO IMPERDÍVEL</h2>
             <div id="countdown-timer"></div>
@@ -593,89 +628,36 @@
         </div>
     </footer>
 
-    <!-- NAVEGAÇÃO LATERAL ESQUERDA (NOVO DESIGN "PILL") -->
-    <nav id="side-nav" class="fixed left-4 top-1/2 -translate-y-1/2 z-50 hidden lg:block">
-        <div class="nav-links">
-            <div id="nav-indicator" class="nav-indicator"></div>
-            <a href="#inicio" class="nav-link">
-                <span class="material-symbols-outlined nav-icon">home</span>
-                <span class="nav-tooltip">Início</span>
-            </a>
-            <a href="#sobre" class="nav-link">
-                <span class="material-symbols-outlined nav-icon">info</span>
-                <span class="nav-tooltip">Sobre</span>
-            </a>
-            <a href="#programacao" class="nav-link">
-                <span class="material-symbols-outlined nav-icon">calendar_month</span>
-                <span class="nav-tooltip">Programação</span>
-            </a>
-            <a href="#palestrantes" class="nav-link">
-                <span class="material-symbols-outlined nav-icon">groups</span>
-                <span class="nav-tooltip">Palestrantes</span>
-            </a>
-            <a href="#patrocinadores" class="nav-link">
-                <span class="material-symbols-outlined nav-icon">handshake</span>
-                <span class="nav-tooltip">Apoiadores</span>
-            </a>
-            <a href="#inscricao" class="nav-link">
-                <span class="material-symbols-outlined nav-icon">edit_square</span>
-                <span class="nav-tooltip">Inscrição</span>
-            </a>
+    <section id="login-admin" class="fixed inset-0 min-h-screen grid grid-cols-1 md:grid-cols-2 items-center hidden"> <div class="login-pane-left h-full bg-[#062E51] text-white p-12 flex-col justify-center hidden md:flex text-right">
+            <h2 class="text-4xl font-bold mb-4">Bem-vindo de volta!</h2>
+            <p class="text-lg opacity-80">Esta é a área de acesso restrito para a administração do Workshop.</p>
         </div>
-    </nav>
 
-    <!-- NAVEGAÇÃO LATERAL DIREITA (NOVO DESIGN "PILL") -->
-    <nav id="side-nav-right" class="fixed right-4 top-1/2 -translate-y-1/2 z-50 hidden lg:block">
-        <div class="nav-links">
-            <div id="nav-indicator-right" class="nav-indicator"></div>
-            <a href="#" id="font-increase-btn" class="nav-link">
-                <span class="material-symbols-outlined nav-icon">text_increase</span>
-                <span class="nav-tooltip">Aumentar Fonte</span>
-            </a>
-            <a href="#" id="font-decrease-btn" class="nav-link">
-                <span class="material-symbols-outlined nav-icon">text_decrease</span>
-                <span class="nav-tooltip">Diminuir Fonte</span>
-            </a>
-            <a href="#" id="font-reset-btn" class="nav-link">
-                <span class="material-symbols-outlined nav-icon">restart_alt</span>
-            </a>
-            <a href="#" id="auth-btn" class="nav-link">
-                <span id="auth-icon" class="material-symbols-outlined nav-icon">login</span>
-                <span class="nav-tooltip">Entrar</span>
-            </a>
+        <a href="#" id="back-to-site-btn" class="absolute top-8 right-8 text-gray-500 hover:text-[#062E51] font-semibold flex items-center gap-2 transition-colors group z-10">
+            <span class="group-hover:-translate-x-1 transition-transform">Voltar ao site</span>
+            <span class="material-symbols-outlined">arrow_forward</span>
+        </a>
+
+        <div class="login-pane-right w-full p-8 flex items-center justify-center">
+            <div class="max-w-sm w-full">
+                <h2 class="text-3xl font-bold text-center text-[#062E51] mb-2">Área Restrita</h2>
+                <p class="text-center text-gray-500 mb-8 text-sm">Acesso exclusivo para administradores.</p>
+                <form id="login-form" class="space-y-6">
+                    <div class="form-group">
+                        <span class="material-symbols-outlined form-icon">person</span>
+                        <input type="email" id="login-email" name="login-email" class="form-input" placeholder=" " required>
+                        <label for="login-email" class="form-label">E-mail</label>
+                    </div>
+                    <div class="form-group">
+                        <span class="material-symbols-outlined form-icon">lock</span>
+                        <input type="password" id="login-password" name="login-password" class="form-input" placeholder=" " required>
+                        <label for="login-password" class="form-label">Senha</label>
+                    </div>
+                    <button type="submit" class="w-full bg-[#062E51] hover:bg-[#001B3E] text-white font-bold py-3 rounded-lg text-lg transition-colors duration-300">Entrar</button>
+                </form>
+            </div>
         </div>
-    </nav>
-
-    <nav id="mobile-tablet-bottom-nav" class="fixed bottom-0 left-0 right-0 bg-[#062E51] text-white shadow-lg z-50 grid grid-cols-7 items-center py-2 lg:hidden">
-        <a href="#inicio" class="flex flex-col items-center text-xs font-medium text-gray-300 hover:text-white transition-colors p-1 col-span-1">
-            <span class="material-symbols-outlined text-xl">home</span>
-            <span>Início</span>
-        </a>
-        <a href="#sobre" class="flex flex-col items-center text-xs font-medium text-gray-300 hover:text-white transition-colors p-1 col-span-1">
-            <span class="material-symbols-outlined text-xl">info</span>
-            <span>Sobre</span>
-        </a>
-        <a href="#programacao" class="flex flex-col items-center text-xs font-medium text-gray-300 hover:text-white transition-colors p-1 col-span-1">
-            <span class="material-symbols-outlined text-xl">calendar_month</span>
-            <span>Prog.</span>
-        </a>
-        <a href="#palestrantes" class="flex flex-col items-center text-xs font-medium text-gray-300 hover:text-white transition-colors p-1 col-span-1">
-            <span class="material-symbols-outlined text-xl">groups</span>
-            <span>Palestr.</span>
-        </a>
-        <a href="#patrocinadores" class="flex flex-col items-center text-xs font-medium text-gray-300 hover:text-white transition-colors p-1 col-span-1">
-            <span class="material-symbols-outlined text-xl">handshake</span>
-            <span>Apoio</span>
-        </a>
-        <a href="#inscricao" class="flex flex-col items-center text-xs font-medium text-gray-300 hover:text-white transition-colors p-1 col-span-1">
-            <span class="material-symbols-outlined text-xl">edit_square</span>
-            <span>Inscrição</span>
-        </a>
-        <a href="#" id="auth-btn-mobile" class="flex flex-col items-center text-xs font-medium text-gray-300 hover:text-white transition-colors p-1 col-span-1">
-            <span id="auth-icon-mobile" class="material-symbols-outlined text-xl">login</span>
-            <span id="auth-text-mobile">Entrar</span>
-        </a>
-    </nav>
+    </section>
 
     <div id="certificate-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
         <div id="certificate-modal-content" class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full text-center">

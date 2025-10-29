@@ -6,21 +6,29 @@
  * Configura e exibe uma contagem regressiva até a data do evento.
  */
 export function configurarContagemRegressiva() {
-    const elementoContador = document.getElementById('countdown-timer');
-    if (!elementoContador) return;
+    const contadorPrincipal = document.getElementById('countdown-timer');
+    const contadorFlutuante = document.getElementById('countdown-timer-floating');
 
-    elementoContador.innerHTML = `
+    if (!contadorPrincipal || !contadorFlutuante) return;
+
+    const htmlContador = `
         <div class="countdown-item"><span id="cd-dias" class="countdown-number">0</span><span class="countdown-label">Dias</span></div>
         <div class="countdown-item"><span id="cd-horas" class="countdown-number">0</span><span class="countdown-label">Horas</span></div>
         <div class="countdown-item"><span id="cd-minutos" class="countdown-number">0</span><span class="countdown-label">Min</span></div>
         <div class="countdown-item"><span id="cd-segundos" class="countdown-number">0</span><span class="countdown-label">Seg</span></div>
     `;
-    const elDias = document.getElementById('cd-dias');
-    const elHoras = document.getElementById('cd-horas');
-    const elMinutos = document.getElementById('cd-minutos');
-    const elSegundos = document.getElementById('cd-segundos');
+    contadorPrincipal.innerHTML = htmlContador;
+    // Adapta o HTML para o contador flutuante (sem labels para economizar espaço)
+    contadorFlutuante.innerHTML = `
+        <div class="countdown-item"><span id="cd-dias-float" class="countdown-number text-base">0</span><span class="countdown-label">D</span></div>
+        <div class="countdown-item"><span id="cd-horas-float" class="countdown-number text-base">0</span><span class="countdown-label">H</span></div>
+        <div class="countdown-item"><span id="cd-minutos-float" class="countdown-number text-base">0</span><span class="countdown-label">M</span></div>
+        <div class="countdown-item"><span id="cd-segundos-float" class="countdown-number text-base">0</span><span class="countdown-label">S</span></div>
+    `;
 
-    if (!elDias || !elHoras || !elMinutos || !elSegundos) return;
+    const elementos = ['dias', 'horas', 'minutos', 'segundos'];
+
+    if (!document.getElementById('cd-dias')) return; // Verifica se o principal foi criado
 
     const dataEvento = new Date(2025, 10, 13).getTime(); // Mês 10 é Novembro (0-11)
 
@@ -29,13 +37,21 @@ export function configurarContagemRegressiva() {
         const distancia = dataEvento - agora;
         
         if (distancia >= 0) {
-            elDias.textContent = Math.floor(distancia / (1000 * 60 * 60 * 24));
-            elHoras.textContent = Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            elMinutos.textContent = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
-            elSegundos.textContent = Math.floor((distancia % (1000 * 60)) / 1000);
+            const valores = {
+                dias: Math.floor(distancia / (1000 * 60 * 60 * 24)),
+                horas: Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+                minutos: Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60)),
+                segundos: Math.floor((distancia % (1000 * 60)) / 1000)
+            };
+
+            elementos.forEach(el => {
+                document.getElementById(`cd-${el}`).textContent = valores[el];
+                document.getElementById(`cd-${el}-float`).textContent = valores[el];
+            });
         } else {
             clearInterval(intervalo);
-            elementoContador.innerHTML = `<p class="font-bold text-lg">O EVENTO COMEÇOU!</p>`;
+            contadorPrincipal.innerHTML = `<p class="font-bold text-lg">O EVENTO COMEÇOU!</p>`;
+            contadorFlutuante.innerHTML = `<p class="font-bold text-sm">O EVENTO COMEÇOU!</p>`;
         }
     }, 1000);
 }

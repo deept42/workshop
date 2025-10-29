@@ -31,43 +31,48 @@ export function configurarRolagemSuave() {
 }
 
 /**
- * Adiciona um atalho de navegação para rolar para a próxima seção com o clique do meio do mouse.
- */
-export function configurarNavegacaoMouseMeio() {
-    document.addEventListener('mousedown', (evento) => {
-        // A classe 'active-link' é adicionada ao link de navegação pela função 'atualizarLinkNavegacaoAtivo'.
-        const linkAtivo = document.querySelector('.nav-link.active-link');
-        if (evento.button === 1) { // Botão do meio do mouse
-            evento.preventDefault(); 
-            const painelVisivel = linkAtivo ? document.querySelector(linkAtivo.getAttribute('href')) : null;
-            if (painelVisivel) {
-                const proximoPainel = painelVisivel.nextElementSibling;
-                if (proximoPainel && proximoPainel.classList.contains('folder-panel')) {
-                    proximoPainel.scrollIntoView({ behavior: 'smooth' });
-                }
-            }
-        }
-    });
-}
-
-/**
  * Gerencia a funcionalidade do menu hambúrguer para dispositivos móveis.
  */
 export function configurarMenuMobile() {
-    const botaoHamburger = document.getElementById('hamburger-btn');
-    const menuOverlay = document.getElementById('mobile-menu');
-    const linksMobile = document.querySelectorAll('.mobile-link');
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
 
-    if (!botaoHamburger || !menuOverlay) return;
+    if (!hamburgerBtn || !mobileMenuOverlay) return;
 
-    botaoHamburger.addEventListener('click', () => {
-        menuOverlay.classList.toggle('open');
-    });
+    const openMenu = () => {
+        mobileMenuOverlay.innerHTML = `
+            <button id="mobile-menu-close-btn" class="absolute top-4 right-4 text-white p-2">
+                <span class="material-symbols-outlined text-4xl">close</span>
+            </button>
+            <nav class="flex flex-col items-center gap-6 text-center">
+                <a href="#inicio" class="nav-link-mobile">Início</a>
+                <a href="#sobre" class="nav-link-mobile">Sobre</a>
+                <a href="#programacao" class="nav-link-mobile">Programação</a>
+                <a href="#palestrantes" class="nav-link-mobile">Palestrantes</a>
+                <a href="#inscricao" class="nav-link-mobile">Inscrição</a>
+            </nav>
+        `;
+        mobileMenuOverlay.classList.remove('hidden');
 
-    linksMobile.forEach(link => {
-        link.addEventListener('click', () => {
-            menuOverlay.classList.remove('open');
+        // Adiciona listeners aos novos elementos
+        document.getElementById('mobile-menu-close-btn').addEventListener('click', closeMenu);
+        mobileMenuOverlay.querySelectorAll('.nav-link-mobile').forEach(link => {
+            link.addEventListener('click', closeMenu);
         });
+    };
+
+    const closeMenu = () => {
+        mobileMenuOverlay.classList.add('hidden');
+        mobileMenuOverlay.innerHTML = ''; // Limpa o conteúdo para remover listeners
+    };
+
+    hamburgerBtn.addEventListener('click', openMenu);
+
+    // Fecha o menu com a tecla 'Esc'
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !mobileMenuOverlay.classList.contains('hidden')) {
+            closeMenu();
+        }
     });
 }
 
@@ -85,20 +90,4 @@ export function configurarBarraProgressoRolagem() {
         const porcentagemRolagem = alturaRolavel > 0 ? (scrollTop / alturaRolavel) * 100 : 0;
         barraProgresso.style.width = `${porcentagemRolagem}%`;
     });
-}
-
-/**
- * Configura o botão de logout para chamar a função de logout do Supabase.
- * @param {Function} callbackLogout - A função a ser executada ao clicar no botão.
- */
-export function configurarBotaoLogout(callbackLogout) {
-    const botaoLogout = document.getElementById('logout-btn');
-    if (botaoLogout) {
-        botaoLogout.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (typeof callbackLogout === 'function') {
-                callbackLogout();
-            }
-        });
-    }
 }

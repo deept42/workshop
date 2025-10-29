@@ -431,21 +431,22 @@ body {
 
 .countdown-item {
     display: flex;
-    flex-direction: column;
+    flex-direction: row; /* Alterado para linha */
     align-items: center;
-    min-width: 2.1875rem; /* 35px */
+    gap: 0.5rem; /* Espaçamento entre o número e o rótulo */
 }
 
 .countdown-number {
-    font-size: 2rem;
+    font-size: 1.125rem; /* 18px, mais próximo do título */
     font-weight: 700;
     line-height: 1;
 }
 
 .countdown-label {
-    font-size: 0.6rem;
+    font-size: 0.9rem; /* Mesmo tamanho do título */
     text-transform: uppercase;
     opacity: 0.8;
+    font-weight: 700;
 }
 
 
@@ -1402,6 +1403,57 @@ button[type="submit"].is-loading {
     background-color: #e5e7eb; /* Fundo cinza para a barra vazia */
 }
 
+/* --- ESTILOS PARA A NOVA NAVEGAÇÃO DESKTOP --- */
+.desktop-nav-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    color: #4b5563; /* gray-600 */
+    background-color: transparent;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.desktop-nav-link:hover {
+    background-color: #f3f4f6; /* gray-100 */
+    color: #062E51; /* Azul escuro */
+}
+
+/* Estilo do link ativo */
+.desktop-nav-link.active-link {
+    background-color: #E63946; /* Vermelho principal */
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(230, 57, 70, 0.4);
+}
+
+/* Estilo do Tooltip */
+.desktop-nav-tooltip {
+    position: absolute;
+    left: 120%; /* Posiciona à direita do ícone */
+    top: 50%;
+    transform: translateY(-50%) translateX(-10px); /* Começa um pouco para a esquerda */
+    background-color: #1f2937; /* gray-800 */
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    pointer-events: none; /* Não interfere com o mouse */
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Mostra o tooltip no hover do link pai (group-hover) */
+.desktop-nav-link:hover .desktop-nav-tooltip {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+}
+
 /* --- Estilos para os Cards de Destaque (Sobre) (TEMA CLARO) --- */
 .highlight-card {
     background-color: rgba(255, 255, 255, 0.7); /* Fundo branco "glass" */
@@ -1443,4 +1495,120 @@ button[type="submit"].is-loading {
     display: none;
     visibility: hidden;
     opacity: 0;
+}
+
+/* --- ESTILOS PARA A NOVA NAVEGAÇÃO PRINCIPAL --- */
+
+/* Estilo base para os links da navegação no desktop */
+.nav-link-main {
+    color: #d1d5db; /* gray-300 */
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    text-decoration: none;
+}
+
+.nav-link-main::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background-color: #E63946; /* Vermelho */
+    transition: width 0.3s ease-in-out;
+}
+
+.nav-link-main:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Estilo para o link ativo */
+.nav-link-main.active-link {
+    color: white;
+    font-weight: 700;
+}
+
+.nav-link-main.active-link::after {
+    width: 60%;
+}
+
+/* Estilo para o botão de ação (Login/Admin) */
+.nav-link-main-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: transparent;
+    color: white;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border: 1px solid #E63946;
+    border-radius: 9999px; /* pill shape */
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-link-main-action:hover {
+    background-color: #E63946;
+    color: white;
+}
+
+/* Estilos para o Menu Overlay Mobile */
+#mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(6, 46, 81, 0.95); /* Azul escuro com alta opacidade */
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+/* --- ESTILOS PARA O COMPORTAMENTO DE ROLAGEM DA NAVEGAÇÃO --- */
+
+/* Esconde os elementos do topo quando a página é rolada */
+.hidden-on-scroll {
+    transform: translateY(-100%);
+}
+
+/* Mostra o elemento flutuante inferior quando a página é rolada */
+#floating-nav-bottom.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+
+/* Estilos para os links dentro da navegação flutuante */
+.floating-nav-link {
+    color: #4b5563; /* gray-600 */
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.2s ease-in-out;
+}
+.floating-nav-link:hover {
+    background-color: #e5e7eb; /* gray-200 */
+    color: #062E51;
+}
+
+.nav-link-mobile {
+    font-size: 1.5rem; /* 24px */
+    font-weight: 700;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.nav-link-mobile:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
 }
