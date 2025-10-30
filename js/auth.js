@@ -38,11 +38,9 @@ export function configurarLoginAdmin() {
         } else {
             // Se o login for bem-sucedido, mostra o modal de sucesso.
             // A UI será atualizada pelo 'onAuthStateChange'.
-            mostrarNotificacao(`Login realizado com sucesso! Bem-vindo, ${data.user.email}.`, 'sucesso');
-            // Redireciona para o painel de administração após um breve delay
-            setTimeout(() => {
-                window.location.href = 'admin.html';
-            }, 1500); // 1.5 segundos para o usuário ler o modal
+            mostrarNotificacao(`Login realizado com sucesso! Bem-vindo, ${data.user.email}. Redirecionando...`, 'sucesso');
+            // Apenas redireciona para o painel de administração após o sucesso.
+            window.location.href = 'admin.html';
         }
     });
 }

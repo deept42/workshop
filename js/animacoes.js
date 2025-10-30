@@ -19,16 +19,16 @@ export function atualizarLinkNavegacaoAtivo() {
 
     const observador = new IntersectionObserver((entradas) => {
         entradas.forEach(entrada => {
-            const idSecaoAtiva = entrada.target.id;
-            const linkCorrespondente = document.querySelector(`.nav-link-main[href="#${idSecaoAtiva}"]`);
-
             if (entrada.isIntersecting) {
+                const idSecaoAtiva = entrada.target.id;
+                // Seleciona todos os links de navegação que apontam para a seção ativa
+                const linksCorrespondentes = document.querySelectorAll(`.nav-link-main[href="#${idSecaoAtiva}"], .nav-link-mobile[href="#${idSecaoAtiva}"]`);
+                
                 // Remove a classe de todos os links para garantir que apenas um esteja ativo
-                document.querySelectorAll('.nav-link-main').forEach(link => link.classList.remove('active-link'));
+                document.querySelectorAll('.nav-link-main, .nav-link-mobile').forEach(link => link.classList.remove('active-link'));
                 // Adiciona a classe ao link correto
-                if (linkCorrespondente) {
-                    linkCorrespondente.classList.add('active-link');
-                }
+                linksCorrespondentes.forEach(link => link.classList.add('active-link'));
+                
                 // Adiciona a classe 'is-visible' para disparar a animação de entrada.
                 entrada.target.querySelectorAll('.animate-on-scroll').forEach(el => el.classList.add('is-visible'));
             } else {

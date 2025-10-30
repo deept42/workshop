@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'sobre',
             'programacao',
             'palestrantes',
+            'informacoes',
             'patrocinadores',
             'inscricao'
         ];
@@ -50,17 +51,15 @@ document.addEventListener('DOMContentLoaded', () => {
     supabase.auth.onAuthStateChange((event, session) => {
         const areaLogin = document.getElementById('login-admin');
         const areaPrincipal = document.querySelector('main');
-        const barraTopo = document.getElementById('top-bar');
         const rodape = document.querySelector('footer');
-        const headerPrincipal = document.getElementById('main-header');
+        // Precisamos controlar o wrapper principal do header, não apenas o conteúdo interno.
+        const headerWrapper = document.getElementById('header-wrapper');
+        const ctaFlutuante = document.getElementById('inscricao-cta-flutuante');
 
-        // Elementos do botão de autenticação (Desktop e Mobile)
-        const authBtn = document.getElementById('auth-btn');
-        const authIcon = document.getElementById('auth-icon');
-        const authText = document.getElementById('auth-text');
-        const authBtnMobile = document.getElementById('auth-btn-mobile');
-        const authIconMobile = document.getElementById('auth-icon-mobile');
-        const authTextMobile = document.getElementById('auth-text-mobile');
+        // Elementos do novo botão de login flutuante
+        const loginFabBtn = document.getElementById('login-fab-btn');
+        const loginFabIcon = document.getElementById('login-fab-icon');
+        const loginFabText = document.getElementById('login-fab-text');
 
         const estaLogado = !!session;
 
@@ -71,11 +70,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Quando a tela de login é mostrada
             if (mostrar) {
-                if (areaLogin) areaLogin.style.display = 'grid';
+                if (areaLogin) areaLogin.classList.remove('hidden'); // Ação correta: remove a classe que esconde
                 if (areaPrincipal) areaPrincipal.style.display = 'none';
-                if (barraTopo) barraTopo.style.display = 'none';
-                if (rodape) rodape.style.display = 'none';
-                if (headerPrincipal) headerPrincipal.style.display = 'none';
+                if (rodape) rodape.style.display = 'none';                
+                if (headerWrapper) headerWrapper.style.display = 'none'; // Esconde todo o header
+                if (ctaFlutuante) ctaFlutuante.style.display = 'none'; // Esconde o botão de inscrição
+                if (loginFabBtn) loginFabBtn.style.display = 'none'; // Esconde o próprio botão de login
                 // Adiciona a classe 'is-active' para iniciar a animação de entrada
                 setTimeout(() => {
                     leftPane?.classList.add('is-active');
@@ -87,11 +87,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 rightPane?.classList.remove('is-active');
                 
                 const mostrarConteudoPrincipal = () => {
-                    if (areaLogin) areaLogin.style.display = 'none';
+                    if (areaLogin) areaLogin.classList.add('hidden'); // Ação correta: adiciona a classe para esconder
                     if (areaPrincipal) areaPrincipal.style.display = 'block';
-                    if (barraTopo) barraTopo.style.display = 'flex'; // Usa 'flex' para alinhar corretamente
-                    if (rodape) rodape.style.display = 'block';
-                    if (headerPrincipal) headerPrincipal.style.display = ''; // Reseta para o padrão
+                    if (rodape) rodape.style.display = 'block';                    
+                    if (headerWrapper) headerWrapper.style.display = ''; // Mostra o header novamente
+                    if (ctaFlutuante) ctaFlutuante.style.display = ''; // Mostra o botão de inscrição novamente
+                    if (loginFabBtn) loginFabBtn.style.display = ''; // Mostra o botão de login novamente
                 };
 
                 // Esconde a tela de login e mostra o site após a animação
@@ -120,8 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        configurarBotaoAuth(authBtn, authIcon, authText, estaLogado, fazerLogout, () => alternarTelaLogin(true));
-        configurarBotaoAuth(authBtnMobile, authIconMobile, authTextMobile, estaLogado, fazerLogout, () => alternarTelaLogin(true));
+        configurarBotaoAuth(loginFabBtn, loginFabIcon, loginFabText, estaLogado, fazerLogout, () => alternarTelaLogin(true));
 
         // --- LÓGICA PARA O BOTÃO "VOLTAR AO SITE" ---
         const backToSiteBtn = document.getElementById('back-to-site-btn');
@@ -160,21 +160,13 @@ document.addEventListener('DOMContentLoaded', () => {
         configurarLoginAdmin();
     }
 
-    // --- LÓGICA PARA HEADER FLUTUANTE ---
-    const header = document.getElementById('main-header');
-    const topBar = document.getElementById('top-bar');
-    const floatingNav = document.getElementById('floating-nav-bottom');
+    // --- LÓGICA PARA HEADER FLUTUANTE AO ROLAR ---
+    const headerWrapper = document.getElementById('header-wrapper');
 
-    if (header && topBar && floatingNav) {
+    if (headerWrapper) {
         window.addEventListener('scroll', () => {
-            // Adiciona/remove classes para mostrar/esconder os elementos com base na rolagem
-            if (window.scrollY > 10) {
-                header.classList.add('hidden-on-scroll'); // Esconde apenas o header principal
-                floatingNav.classList.add('visible');
-            } else {
-                header.classList.remove('hidden-on-scroll'); // Mostra apenas o header principal
-                floatingNav.classList.remove('visible');
-            }
+            // Adiciona a classe 'scrolled' quando o usuário rolar mais de 50px
+            headerWrapper.classList.toggle('scrolled', window.scrollY > 50);
         });
     }
 });

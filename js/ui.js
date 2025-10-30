@@ -7,35 +7,21 @@
  */
 export function configurarContagemRegressiva() {
     const contadorPrincipal = document.getElementById('countdown-timer');
-    const contadorFlutuante = document.getElementById('countdown-timer-floating');
 
-    if (!contadorPrincipal || !contadorFlutuante) return;
+    if (!contadorPrincipal) return;
 
-    const htmlContador = `
-        <div class="countdown-item"><span id="cd-dias" class="countdown-number">0</span><span class="countdown-label">Dias</span></div>
-        <div class="countdown-item"><span id="cd-horas" class="countdown-number">0</span><span class="countdown-label">Horas</span></div>
-        <div class="countdown-item"><span id="cd-minutos" class="countdown-number">0</span><span class="countdown-label">Min</span></div>
-        <div class="countdown-item"><span id="cd-segundos" class="countdown-number">0</span><span class="countdown-label">Seg</span></div>
-    `;
-    contadorPrincipal.innerHTML = htmlContador;
-    // Adapta o HTML para o contador flutuante (sem labels para economizar espaço)
-    contadorFlutuante.innerHTML = `
-        <div class="countdown-item"><span id="cd-dias-float" class="countdown-number text-base">0</span><span class="countdown-label">D</span></div>
-        <div class="countdown-item"><span id="cd-horas-float" class="countdown-number text-base">0</span><span class="countdown-label">H</span></div>
-        <div class="countdown-item"><span id="cd-minutos-float" class="countdown-number text-base">0</span><span class="countdown-label">M</span></div>
-        <div class="countdown-item"><span id="cd-segundos-float" class="countdown-number text-base">0</span><span class="countdown-label">S</span></div>
-    `;
-
-    const elementos = ['dias', 'horas', 'minutos', 'segundos'];
-
-    if (!document.getElementById('cd-dias')) return; // Verifica se o principal foi criado
+    if (contadorPrincipal) {
+        contadorPrincipal.innerHTML = `
+            <span id="cd-dias">0</span>d <span id="cd-horas">0</span>h <span id="cd-minutos">0</span>m <span id="cd-segundos">0</span>s
+        `;
+    }
 
     const dataEvento = new Date(2025, 10, 13).getTime(); // Mês 10 é Novembro (0-11)
 
     const intervalo = setInterval(() => {
         const agora = new Date().getTime();
         const distancia = dataEvento - agora;
-        
+
         if (distancia >= 0) {
             const valores = {
                 dias: Math.floor(distancia / (1000 * 60 * 60 * 24)),
@@ -44,14 +30,14 @@ export function configurarContagemRegressiva() {
                 segundos: Math.floor((distancia % (1000 * 60)) / 1000)
             };
 
-            elementos.forEach(el => {
-                document.getElementById(`cd-${el}`).textContent = valores[el];
-                document.getElementById(`cd-${el}-float`).textContent = valores[el];
+            ['dias', 'horas', 'minutos', 'segundos'].forEach(el => {
+                const elPrincipal = document.getElementById(`cd-${el}`);
+                if (elPrincipal) elPrincipal.textContent = valores[el];
             });
         } else {
             clearInterval(intervalo);
-            contadorPrincipal.innerHTML = `<p class="font-bold text-lg">O EVENTO COMEÇOU!</p>`;
-            contadorFlutuante.innerHTML = `<p class="font-bold text-sm">O EVENTO COMEÇOU!</p>`;
+            // Esconde o botão quando o evento começa
+            document.getElementById('inscricao-cta-flutuante')?.classList.add('hidden');
         }
     }, 1000);
 }

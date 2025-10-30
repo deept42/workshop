@@ -1,3 +1,38 @@
+/* 
+   ==========================================================================
+   LÓGICA DE UI/UX PARA O HEADER FLUTUANTE E CONTEÚDO CENTRALIZADO
+   ==========================================================================
+*/
+
+/* O container principal que controla a posição e a animação. */
+#header-wrapper {
+    /* A transição suave é a chave para o efeito elegante. */
+    /* A transição não é mais necessária, pois o estado é permanente */
+}
+
+/* O conteúdo interno do header agora é permanentemente flutuante. */
+#header-content {
+    max-width: 56rem; /* 896px - O conteúdo se contrai para o centro. */
+    margin-top: 0.5rem; /* Desce um pouco para dar a sensação de flutuar. */
+    border-radius: 0.75rem; /* Bordas arredondadas aparecem. */
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); /* Sombra sutil aparece. */
+    overflow: hidden; /* Garante que a barra de progresso respeite as bordas. */
+    margin-left: auto; /* Centraliza o header */
+    margin-right: auto; /* Centraliza o header */
+    /* Efeito de vidro fosco azul se torna o padrão */
+    background-color: rgba(6, 46, 81, 0.9); /* #062E51 com 90% de opacidade */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* Para compatibilidade com Safari */
+    transition: background-color 0.4s ease, backdrop-filter 0.4s ease; /* Anima a mudança de cor */
+}
+
+/* Quando a página é rolada, o header se torna transparente */
+#header-wrapper.scrolled #header-content {
+    /* Aplica um azul muito sutil para manter a tonalidade, mas com alta transparência */
+    background-color: rgba(6, 46, 81, 0.7); /* #062E51 com 70% de opacidade para um azul mais forte */
+    /* O backdrop-filter é mantido para preservar o efeito de vidro fosco */
+}
+
 /* Reset e configuração base para a experiência de tela cheia */
 
 /* --- NOVA LÓGICA: Fundo de Quadrados Animados --- */
@@ -103,8 +138,10 @@ body {
 
 /* Wrapper de conteúdo dentro de cada painel */
 .panel-content {
-    max-width: clamp(20rem, 95%, 80rem);
-    padding: 2rem 4rem;
+    max-width: 56rem; /* 896px - Mesma largura do header para alinhar o conteúdo */
+    margin-left: auto; /* Centraliza o conteúdo */
+    margin-right: auto; /* Centraliza o conteúdo */
+    padding: 2rem 1rem; /* Ajusta o padding para telas menores */
 }
 
 /* Variação do panel-content que ocupa a largura total */
@@ -386,11 +423,12 @@ body {
 }
 
 /* --- Estilos para a Barra de Topo Fixa --- */
+/* A posição fixa agora é controlada pelo #header-wrapper */
+/* O fundo agora é transparente para se unificar com o header principal */
 #top-bar {
-    background: white;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background: transparent;
     padding: 0.25rem 1rem;
-    color: #062E51; /* Cor do texto (já estava correta) */
+    color: white; /* Texto branco para contrastar com o fundo escuro unificado */
 }
 
 /* --- Estilos para a Barra de Progresso --- */
@@ -418,6 +456,75 @@ body {
 .top-bar-subtitle {
     font-size: 0.9rem;
     font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+/* --- ESTILOS PARA O NOVO BOTÃO DE AÇÃO FLUTUANTE --- */
+#inscricao-cta-flutuante {
+    position: fixed;
+    bottom: 1.5rem; /* 24px */
+    right: 1.5rem; /* 24px */
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* 12px */
+    background-color: #E63946; /* Vermelho principal */
+    color: white;
+    padding: 0.75rem 1.25rem; /* 12px 20px */
+    border-radius: 9999px; /* Formato de pílula */
+    box-shadow: 0 10px 20px rgba(230, 57, 70, 0.3), 0 6px 6px rgba(230, 57, 70, 0.25);
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    animation: pulse-cta 2.5s infinite;
+}
+
+#inscricao-cta-flutuante:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 15px 25px rgba(230, 57, 70, 0.4), 0 8px 10px rgba(230, 57, 70, 0.3);
+    animation-play-state: paused; /* Pausa a animação de pulso no hover */
+}
+
+.cta-icon-container {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    padding: 0.5rem; /* 8px */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cta-icon {
+    font-size: 1.75rem; /* 28px */
+    transition: transform 0.3s ease;
+}
+
+.group:hover .cta-icon {
+    transform: rotate(-15deg) scale(1.1);
+}
+
+.cta-content {
+    text-align: left;
+}
+
+.cta-title {
+    font-weight: 800;
+    font-size: 0.875rem; /* 14px */
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.cta-countdown {
+    font-size: 0.75rem; /* 12px */
+    font-weight: 500;
+    opacity: 0.9;
+}
+
+.cta-subtitle {
+    font-size: 0.75rem; /* 12px */
+    font-weight: 500;
+    opacity: 0.9;
     letter-spacing: 0.1em;
     text-transform: uppercase;
 }
@@ -1575,11 +1682,6 @@ button[type="submit"].is-loading {
 
 /* --- ESTILOS PARA O COMPORTAMENTO DE ROLAGEM DA NAVEGAÇÃO --- */
 
-/* Esconde os elementos do topo quando a página é rolada */
-.hidden-on-scroll {
-    transform: translateY(-100%);
-}
-
 /* Mostra o elemento flutuante inferior quando a página é rolada */
 #floating-nav-bottom.visible {
     opacity: 1;
@@ -1611,4 +1713,104 @@ button[type="submit"].is-loading {
 .nav-link-mobile:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
+
+/* Animação de pulso para o botão CTA */
+@keyframes pulse-cta {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+}
+}
+/* --- ESTILOS PARA O MENU OVERLAY MOBILE (GLASSMORPHISM AZUL) --- */
+#mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Efeito de vidro fosco com o azul principal do site */
+    background-color: rgba(6, 46, 81, 0.9); /* #062E51 com 90% de opacidade */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* Para compatibilidade com Safari */
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem; /* 24px */
+}
+
+/* --- ESTILOS PARA O BOTÃO DE LOGIN FLUTUANTE (FAB) --- */
+.login-fab {
+    position: fixed;
+    top: 1rem; /* 16px */
+    right: 1.5rem; /* 24px */
+    z-index: 70; /* Acima do header */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* 8px */
+    background-color: #E63946;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 9999px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+}
+
+.login-fab-text {
+    font-weight: 600;
+    font-size: 0.875rem; /* 14px */
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: max-width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+}
+
+.login-fab:hover .login-fab-text {
+    max-width: 100px; /* Revela o texto */
+    margin-left: 0.25rem; /* Adiciona um pequeno espaço */
+}
+
+/* Ajuste para os links da navegação com ícones */
+.nav-link-main, .nav-link-mobile {
+    display: flex;
+    align-items: center;
+    /* O gap foi removido para ser controlado pelo margin do texto */
+    overflow: hidden; /* Garante que o conteúdo não vaze durante a animação */
+}
+
+/* Estilo para o texto dentro do link de navegação (desktop) */
+.nav-link-main span:last-child {
+    /* Por padrão, o texto fica escondido */
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap; /* Impede que o texto quebre a linha durante a transição */
+    transition: max-width 0.4s ease-in-out, margin-left 0.4s ease-in-out;
+}
+
+/* Quando o link está ativo, o texto se expande */
+.nav-link-main.active-link span:last-child {
+    max-width: 150px; /* Largura suficiente para o maior texto */
+    margin-left: 0.5rem; /* Adiciona o espaçamento apenas quando visível */
+}
+
+/* --- ESTILOS PARA O COMPORTAMENTO DE ROLAGEM DA NAVEGAÇÃO --- */
+
+/* Mostra o elemento flutuante inferior quando a página é rolada */
+#floating-nav-bottom.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+
+/* Estilos para os links dentro da navegação flutuante */
+.floating-nav-link {
+    color: #4b5563; /* gray-600 */
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.2s ease-in-out;
+}
+.floating-nav-link:hover {
+    background-color: #e5e7eb; /* gray-200 */
+    color: #062E51;
 }

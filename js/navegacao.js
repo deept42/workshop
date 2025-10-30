@@ -41,15 +41,16 @@ export function configurarMenuMobile() {
 
     const openMenu = () => {
         mobileMenuOverlay.innerHTML = `
-            <button id="mobile-menu-close-btn" class="absolute top-4 right-4 text-white p-2">
-                <span class="material-symbols-outlined text-4xl">close</span>
+            <button id="mobile-menu-close-btn" class="absolute top-6 right-6 text-white p-2">
+                <span class="material-symbols-outlined text-[2.5rem]">close</span>
             </button>
-            <nav class="flex flex-col items-center gap-6 text-center">
-                <a href="#inicio" class="nav-link-mobile">Início</a>
-                <a href="#sobre" class="nav-link-mobile">Sobre</a>
-                <a href="#programacao" class="nav-link-mobile">Programação</a>
-                <a href="#palestrantes" class="nav-link-mobile">Palestrantes</a>
-                <a href="#inscricao" class="nav-link-mobile">Inscrição</a>
+            <nav class="flex flex-col items-start gap-6 text-center text-[1.5rem] font-bold">
+                <a href="#inicio" class="nav-link-mobile nav-link-main"><span class="material-symbols-outlined">home</span><span>Início</span></a>
+                <a href="#sobre" class="nav-link-mobile nav-link-main"><span class="material-symbols-outlined">info</span><span>Sobre</span></a>
+                <a href="#programacao" class="nav-link-mobile nav-link-main"><span class="material-symbols-outlined">calendar_month</span><span>Programação</span></a>
+                <a href="#palestrantes" class="nav-link-mobile nav-link-main"><span class="material-symbols-outlined">mic</span><span>Palestrantes</span></a>
+                <a href="#informacoes" class="nav-link-mobile nav-link-main"><span class="material-symbols-outlined">help_center</span><span>Informações</span></a>
+                <a href="#inscricao" class="nav-link-mobile nav-link-main"><span class="material-symbols-outlined">edit_square</span><span>Inscrição</span></a>
             </nav>
         `;
         mobileMenuOverlay.classList.remove('hidden');
