@@ -14,11 +14,18 @@
 </head>
 <body>
 
-<!-- BOTÃO DE LOGIN FLUTUANTE -->
-<a href="#" id="login-fab-btn" class="login-fab group">
-    <span id="login-fab-icon" class="material-symbols-outlined">login</span>
-    <span id="login-fab-text" class="login-fab-text">Área do Admin</span>
-</a>
+<!-- CONTAINER PARA BOTÕES DE AÇÃO NO CANTO SUPERIOR DIREITO -->
+<div class="fixed top-4 right-6 z-[100] flex items-center gap-2">
+    <!-- Botão de Logout (inicialmente escondido) -->
+    <button id="logout-fab-btn" class="login-fab group hidden bg-gray-500 hover:bg-gray-600">
+        <span class="material-symbols-outlined">logout</span>
+    </button>
+    <!-- Botão de Login/Painel Admin -->
+    <a href="#" id="login-fab-btn" class="login-fab group bg-red-500 hover:bg-red-600">
+        <span id="login-fab-icon" class="material-symbols-outlined">login</span>
+        <span id="login-fab-text" class="login-fab-text">Área do Admin</span>
+    </a>
+</div>
 
 <!-- CONTAINER PRINCIPAL DO HEADER QUE SERÁ ANIMADO -->
 <div id="header-wrapper" class="fixed top-0 left-0 w-full z-[60]">
@@ -564,8 +571,28 @@
 
         <section id="inscricao" class="folder-panel section-with-gradient-bg">
             <div class="panel-content">
-                <div class="flex flex-col lg:flex-row items-center justify-center gap-10">
-                    <div class="form-container-modern animate-on-scroll w-full lg:w-1/2 text-center md:text-left" style="--animation-delay: 0s;">
+                <div class="flex flex-col items-center justify-center gap-12">
+                    <!-- Conteúdo informativo (APENAS caixas) -->
+                    <div class="animate-on-scroll w-full max-w-3xl mx-auto text-[#062E51] text-center" style="--animation-delay: 0s;">
+                        <div class="flex flex-col sm:flex-row gap-6 mb-6 text-center">
+                            <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=WORKSHOP%3A+Munic%C3%ADpios+Mais+Resilientes+em+Desastres&dates=20251113T110000Z/20251114T210000Z&details=Participe+do+WORKSHOP%3A+Munic%C3%ADpios+Mais+Resilientes+em+Desastres%2C+uma+iniciativa+para+capacitar+gestores+e+comunidades+do+Litoral+do+Paran%C3%A1+para+um+futuro+mais+seguro.&location=ISULPAR+-+Instituto+Superior+do+Litoral+do+Paran%C3%A1%2C+Paranagu%C3%A1+-+PR&ctz=America/Sao_Paulo" target="_blank" rel="noopener noreferrer" class="flex-1 group">
+                                <div class="relative bg-white/50 p-4 rounded-lg shadow-sm border border-gray-200 h-full transition-all duration-300 group-hover:bg-white group-hover:shadow-md group-hover:-translate-y-1">
+                                    <span class="material-symbols-outlined absolute top-2 right-2 text-gray-400 group-hover:text-[#E63946] transition-colors opacity-0 group-hover:opacity-100">open_in_new</span>
+                                    <h3 class="text-xl font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">calendar_month</span>Data</h3>
+                                    <p class="text-lg text-gray-700 mt-2">13 e 14 de Novembro</p>
+                                </div>
+                            </a>
+                            <a href="https://maps.app.goo.gl/9h2Xw" target="_blank" rel="noopener noreferrer" class="flex-1 group">
+                                <div class="relative bg-white/50 p-4 rounded-lg shadow-sm border border-gray-200 h-full transition-all duration-300 group-hover:bg-white group-hover:shadow-md group-hover:-translate-y-1">
+                                    <span class="material-symbols-outlined absolute top-2 right-2 text-gray-400 group-hover:text-[#E63946] transition-colors opacity-0 group-hover:opacity-100">open_in_new</span>
+                                    <h3 class="text-xl font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">location_on</span>Local</h3>
+                                    <p class="text-lg text-gray-700 mt-2">ISULPAR, Paranaguá - PR</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Formulário -->
+                    <div class="form-container-modern animate-on-scroll w-full max-w-3xl mx-auto text-center md:text-left" style="--animation-delay: 0s;">
                         <div class="form-progress-bar-container">
                             <div id="form-progress-bar"></div>
                         </div>
@@ -647,28 +674,11 @@
                             <div id="form-messages" class="text-center"></div>
                         </form>
                     </div>
-                    <div class="animate-on-scroll w-full lg:w-1/2 text-[#062E51]" style="--animation-delay: 0.1s;">
-                        <div class="flex flex-col sm:flex-row gap-6 mb-6 text-center">
-                            <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=WORKSHOP%3A+Munic%C3%ADpios+Mais+Resilientes+em+Desastres&dates=20251113T110000Z/20251114T210000Z&details=Participe+do+WORKSHOP%3A+Munic%C3%ADpios+Mais+Resilientes+em+Desastres%2C+uma+iniciativa+para+capacitar+gestores+e+comunidades+do+Litoral+do+Paran%C3%A1+para+um+futuro+mais+seguro.&location=ISULPAR+-+Instituto+Superior+do+Litoral+do+Paran%C3%A1%2C+Paranagu%C3%A1+-+PR&ctz=America/Sao_Paulo" target="_blank" rel="noopener noreferrer" class="flex-1 group">
-                                <div class="relative bg-white/50 p-4 rounded-lg shadow-sm border border-gray-200 h-full transition-all duration-300 group-hover:bg-white group-hover:shadow-md group-hover:-translate-y-1">
-                                    <span class="material-symbols-outlined absolute top-2 right-2 text-gray-400 group-hover:text-[#E63946] transition-colors opacity-0 group-hover:opacity-100">open_in_new</span>
-                                    <h3 class="text-xl font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">calendar_month</span>Data</h3>
-                                    <p class="text-lg text-gray-700 mt-2">13 e 14 de Novembro</p>
-                                </div>
-                            </a>
-                            <a href="https://maps.app.goo.gl/9h2Xw" target="_blank" rel="noopener noreferrer" class="flex-1 group">
-                                <div class="relative bg-white/50 p-4 rounded-lg shadow-sm border border-gray-200 h-full transition-all duration-300 group-hover:bg-white group-hover:shadow-md group-hover:-translate-y-1">
-                                    <span class="material-symbols-outlined absolute top-2 right-2 text-gray-400 group-hover:text-[#E63946] transition-colors opacity-0 group-hover:opacity-100">open_in_new</span>
-                                    <h3 class="text-xl font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">location_on</span>Local</h3>
-                                    <p class="text-lg text-gray-700 mt-2">ISULPAR, Paranaguá - PR</p>
-                                </div>
-                            </a>
+                    <!-- Mapa agora fica ABAIXO do formulário -->
+                    <div class="animate-on-scroll w-full max-w-3xl mx-auto" style="--animation-delay: 0.1s;">
+                        <div class="map-container h-80 md:h-96">
+                            <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3601.782803386997!2d-48.51338872551406!3d-25.47891113360638!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94dbee3e0251767b%3A0x6b83f3f38814d603!2sISULPAR%20-%20Instituto%20Superior%20do%20Litoral%20do%20Paran%C3%A1!5e0!3m2!1spt-BR!2sbr!4v1729864228490!5m2!1spt-BR!2sbr" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
-                        
-                        <div class="map-container">
-                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3601.782803386997!2d-48.51338872551406!3d-25.47891113360638!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94dbee3e0251767b%3A0x6b83f3f38814d603!2sISULPAR%20-%20Instituto%20Superior%20do%20Litoral%20do%20Paran%C3%A1!5e0!3m2!1spt-BR!2sbr!4v1729864228490!5m2!1spt-BR!2sbr" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                        </div>
-                        
                     </div>
                 </div>
             </div> </section>

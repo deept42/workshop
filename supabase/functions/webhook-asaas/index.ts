@@ -19,12 +19,11 @@ serve(async (req: Request) => {
     // 2. Lógica do Webhook: Processa apenas eventos de pagamento confirmado
     if (payload.event === "PAYMENT_CONFIRMED" || payload.event === "PAYMENT_RECEIVED") {
       const payment = payload.payment;
-      // Usamos o externalReference, que é o ID do nosso participante no banco de dados.
-      // É a forma mais segura e direta de identificar o registro.
-      const participanteId = payment.externalReference;
+      // Pega o CPF do cliente que pagou, enviado pelo Asaas.
+      const cpfPagador = payment.customer.cpfCnpj;
 
-      if (!participanteId) {
-        throw new Error("Webhook de pagamento recebido, mas sem 'externalReference' (ID do participante).");
+      if (!cpfPagador) {
+        throw new Error("Webhook de pagamento recebido, mas sem CPF do cliente.");
       }
 
       // 3. Cria um cliente Supabase com a role 'service_role' para poder escrever no DB.
@@ -33,15 +32,18 @@ serve(async (req: Request) => {
         Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ''
       );
 
-      // 4. Busca o participante diretamente pelo seu ID (externalReference)
+      // Limpa o CPF para corresponder ao formato salvo no banco de dados (apenas números)
+      const cpfLimpo = cpfPagador.replace(/\D/g, '');
+
+      // 4. Busca o participante pelo CPF limpo
       const { data: participante, error: fetchError } = await supabaseAdmin
         .from("cadastro_workshop")
-        .select("id, nome_completo, status_pagamento")
-        .eq("id", participanteId)
+        .select("id, nome_completo, status_pagamento, cpf")
+        .eq("cpf", cpfLimpo)
         .single();
 
       if (fetchError || !participante) {
-        throw new Error(`Webhook recebido, mas nenhum participante encontrado com o ID: ${participanteId}. Erro: ${fetchError?.message}`);
+        throw new Error(`Webhook recebido para CPF ${cpfLimpo}, mas nenhum participante correspondente foi encontrado. Erro: ${fetchError?.message}`);
       }
 
       // 5. Verificação de Idempotência: Atualiza o status apenas se ele ainda não for 'pago'

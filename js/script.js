@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const ctaFlutuante = document.getElementById('inscricao-cta-flutuante');
 
         // Elementos do novo botão de login flutuante
+        const logoutFabBtn = document.getElementById('logout-fab-btn');
         const loginFabBtn = document.getElementById('login-fab-btn');
         const loginFabIcon = document.getElementById('login-fab-icon');
         const loginFabText = document.getElementById('login-fab-text');
@@ -74,8 +75,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (areaPrincipal) areaPrincipal.style.display = 'none';
                 if (rodape) rodape.style.display = 'none';                
                 if (headerWrapper) headerWrapper.style.display = 'none'; // Esconde todo o header
-                if (ctaFlutuante) ctaFlutuante.style.display = 'none'; // Esconde o botão de inscrição
-                if (loginFabBtn) loginFabBtn.style.display = 'none'; // Esconde o próprio botão de login
+                if (ctaFlutuante) ctaFlutuante.classList.add('hidden'); // Esconde o botão de inscrição
+                if (loginFabBtn) loginFabBtn.classList.add('hidden'); // Esconde o próprio botão de login
+                if (logoutFabBtn) logoutFabBtn.classList.add('hidden'); // Esconde o botão de logout
                 // Adiciona a classe 'is-active' para iniciar a animação de entrada
                 setTimeout(() => {
                     leftPane?.classList.add('is-active');
@@ -90,9 +92,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (areaLogin) areaLogin.classList.add('hidden'); // Ação correta: adiciona a classe para esconder
                     if (areaPrincipal) areaPrincipal.style.display = 'block';
                     if (rodape) rodape.style.display = 'block';                    
-                    if (headerWrapper) headerWrapper.style.display = ''; // Mostra o header novamente
-                    if (ctaFlutuante) ctaFlutuante.style.display = ''; // Mostra o botão de inscrição novamente
-                    if (loginFabBtn) loginFabBtn.style.display = ''; // Mostra o botão de login novamente
+                    if (headerWrapper) headerWrapper.style.display = ''; // Mostra o header novamente (display: flex é o padrão do browser)
+                    if (ctaFlutuante) ctaFlutuante.classList.remove('hidden'); // Mostra o botão de inscrição novamente
+                    // A visibilidade dos botões de login/logout é controlada por configurarBotoesAuth
+                    configurarBotoesAuth(estaLogado);
                 };
 
                 // Esconde a tela de login e mostra o site após a animação
@@ -106,22 +109,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Função para configurar um botão de autenticação
-        const configurarBotaoAuth = (btn, icon, text, logado, acaoLogout, acaoLogin) => {
-            if (btn && icon && text) {
-                icon.textContent = logado ? 'logout' : 'login';
-                text.textContent = logado ? 'Sair' : 'Área do Admin';
-                btn.onclick = (e) => { 
-                    e.preventDefault();
-                    if (logado) {
-                        acaoLogout().then(() => alternarTelaLogin(true));
-                    } else {
-                        acaoLogin();
-                    }
-                };
+        const configurarBotoesAuth = (logado) => {
+            if (!loginFabBtn || !logoutFabBtn || !loginFabIcon || !loginFabText) return;
+
+            if (logado) {
+                // Estado LOGADO
+                loginFabIcon.textContent = 'admin_panel_settings';
+                loginFabText.textContent = 'Painel Admin';
+                loginFabBtn.href = 'admin.html'; // Link direto para o painel
+                logoutFabBtn.classList.remove('hidden'); // Mostra o botão de logout
+
+                logoutFabBtn.onclick = () => fazerLogout();
+            } else {
+                // Estado DESLOGADO
+                loginFabIcon.textContent = 'login';
+                loginFabText.textContent = 'Área do Admin';
+                loginFabBtn.href = '#'; // Ação de abrir modal
+                logoutFabBtn.classList.add('hidden'); // Esconde o botão de logout
+                loginFabBtn.onclick = (e) => { e.preventDefault(); alternarTelaLogin(true); };
             }
         };
-
-        configurarBotaoAuth(loginFabBtn, loginFabIcon, loginFabText, estaLogado, fazerLogout, () => alternarTelaLogin(true));
+        configurarBotoesAuth(estaLogado);
 
         // --- LÓGICA PARA O BOTÃO "VOLTAR AO SITE" ---
         const backToSiteBtn = document.getElementById('back-to-site-btn');

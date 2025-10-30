@@ -24,6 +24,7 @@ async function inicializarPainelAdministrativo() {
         return;
     }
 
+    // Busca o nome do usuário dos metadados ou usa o e-mail como fallback
     const adminEmailEl = document.getElementById('admin-email');
     if (adminEmailEl) adminEmailEl.textContent = session.user.email;
 
