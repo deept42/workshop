@@ -178,3 +178,70 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+/**
+ * Configura o efeito de "terremoto" e "queda" para a palavra "Desastres".
+ */
+function configurarEfeitoDesastre() {
+    const container = document.getElementById('disaster-word');
+    if (!container) return;
+
+    const word = "Desastres";
+
+    function prepararPalavra() {
+        // 1. Limpa o contêiner e remove a classe 'active' para reiniciar
+        container.innerHTML = '';
+        container.classList.remove('active');
+
+        // 2. Divide a palavra e cria um <span> para cada letra, sem definir a animação ainda
+        word.split('').forEach((char, index) => {
+            const letterSpan = document.createElement('span');
+            letterSpan.textContent = char;
+            letterSpan.classList.add('letter');
+            
+            // 3. Define um atraso em cascata para a queda de cada letra
+            const delay = index * 0.08; // 0.08s de atraso entre cada letra
+            letterSpan.style.animationDelay = `${delay}s`; // O delay é definido, mas a animação não é iniciada
+            
+            container.appendChild(letterSpan);
+        });
+    }
+
+    function dispararEfeito() {
+        // Primeiro, garante que a palavra esteja no estado inicial (com todas as letras visíveis)
+        prepararPalavra();
+        
+        // 4. Força um "reflow" para o navegador registrar os novos elementos
+        void container.offsetWidth;
+
+        // 5. Adiciona a classe 'active' para iniciar as animações
+        container.classList.add('active');
+    }
+
+    // 6. Adiciona o ouvinte de evento para o clique, que agora dispara o efeito
+    container.addEventListener('click', dispararEfeito);
+
+    // 7. Apenas prepara a palavra quando a página carrega, sem iniciar a animação
+    prepararPalavra();
+}
+
+
+/**
+ * Prepara o texto para a animação de fluxo de cores.
+ * Envolve cada caractere do elemento com a classe '.anim-text-flow' em um <span>.
+ */
+function configurarAnimacaoTexto() {
+    const elementosAnimados = document.querySelectorAll('.anim-text-flow');
+    elementosAnimados.forEach(elemento => {
+        // Pega o texto, remove espaços em branco das pontas e divide em caracteres
+        const caracteres = elemento.textContent.trim().split('');
+        // Substitui o conteúdo original por spans individuais para cada caractere
+        elemento.innerHTML = caracteres.map(char => `<span>${char}</span>`).join('');
+    });
+}
+
+// Garante que a função seja executada após o carregamento do DOM
+document.addEventListener('DOMContentLoaded', () => {
+    configurarAnimacaoTexto();
+    configurarEfeitoDesastre();
+});

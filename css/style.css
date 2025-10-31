@@ -169,7 +169,7 @@ body {
     width: 100%;
     height: 100%;
     /* NOVA COR: Sobreposição clara para legibilidade de texto escuro */
-    background-color: rgba(255, 255, 255, 0.6);
+    background-color: #193b5b4d;
     z-index: 1;
 }
 
@@ -291,11 +291,6 @@ body {
 /* --- FIM DA NOVA LÓGICA --- */
 
 /* --- Tipografia Fluida --- */
-
-/* NOVA COR: Garante que o texto do Hero seja escuro */
-#inicio h1, #inicio p, #inicio .hero-button {
-    color: #062E51; /* Cor escura principal */
-}
 
 /* Título principal no painel Hero */
 #inicio h1 {
@@ -613,10 +608,6 @@ body {
     #inicio p {
         font-size: 1rem;
         margin-bottom: 2rem;
-    }
-
-    .top-bar-title, .top-bar-subtitle {
-        display: none;
     }
     .hero-button {
         padding: 0.75rem 1.5rem;
@@ -1291,15 +1282,6 @@ button[type="submit"].is-loading span {
     100% { left: 100%; }
 }
 
-@keyframes move-gradient {
-    0% {
-        background-position: 100% 0;
-    }
-    100% {
-        background-position: -100% 0;
-    }
-}
-
 /* Garante que a seção de login tenha fundo branco */
 #login-admin {
     background-color: white;
@@ -1719,6 +1701,182 @@ button[type="submit"].is-loading {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.03); }
 }
+.hero-title {
+    color: white; /* Garante o contraste sobre o vídeo */
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); /* Sombra para legibilidade */
+}
+
+/* Subtítulo com sublinhado animado */
+.hero-subheading {
+    color: white;
+    font-weight: 700; /* Negrito para maior destaque */
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6); /* Sombra mais forte para garantir contraste */
+}
+
+/* Botão de Ação Principal */
+.hero-button {
+    display: inline-block;
+    background-image: linear-gradient(to right, #E63946 0%, #c9323d 50%, #E63946 100%);
+    background-size: 200% auto;
+    color: white;
+    font-weight: bold;
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-size: 1.125rem;
+    box-shadow: 0 4px 15px 0 rgba(230, 57, 70, 0.4);
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    animation: pulse-hero-button 2s infinite;
+}
+
+.hero-button:hover {
+    background-position: right center; /* Move o gradiente */
+    box-shadow: 0 8px 20px 0 rgba(230, 57, 70, 0.6);
+    transform: translateY(-3px);
+    animation-play-state: paused; /* Pausa a animação de pulso no hover */
+}
+}
+
+@keyframes pulse-hero-button {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* --- NOVOS ESTILOS PROFISSIONAIS PARA A SEÇÃO HERO --- */
+
+
+/*
+ * MÓDULO DE ANIMAÇÃO DE TEXTO (EFEITO DE FLUXO DE COR)
+ */
+
+@keyframes anim-text-flow-keys {
+    0% { color: hsla(0, 60%, 60%, 1); }
+    5% { color: hsla(18, 60%, 60%, 1); }
+    10% { color: hsla(36, 60%, 60%, 1); }
+    15% { color: hsla(54, 60%, 60%, 1); }
+    20% { color: hsla(72, 60%, 60%, 1); }
+    25% { color: hsla(90, 60%, 60%, 1); }
+    30% { color: hsla(108, 60%, 60%, 1); }
+    35% { color: hsla(126, 60%, 60%, 1); }
+    40% { color: hsla(144, 60%, 60%, 1); }
+    45% { color: hsla(162, 60%, 60%, 1); }
+    50% { color: hsla(180, 60%, 60%, 1); }
+    55% { color: hsla(198, 60%, 60%, 1); }
+    60% { color: hsla(216, 60%, 60%, 1); }
+    65% { color: hsla(234, 60%, 60%, 1); }
+    70% { color: hsla(252, 60%, 60%, 1); }
+    75% { color: hsla(270, 60%, 60%, 1); }
+    80% { color: hsla(288, 60%, 60%, 1); }
+    85% { color: hsla(306, 60%, 60%, 1); }
+    90% { color: hsla(324, 60%, 60%, 1); }
+    95% { color: hsla(342, 60%, 60%, 1); }
+    100% { color: hsla(360, 60%, 60%, 1); }
+}
+
+.anim-text-flow span {
+    animation-name: anim-text-flow-keys;
+    animation-duration: 50s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-fill-mode: forwards;
+}
+
+.anim-text-flow span:nth-of-type(1) { animation-delay: -19.8s; }
+.anim-text-flow span:nth-of-type(2) { animation-delay: -19.6s; }
+.anim-text-flow span:nth-of-type(3) { animation-delay: -19.4s; }
+.anim-text-flow span:nth-of-type(4) { animation-delay: -19.2s; }
+.anim-text-flow span:nth-of-type(5) { animation-delay: -19.0s; }
+.anim-text-flow span:nth-of-type(6) { animation-delay: -18.8s; }
+.anim-text-flow span:nth-of-type(7) { animation-delay: -18.6s; }
+.anim-text-flow span:nth-of-type(8) { animation-delay: -18.4s; }
+.anim-text-flow span:nth-of-type(9) { animation-delay: -18.2s; }
+.anim-text-flow span:nth-of-type(10) { animation-delay: -18.0s; }
+.anim-text-flow span:nth-of-type(11) { animation-delay: -17.8s; }
+.anim-text-flow span:nth-of-type(12) { animation-delay: -17.6s; }
+.anim-text-flow span:nth-of-type(13) { animation-delay: -17.4s; }
+.anim-text-flow span:nth-of-type(14) { animation-delay: -17.2s; }
+.anim-text-flow span:nth-of-type(15) { animation-delay: -17.0s; }
+.anim-text-flow span:nth-of-type(16) { animation-delay: -16.8s; }
+.anim-text-flow span:nth-of-type(17) { animation-delay: -16.6s; }
+.anim-text-flow span:nth-of-type(18) { animation-delay: -16.4s; }
+.anim-text-flow span:nth-of-type(19) { animation-delay: -16.2s; }
+.anim-text-flow span:nth-of-type(20) { animation-delay: -16.0s; }
+.anim-text-flow span:nth-of-type(21) { animation-delay: -15.8s; }
+.anim-text-flow span:nth-of-type(22) { animation-delay: -15.6s; }
+.anim-text-flow span:nth-of-type(23) { animation-delay: -15.4s; }
+.anim-text-flow span:nth-of-type(24) { animation-delay: -15.2s; }
+.anim-text-flow span:nth-of-type(25) { animation-delay: -15.0s; }
+.anim-text-flow span:nth-of-type(26) { animation-delay: -14.8s; }
+.anim-text-flow span:nth-of-type(27) { animation-delay: -14.6s; }
+.anim-text-flow span:nth-of-type(28) { animation-delay: -14.4s; }
+.anim-text-flow span:nth-of-type(29) { animation-delay: -14.2s; }
+.anim-text-flow span:nth-of-type(30) { animation-delay: -14.0s; }
+.anim-text-flow span:nth-of-type(31) { animation-delay: -13.8s; }
+.anim-text-flow span:nth-of-type(32) { animation-delay: -13.6s; }
+.anim-text-flow span:nth-of-type(33) { animation-delay: -13.4s; }
+.anim-text-flow span:nth-of-type(34) { animation-delay: -13.2s; }
+.anim-text-flow span:nth-of-type(35) { animation-delay: -13.0s; }
+.anim-text-flow span:nth-of-type(36) { animation-delay: -12.8s; }
+.anim-text-flow span:nth-of-type(37) { animation-delay: -12.6s; }
+.anim-text-flow span:nth-of-type(38) { animation-delay: -12.4s; }
+.anim-text-flow span:nth-of-type(39) { animation-delay: -12.2s; }
+.anim-text-flow span:nth-of-type(40) { animation-delay: -12.0s; }
+.anim-text-flow span:nth-of-type(41) { animation-delay: -11.8s; }
+.anim-text-flow span:nth-of-type(42) { animation-delay: -11.6s; }
+.anim-text-flow span:nth-of-type(43) { animation-delay: -11.4s; }
+.anim-text-flow span:nth-of-type(44) { animation-delay: -11.2s; }
+.anim-text-flow span:nth-of-type(45) { animation-delay: -11.0s; }
+.anim-text-flow span:nth-of-type(46) { animation-delay: -10.8s; }
+.anim-text-flow span:nth-of-type(47) { animation-delay: -10.6s; }
+.anim-text-flow span:nth-of-type(48) { animation-delay: -10.4s; }
+.anim-text-flow span:nth-of-type(49) { animation-delay: -10.2s; }
+.anim-text-flow span:nth-of-type(50) { animation-delay: -10.0s; }
+}
+
+/* --- EFEITO DE TERREMOTO PARA A PALAVRA "DESASTRES" --- */
+
+@keyframes shake {
+    0%, 100% { transform: translate(0, 0) rotate(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translate(-2px, -2px) rotate(-1deg); }
+    20%, 40%, 60%, 80% { transform: translate(2px, 2px) rotate(1deg); }
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(0) rotate(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(150px) rotate(15deg);
+        opacity: 0;
+    }
+}
+
+/* O contêiner da palavra */
+#disaster-word {
+    display: inline-block; /* Necessário para o transform funcionar corretamente */
+}
+
+/* Estilo base para cada letra */
+.letter {
+    display: inline-block;
+    position: relative; /* Necessário para animações não afetarem o layout */
+    opacity: 1;
+}
+
+/* GATILHOS DE ANIMAÇÃO */
+
+/* Quando o contêiner tem a classe 'active', ele treme */
+#disaster-word.active {
+    animation: shake 0.5s linear;
+}
+
+/* Quando o contêiner tem a classe 'active', as letras caem */
+#disaster-word.active .letter {
+    animation-name: fall;
+    animation-duration: 1.2s;
+    animation-timing-function: ease-in;
+    animation-fill-mode: forwards; /* Mantém o estado final (invisível) */
 }
 /* --- ESTILOS PARA O MENU OVERLAY MOBILE (GLASSMORPHISM AZUL) --- */
 #mobile-menu-overlay {
