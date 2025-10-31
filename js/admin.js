@@ -4,18 +4,28 @@
  */
 
 import { supabase } from './supabaseClient.js';
-import { configurarControlesAcessibilidade } from './acessibilidade.js';
 import { mostrarNotificacao } from './notificacoes.js';
+import {
+    fetchInscritos, addInscrito, updateInscrito, updateInscritosBatch,
+    deleteInscritosPermanently, fetchInscritoById
+} from './api.js';
  
-// Variável de estado no escopo do módulo para ser acessível por todas as funções
-let todosInscritos = [];
-
+// --- MÓDULO DE ESTADO E RENDERIZAÇÃO ---
+const estado = {
+    inscritos: [],
+    mostrandoLixeira: false,
+    filtroColuna: 'all',
+    filtroTermo: '',
+    colunaOrdenacao: 'created_at',
+    direcaoOrdenacao: 'desc',
+    setInscritos(novosInscritos) {
+        this.inscritos = novosInscritos;
+    }
+};
 /**
  * Função principal que inicializa o painel de administração.
  */
 async function inicializarPainelAdministrativo() {
-    let mostrandoLixeira = false; // Variável de estado local para a visualização
-
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
@@ -29,59 +39,39 @@ async function inicializarPainelAdministrativo() {
     if (adminEmailEl) adminEmailEl.textContent = session.user.email;
 
     /**
-     * Atualiza todas as partes da UI que dependem dos dados dos inscritos.
+     * Função central para carregar dados e renderizar toda a UI.
      */
-    function atualizarUICompleta() {
-        const inscritosAtivos = todosInscritos.filter(i => !i.is_deleted);
-        
-        renderizarVisualizacao();
-        
-        configurarCardEmpresasInterativo(inscritosAtivos);
-        configurarCardMunicipiosInterativo(inscritosAtivos);
-        configurarCardCertificadoInterativo(inscritosAtivos);
-        preencherMetricas(inscritosAtivos);
-        configurarCardParticipantesInterativo(inscritosAtivos);
-        criarGraficos(inscritosAtivos);
-
-        const bulkActionsBar = document.getElementById('bulk-actions-bar');
-        if (bulkActionsBar) bulkActionsBar.classList.add('hidden');
+    async function carregarERenderizar() {
+        try {
+            const data = await fetchInscritos();
+            estado.setInscritos(data);
+            renderizarUICompleta();
+        } catch (error) {
+            mostrarNotificacao(error.message, 'erro');
+        }
     }
 
-    /**
-     * Configura todos os listeners de eventos que só precisam ser configurados uma vez.
-     */
-    function configurarTudo() {
-        configurarFiltroDeBusca(renderizarVisualizacao);
-        configurarOrdenacaoTabela(renderizarVisualizacao);
-        configurarAcoesTabela(async () => {
-            // O callback de sucesso é o mesmo para ambas as funções
-            todosInscritos = await buscarInscritos();
-            atualizarUICompleta();
-        });
-        configurarAcoesEmMassa(async () => {
-            todosInscritos = await buscarInscritos();
-            atualizarUICompleta();
-        });
-        configurarExportacaoCSV(todosInscritos);
-        configurarExportacaoPDF(todosInscritos);
-        configurarExportacaoChecklist(todosInscritos);
+    // Configura todos os listeners de eventos que só precisam ser configurados uma vez.
+    function configurarListenersGlobais() {
+        configurarFiltroDeBusca();
+        configurarOrdenacaoTabela();
+        configurarAcoesTabela();
+        configurarAcoesEmMassa();
+        configurarExportacoes();
         configurarExclusaoDuplicados();
-        configurarModalAdicionarInscrito(async () => {
-            todosInscritos = await buscarInscritos();
-            atualizarUICompleta();
-        });
-        configurarModalEditarInscrito(async () => {
-            todosInscritos = await buscarInscritos();
-            atualizarUICompleta();
-        });
+        configurarModalAdicionarInscrito();
+        configurarModalEditarInscrito();
         configurarNotificacoesDeCommit();
         configurarBotaoGraficos();
         configurarMenuFlutuante();
         configurarTutorialGuiado();
+        configurarToggleLixeira();
+
+        // Listener central para recarregar dados após ações bem-sucedidas
+        document.body.addEventListener('dadosAlterados', carregarERenderizar);
     }
 
-
-    // 3. Configurar o Botão de Logout
+    // Configurar o Botão de Logout
     const logoutBtn = document.getElementById('admin-logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async () => {
@@ -92,67 +82,71 @@ async function inicializarPainelAdministrativo() {
         });
     }
 
-    // Configura o interruptor (toggle switch) da lixeira
+    // --- PONTO DE ENTRADA ---
+    configurarListenersGlobais();
+    await carregarERenderizar();
+}
+
+/**
+ * Atualiza todas as partes da UI que dependem dos dados dos inscritos.
+ */
+function renderizarUICompleta() {
+    const inscritosAtivos = estado.inscritos.filter(i => !i.is_deleted);
+    const inscritosLixeira = estado.inscritos.filter(i => i.is_deleted);
+
+    // Renderiza a tabela com os dados filtrados e ordenados
+    renderizarTabela(estado.mostrandoLixeira ? inscritosLixeira : inscritosAtivos);
+
+    // Renderiza as métricas e gráficos com base nos inscritos ativos
+    renderizarMetricas(inscritosAtivos);
+    criarGraficos(inscritosAtivos);
+
+    // Atualiza o contador da lixeira
+    const trashCountBadge = document.getElementById('trash-count-badge');
+    if (trashCountBadge) {
+        const count = inscritosLixeira.length;
+        trashCountBadge.textContent = count;
+        trashCountBadge.style.display = count > 0 ? 'flex' : 'none';
+    }
+
+    // Esconde a barra de ações em massa
+    const bulkActionsBar = document.getElementById('bulk-actions-bar');
+    if (bulkActionsBar) bulkActionsBar.classList.add('hidden');
+}
+
+function configurarToggleLixeira() {
     const toggleSwitch = document.getElementById('view-toggle-switch');
     const labelAtivos = document.getElementById('toggle-label-ativos');
     const labelLixeira = document.getElementById('toggle-label-lixeira');
 
-    if (toggleSwitch && labelAtivos && labelLixeira) {
-        // Adiciona cursor de ponteiro para indicar que os labels são clicáveis
-        labelAtivos.classList.add('cursor-pointer');
-        labelLixeira.classList.add('cursor-pointer');
+    if (!toggleSwitch || !labelAtivos || !labelLixeira) return;
 
-        // Função central para alternar a visualização
-        const alternarVisualizacao = () => {
-            mostrandoLixeira = !mostrandoLixeira;
+    const alternarVisualizacao = () => {
+        estado.mostrandoLixeira = !estado.mostrandoLixeira;
 
-            // Atualiza a aparência do interruptor
-            const thumb = document.getElementById('toggle-thumb');
+        const thumb = document.getElementById('toggle-thumb');
+        toggleSwitch.classList.toggle('bg-red-600', estado.mostrandoLixeira);
+        toggleSwitch.classList.toggle('bg-green-600', !estado.mostrandoLixeira);
+        thumb.classList.toggle('translate-x-5', estado.mostrandoLixeira);
+        thumb.classList.toggle('translate-x-0', !estado.mostrandoLixeira);
 
-            toggleSwitch.classList.toggle('bg-red-600', mostrandoLixeira);
-            toggleSwitch.classList.toggle('bg-green-600', !mostrandoLixeira);
-            thumb.classList.toggle('translate-x-5', mostrandoLixeira);
-            thumb.classList.toggle('translate-x-0', !mostrandoLixeira);
+        labelAtivos.classList.toggle('text-green-700', !estado.mostrandoLixeira);
+        labelAtivos.classList.toggle('text-gray-400', estado.mostrandoLixeira);
+        labelLixeira.classList.toggle('text-red-600', estado.mostrandoLixeira);
+        labelLixeira.classList.toggle('text-gray-400', !estado.mostrandoLixeira);
 
-            labelAtivos.classList.toggle('text-green-700', !mostrandoLixeira);
-            labelAtivos.classList.toggle('text-gray-400', mostrandoLixeira);
-            labelLixeira.classList.toggle('text-red-600', mostrandoLixeira);
-            labelLixeira.classList.toggle('text-gray-400', !mostrandoLixeira);
+        renderizarUICompleta();
+    };
 
-            // Renderiza a visualização correta (ativos ou lixeira)
-            renderizarVisualizacao();
-        };
+    [toggleSwitch, labelAtivos, labelLixeira].forEach(el => {
+        el.classList.add('cursor-pointer');
+        el.addEventListener('click', alternarVisualizacao);
+    });
+}
 
-        // Adiciona o evento de clique ao interruptor e aos labels
-        toggleSwitch.addEventListener('click', alternarVisualizacao);
-        labelAtivos.addEventListener('click', alternarVisualizacao);
-        labelLixeira.addEventListener('click', alternarVisualizacao);
-    }
-
-    function renderizarVisualizacao() {
-        const dadosParaRenderizar = mostrandoLixeira
-            ? todosInscritos.filter(i => i.is_deleted)
-            : todosInscritos.filter(i => !i.is_deleted);
-        renderizarTabela(dadosParaRenderizar, mostrandoLixeira);
-
-        // Atualiza o contador da lixeira
-        const trashCountBadge = document.getElementById('trash-count-badge');
-        if (trashCountBadge) {
-            const count = todosInscritos.filter(i => i.is_deleted).length;
-            trashCountBadge.textContent = count;
-            trashCountBadge.style.display = count > 0 ? 'flex' : 'none';
-        }
-    }
-
-    // --- PONTO DE ENTRADA ---
-    todosInscritos = await buscarInscritos();
-    if (todosInscritos) {
-        atualizarUICompleta(); // Renderiza a UI pela primeira vez
-        configurarTudo();      // Configura todos os eventos
-        
-    } else {
-        document.getElementById('lista-inscritos').innerHTML = `<tr><td colspan="8" class="px-6 py-4 text-center text-red-500">Falha ao carregar dados.</td></tr>`;
-    }
+function renderizarMetricas(inscritosAtivos) {
+    // Os cards agora são criados uma vez e apenas seus dados são atualizados
+    document.dispatchEvent(new CustomEvent('atualizarCards', { detail: { inscritos: inscritosAtivos } }));
 }
 
 /**
@@ -182,29 +176,11 @@ function configurarBotaoGraficos() {
 }
 
 /**
- * Busca os dados da tabela 'cadastro_workshop' no Supabase.
- * @returns {Promise<Array|null>} Uma lista de inscritos ou null em caso de erro.
- */
-async function buscarInscritos() {    
-    const { data: inscritos, error } = await supabase
-        .from('cadastro_workshop')
-        .select('*')
-        .order('nome_completo', { ascending: true });
-    
-    if (error) {
-        console.error('Erro ao buscar inscritos:', error.message, error); // Loga a mensagem e o objeto completo
-        return null;
-    }
-    return inscritos;
-}
-
-/**
  * Gera o HTML para uma única linha da tabela de inscritos.
  * @param {object} inscrito - O objeto do inscrito.
- * @param {boolean} naLixeira - Flag para saber se a visualização é da lixeira.
  * @returns {string} O HTML da tag <tr>.
  */
-function gerarHtmlLinha(inscrito, naLixeira = false) {
+function gerarHtmlLinha(inscrito) {
     // Cria os marcadores coloridos para os dias de participação
     let diasHtml = '';
     if (inscrito.participa_dia_13 && inscrito.participa_dia_14) {
@@ -217,7 +193,7 @@ function gerarHtmlLinha(inscrito, naLixeira = false) {
         diasHtml = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-400 text-white">Nenhum</span>`;
     }
 
-    const botaoAcao = naLixeira
+    const botaoAcao = estado.mostrandoLixeira
         ? `<div class="flex gap-2">
                <button class="btn-restaurar text-gray-500 hover:text-green-600 transition-colors" data-id="${inscrito.id}" data-nome="${inscrito.nome_completo}" title="Restaurar inscrito">
                    <span class="material-symbols-outlined">restore_from_trash</span>
@@ -323,28 +299,70 @@ function gerarHtmlLinha(inscrito, naLixeira = false) {
  * Renderiza os dados dos inscritos na tabela HTML.
  * @param {Array} inscritos - A lista de objetos de inscritos a serem exibidos.
  * @param {boolean} naLixeira - Flag para saber se a visualização é da lixeira.
- */
-function renderizarTabela(inscritos, naLixeira = false) {
+*/
+function renderizarTabela(inscritos) {
     const corpoTabela = document.getElementById('lista-inscritos');
     if (!corpoTabela) return;
-
+    
+    // Usa diretamente os dados filtrados e ordenados que são passados para a função.
     if (inscritos.length === 0) {
-        const mensagemVazio = naLixeira 
+        const mensagemVazio = estado.mostrandoLixeira
             ? 'Lixeira vazia. Missão cumprida! ✅' 
             : 'Nenhum inscrito encontrado. Parece que estamos sozinhos por aqui. 🦗';
         corpoTabela.innerHTML = `<tr><td colspan="14" class="px-6 py-4 text-center text-gray-500">${mensagemVazio}</td></tr>`;
         return;
     }
-
-    const linhasHtml = inscritos.map(inscrito => gerarHtmlLinha(inscrito, naLixeira)).join('');
-
-    corpoTabela.innerHTML = linhasHtml;
+    corpoTabela.innerHTML = inscritos.map(i => gerarHtmlLinha(i)).join('');
 
     // Após renderizar, reconfigura a seleção para garantir que os listeners estejam nos novos elementos
-    configurarSelecaoEmMassa(naLixeira);
+    configurarSelecaoEmMassa();
 }
 
+function getDadosFiltradosEOrdenados() {
+    const {
+        inscritos, mostrandoLixeira, filtroColuna, filtroTermo,
+        colunaOrdenacao, direcaoOrdenacao
+    } = estado;
 
+    const dadosVisiveis = mostrandoLixeira
+        ? inscritos.filter(i => i.is_deleted)
+        : inscritos.filter(i => !i.is_deleted);
+
+    // Filtragem
+    const dadosFiltrados = dadosVisiveis.filter(inscrito => {
+        if (!filtroTermo) return true;
+        const termo = filtroTermo.toLowerCase();
+
+        if (filtroColuna === 'all') {
+            return Object.values(inscrito).some(val =>
+                String(val).toLowerCase().includes(termo)
+            );
+        } else {
+            const valorCampo = inscrito[filtroColuna];
+            return String(valorCampo).toLowerCase().includes(termo);
+        }
+    });
+
+    // Ordenação
+    return dadosFiltrados.sort((a, b) => {
+        let valorA = a[colunaOrdenacao];
+        let valorB = b[colunaOrdenacao];
+
+        // Tratamento para valores nulos ou indefinidos
+        if (valorA == null) return 1;
+        if (valorB == null) return -1;
+
+        let comparacao = 0;
+        if (typeof valorA === 'string') {
+            comparacao = valorA.localeCompare(valorB, 'pt-BR', { sensitivity: 'base' });
+        } else if (typeof valorA === 'number' || typeof valorA === 'boolean' || valorA instanceof Date) {
+            if (valorA < valorB) comparacao = -1;
+            if (valorA > valorB) comparacao = 1;
+        }
+
+        return direcaoOrdenacao === 'asc' ? comparacao : -comparacao;
+    });
+}
 
 
 /**
@@ -357,53 +375,19 @@ function configurarFiltroDeBusca() {
     if (!seletorColuna || !filtroInput) return;
 
     const executarFiltro = () => {
-        const colunaSelecionada = seletorColuna.value;
-        const termoBusca = filtroInput.value.toLowerCase().trim();
-        const linhasTabela = document.querySelectorAll('#lista-inscritos tr');
-
-        // Mapeia os valores do <select> para os índices das colunas da tabela (começando em 0)
-        const mapaColunas = {
-            'nome': 1,
-            'codigo_inscricao': 2,
-            'cargo': 2,            
-            'cpf': 3,
-            'email': 4,
-            'telefone': 5,
-            'empresa': 6,
-            'municipio': 7,
-            'cep': 8,
-            'dias': 9,
-            'certificado': 10,
-            'created_at': 11
-        };
-
-        linhasTabela.forEach(linha => {
-            let textoParaVerificar = '';
-
-            if (colunaSelecionada === 'all') {
-                // Busca em toda a linha
-                textoParaVerificar = linha.textContent.toLowerCase();
-            } else {
-                // Busca na coluna específica
-                const indiceColuna = mapaColunas[colunaSelecionada];
-                const celula = linha.querySelectorAll('td')[indiceColuna];
-                if (celula) textoParaVerificar = celula.textContent.toLowerCase();
-            }
-
-            linha.style.display = textoParaVerificar.includes(termoBusca) ? '' : 'none';
-        });
+        estado.filtroColuna = seletorColuna.value;
+        estado.filtroTermo = filtroInput.value;
+        renderizarUICompleta();
     };
 
-    // Executa o filtro sempre que o texto ou a seleção mudar
     filtroInput.addEventListener('input', executarFiltro);
     seletorColuna.addEventListener('change', executarFiltro);
 }
 
 /**
  * Adiciona a funcionalidade de ordenação à tabela ao clicar nos cabeçalhos.
- * @param {Function} callbackRender - A função que deve ser chamada para re-renderizar a tabela.
  */
-function configurarOrdenacaoTabela(callbackRender) {
+function configurarOrdenacaoTabela() {
     const headers = document.querySelectorAll('.admin-table th[data-column]');
     let colunaOrdenadaAtual = 'nome_completo';
     let direcaoOrdenacaoAtual = 'asc';
@@ -412,60 +396,17 @@ function configurarOrdenacaoTabela(callbackRender) {
         header.addEventListener('click', () => {
             const colunaSelecionada = header.dataset.column;
 
-            if (colunaSelecionada === colunaOrdenadaAtual) {
-                direcaoOrdenacaoAtual = direcaoOrdenacaoAtual === 'asc' ? 'desc' : 'asc';
+            if (colunaSelecionada === estado.colunaOrdenacao) {
+                estado.direcaoOrdenacao = estado.direcaoOrdenacao === 'asc' ? 'desc' : 'asc';
             } else {
-                colunaOrdenadaAtual = colunaSelecionada;
-                direcaoOrdenacaoAtual = 'asc';
+                estado.colunaOrdenacao = colunaSelecionada;
+                estado.direcaoOrdenacao = 'asc';
             }
 
-            // Ordena o array principal de inscritos
-            todosInscritos.sort((a, b) => {
-                let valorA, valorB;
-
-                // Tratamento especial para a coluna 'dias'
-                if (colunaSelecionada === 'dias') {
-                    valorA = `${a.participa_dia_13 ? '13' : ''}${a.participa_dia_13 && a.participa_dia_14 ? ', ' : ''}${a.participa_dia_14 ? '14' : ''}`;
-                    valorB = `${b.participa_dia_13 ? '13' : ''}${b.participa_dia_13 && b.participa_dia_14 ? ', ' : ''}${b.participa_dia_14 ? '14' : ''}`;
-                } else if (colunaSelecionada === 'created_at') {
-                    // Para datas, compara os objetos Date diretamente
-                    valorA = new Date(a.created_at);
-                    valorB = new Date(b.created_at);
-                } else if (colunaSelecionada === 'quer_certificado') {
-                    // Ordena por um valor numérico: 2=pago, 1=pendente, 0=não solicitado
-                    const getCertValue = (insc) => {
-                        if (!insc.quer_certificado) return 0;
-                        return insc.status_pagamento === 'pago' ? 2 : 1;
-                    };
-                    valorA = getCertValue(a);
-                    valorB = getCertValue(b);
-                } else {
-                    valorA = a[colunaSelecionada];
-                    valorB = b[colunaSelecionada];
-                }
-
-                // Garante que valores nulos ou indefinidos fiquem no final
-                if (valorA == null) return 1;
-                if (valorB == null) return -1;
-
-                let comparacao = 0;
-                if (typeof valorA === 'string' && typeof valorB === 'string') {
-                    // Comparação de texto
-                    comparacao = valorA.localeCompare(valorB, 'pt-BR', { sensitivity: 'base' });
-                } else {
-                    // Comparação numérica ou de booleano
-                    if (valorA < valorB) comparacao = -1;
-                    if (valorA > valorB) comparacao = 1;
-                }
-
-                return direcaoOrdenacaoAtual === 'asc' ? comparacao : -comparacao;
-            });
-
-            // Chama a função de renderização para redesenhar a tabela com os dados agora ordenados
-            callbackRender();
+            renderizarUICompleta();
 
             // Atualiza os ícones de seta nos cabeçalhos
-            atualizarIconesOrdenacao(headers, colunaSelecionada, direcaoOrdenacaoAtual);
+            atualizarIconesOrdenacao(headers, estado.colunaOrdenacao, estado.direcaoOrdenacao);
         });
     });
 }
@@ -474,11 +415,8 @@ function configurarOrdenacaoTabela(callbackRender) {
  * Configura os botões e a lógica da barra de ações em massa.
  * @param {Function} callbackSucesso - Função a ser chamada após uma ação bem-sucedida.
  */
-function configurarAcoesEmMassa(callbackSucesso) {
+function configurarAcoesEmMassa() {
     const bulkMoveBtn = document.getElementById('bulk-move-to-trash-btn');
-    const bulkCsvBtn = document.getElementById('bulk-export-csv-btn');
-    const bulkPdfBtn = document.getElementById('bulk-export-pdf-btn');
-    const bulkChecklistBtn = document.getElementById('bulk-export-checklist-btn');    
     const bulkRestoreBtn = document.getElementById('bulk-restore-btn');
     const bulkDeletePermanentBtn = document.getElementById('bulk-delete-permanent-btn');
     const bulkEditBtn = document.getElementById('bulk-edit-btn');
@@ -489,48 +427,21 @@ function configurarAcoesEmMassa(callbackSucesso) {
             const idsParaMover = obterIdsSelecionados();
             if (idsParaMover.length === 0) return;
 
-            const confirmado = await mostrarModalConfirmacaoDeletar(
+            const confirmado = await mostrarModalConfirmacao(
                 `Mover ${idsParaMover.length} Itens`,
                 `Você tem certeza que deseja mover os ${idsParaMover.length} itens selecionados para a lixeira?`,
                 `Sim, mover`
             );
 
             if (confirmado) {
-                const { error } = await supabase.from('cadastro_workshop').update({ is_deleted: true }).in('id', idsParaMover);
-                if (error) {
-                    mostrarNotificacao('Ocorreu um erro ao mover os itens.', 'erro');
-                } else {
+                try {
+                    await updateInscritosBatch(idsParaMover, { is_deleted: true });
                     mostrarNotificacao(`${idsParaMover.length} iten(s) movido(s) para a lixeira.`, 'sucesso');
-                    callbackSucesso();
+                    document.body.dispatchEvent(new CustomEvent('dadosAlterados'));
+                } catch (error) {
+                    mostrarNotificacao(error.message, 'erro');
                 }
             }
-        });
-    }
-
-    // Ação: Exportar CSV dos selecionados
-    if (bulkCsvBtn) {
-        bulkCsvBtn.addEventListener('click', () => {
-            const linhasSelecionadas = obterLinhasParaExportacao();
-            if (linhasSelecionadas.length === 0) return;
-            gerarCSV(linhasSelecionadas, todosInscritos);
-        });
-    }
-
-    // Ação: Exportar PDF dos selecionados
-    if (bulkPdfBtn) {
-        bulkPdfBtn.addEventListener('click', () => {
-            const linhasSelecionadas = obterLinhasParaExportacao();
-            if (linhasSelecionadas.length === 0) return;
-            gerarPDF(linhasSelecionadas, todosInscritos);
-        });
-    }
-
-    // Ação: Exportar Checklist dos selecionados
-    if (bulkChecklistBtn) {
-        bulkChecklistBtn.addEventListener('click', () => {
-            const linhasSelecionadas = obterLinhasParaExportacao();
-            if (linhasSelecionadas.length === 0) return;
-            gerarChecklist(linhasSelecionadas, todosInscritos);
         });
     }
 
@@ -541,12 +452,12 @@ function configurarAcoesEmMassa(callbackSucesso) {
             if (idsParaRestaurar.length === 0) return;
 
             // Não precisa de confirmação para restaurar
-            const { error } = await supabase.from('cadastro_workshop').update({ is_deleted: false }).in('id', idsParaRestaurar);
-            if (error) {
-                mostrarNotificacao('Ocorreu um erro ao restaurar os itens.', 'erro');
-            } else {
+            try {
+                await updateInscritosBatch(idsParaRestaurar, { is_deleted: false });
                 mostrarNotificacao(`${idsParaRestaurar.length} iten(s) restaurado(s) com sucesso.`, 'sucesso');
-                callbackSucesso();
+                document.body.dispatchEvent(new CustomEvent('dadosAlterados'));
+            } catch (error) {
+                mostrarNotificacao(error.message, 'erro');
             }
         });
     }
@@ -557,19 +468,19 @@ function configurarAcoesEmMassa(callbackSucesso) {
             const idsParaDeletar = obterIdsSelecionados();
             if (idsParaDeletar.length === 0) return;
 
-            const confirmado = await mostrarModalConfirmacaoDeletar(
+            const confirmado = await mostrarModalConfirmacao(
                 `Excluir ${idsParaDeletar.length} Itens Permanentemente`,
                 `ATENÇÃO: Você tem certeza que deseja excluir permanentemente os ${idsParaDeletar.length} itens selecionados? Esta ação não pode ser desfeita.`,
                 `Sim, excluir permanentemente`
             );
 
             if (confirmado) {
-                const { error } = await supabase.from('cadastro_workshop').delete().in('id', idsParaDeletar);
-                if (error) {
-                    mostrarNotificacao('Ocorreu um erro ao excluir os itens permanentemente.', 'erro');
-                } else {
+                try {
+                    await deleteInscritosPermanently(idsParaDeletar);
                     mostrarNotificacao(`${idsParaDeletar.length} iten(s) excluído(s) permanentemente.`, 'sucesso');
-                    callbackSucesso();
+                    document.body.dispatchEvent(new CustomEvent('dadosAlterados'));
+                } catch (error) {
+                    mostrarNotificacao(error.message, 'erro');
                 }
             }
         });
@@ -581,7 +492,7 @@ function configurarAcoesEmMassa(callbackSucesso) {
             const idsSelecionados = obterIdsSelecionados();
             if (idsSelecionados.length !== 1) return;
 
-            const { data, error } = await supabase.from('cadastro_workshop').select('*').eq('id', idsSelecionados[0]).single();
+            const { data, error } = await fetchInscritoById(idsSelecionados[0]);
             if (error) {
                 mostrarNotificacao('Erro ao buscar dados do inscrito para edição.', 'erro');
             } else {
@@ -633,7 +544,7 @@ function obterLinhasParaExportacao() {
 /**
  * Configura a lógica para seleção em massa de itens na tabela.
  */
-function configurarSelecaoEmMassa(naLixeira = false) {
+function configurarSelecaoEmMassa() {
     const bulkActionsBar = document.getElementById('bulk-actions-bar');
     const bulkActionsCount = document.getElementById('bulk-actions-count');
     const selectAllCheckbox = document.getElementById('select-all-checkbox');
@@ -660,12 +571,12 @@ function configurarSelecaoEmMassa(naLixeira = false) {
         }
 
         // Alterna a visibilidade dos botões de ação com base na visualização
-        btnsAtivos.forEach(btn => btn.classList.toggle('hidden', naLixeira));
-        btnsLixeira.forEach(btn => btn.classList.toggle('hidden', !naLixeira));
+        btnsAtivos.forEach(btn => btn.classList.toggle('hidden', estado.mostrandoLixeira));
+        btnsLixeira.forEach(btn => btn.classList.toggle('hidden', !estado.mostrandoLixeira));
 
         // Lógica de visibilidade para os novos botões
-        if (bulkEditBtn) bulkEditBtn.classList.toggle('hidden', naLixeira || totalSelecionado !== 1);
-        if (bulkDuplicateBtn) bulkDuplicateBtn.classList.toggle('hidden', naLixeira || totalSelecionado === 0);
+        if (bulkEditBtn) bulkEditBtn.classList.toggle('hidden', estado.mostrandoLixeira || totalSelecionado !== 1);
+        if (bulkDuplicateBtn) bulkDuplicateBtn.classList.toggle('hidden', estado.mostrandoLixeira || totalSelecionado === 0);
 
         // Se não houver linhas visíveis (ex: filtro não encontrou nada), desmarca o "selecionar tudo"
         if (totalVisivel === 0) {
@@ -712,9 +623,8 @@ function configurarSelecaoEmMassa(naLixeira = false) {
 
 /**
  * Configura os ouvintes de eventos para as ações da tabela (ex: deletar).
- * @param {Function} callbackSucesso - Função a ser chamada após uma ação bem-sucedida.
  */
-function configurarAcoesTabela(callbackSucesso) {
+function configurarAcoesTabela() {
     const corpoTabela = document.getElementById('lista-inscritos');
     if (!corpoTabela) return;
 
@@ -727,27 +637,21 @@ function configurarAcoesTabela(callbackSucesso) {
         
         if (targetButton.classList.contains('btn-mover-lixeira')) {
             // Abre o modal de confirmação para mover para a lixeira
-            const confirmado = await mostrarModalConfirmacaoDeletar(
+            const confirmado = await mostrarModalConfirmacao(
                 `Mover para a Lixeira`,
                 `Você tem certeza que deseja mover "${inscritoNome}" para a lixeira?`,
                 `Sim, mover`
             );
 
             if (confirmado) {
-                const sucesso = await atualizarStatusInscrito(inscritoId, true);
-                if (sucesso) {
-                    callbackSucesso();
-                }
+                await handleUpdateStatus(inscritoId, true);
             }
         } else if (targetButton.classList.contains('btn-restaurar')) {
             // Restaurando da lixeira (não precisa de confirmação)
-            const sucesso = await atualizarStatusInscrito(inscritoId, false);
-            if (sucesso) {
-                callbackSucesso();
-            }
+            await handleUpdateStatus(inscritoId, false);
         } else if (targetButton.classList.contains('btn-deletar-permanente')) {
             // Abre o modal de confirmação para exclusão permanente
-            const confirmado = await mostrarModalConfirmacaoDeletar(
+            const confirmado = await mostrarModalConfirmacao(
                 `Excluir Permanentemente`,
                 `ATENÇÃO: Você está prestes a excluir permanentemente "${inscritoNome}". Esta ação não pode ser desfeita.`,
                 `Sim, excluir permanentemente`
@@ -755,12 +659,9 @@ function configurarAcoesTabela(callbackSucesso) {
 
             if (confirmado) {
                 const sucesso = await deletarInscritoPermanentemente(inscritoId);
-                if (sucesso) {
-                    callbackSucesso();
-                }
             }
         } else if (targetButton.classList.contains('btn-editar')) {
-            const { data, error } = await supabase.from('cadastro_workshop').select('*').eq('id', inscritoId).single();
+            const { data, error } = await fetchInscritoById(inscritoId);
             if (error) {
                 mostrarNotificacao('Erro ao buscar dados do inscrito para edição.', 'erro');
             } else {
@@ -795,7 +696,7 @@ function configurarAcoesTabela(callbackSucesso) {
 
             const sucesso = await atualizarStatusCertificado(id, novoStatus);
             if (sucesso) {
-                callbackSucesso(); // Recarrega a tabela
+                document.body.dispatchEvent(new CustomEvent('dadosAlterados'));
             }
             menu.classList.add('hidden'); // Fecha o menu após a ação
         }
@@ -808,26 +709,18 @@ function configurarAcoesTabela(callbackSucesso) {
     });
 }
 
-async function atualizarStatusInscrito(id, isDeleted) {
-    const { error } = await supabase
-        .from('cadastro_workshop')
-        .update({ is_deleted: isDeleted })
-        .eq('id', id);
-
-    if (error) {
-        mostrarNotificacao('Ocorreu um erro ao atualizar o status do inscrito.', 'erro');
-        console.error('Erro ao atualizar:', error);
-        return false;
-    } else {
+async function handleUpdateStatus(id, isDeleted) {
+    try {
+        await updateInscrito(id, { is_deleted: isDeleted });
         const mensagem = isDeleted
             ? 'Inscrito movido para a lixeira com sucesso.'
             : 'Inscrito restaurado com sucesso.';
-
         mostrarNotificacao(mensagem, 'sucesso');
-        return true;
+        document.body.dispatchEvent(new CustomEvent('dadosAlterados'));
+    } catch (error) {
+        mostrarNotificacao(error.message, 'erro');
     }
 }
-
 /**
  * Atualiza o status do certificado de um inscrito no banco de dados.
  * @param {string} id - O ID do inscrito.
@@ -845,11 +738,11 @@ async function atualizarStatusCertificado(id, novoStatus) {
         dadosParaAtualizar = { quer_certificado: false, status_pagamento: 'nao_solicitado' };
     }
 
-    const { error } = await supabase.from('cadastro_workshop').update(dadosParaAtualizar).eq('id', id);
-
-    if (error) {
-        mostrarNotificacao('Erro ao atualizar o status do certificado.', 'erro');
-        console.error('Erro ao atualizar status do certificado:', error);
+    try {
+        await updateInscrito(id, dadosParaAtualizar);
+    } catch (error) {
+        mostrarNotificacao(error.message, 'erro');
+        console.error('Erro ao atualizar status do certificado:', error.message);
         return false;
     }
     mostrarNotificacao('Status do certificado atualizado com sucesso!', 'sucesso');
@@ -857,33 +750,22 @@ async function atualizarStatusCertificado(id, novoStatus) {
 }
 
 async function deletarInscritoPermanentemente(id) {
-    const { error } = await supabase
-        .from('cadastro_workshop')
-        .delete()
-        .eq('id', id);
-
-    if (error) {
-        mostrarNotificacao('Ocorreu um erro ao excluir o inscrito permanentemente.', 'erro');
-        console.error('Erro na exclusão permanente:', error);
-        return false;
-    } else {
+    try {
+        await deleteInscritosPermanently([id]);
         mostrarNotificacao('Inscrito excluído permanentemente.', 'sucesso');
-        return true;
+        document.body.dispatchEvent(new CustomEvent('dadosAlterados'));
+    } catch (error) {
+        mostrarNotificacao(error.message, 'erro');
     }
 }
 
 /**
  * Duplica um inscrito, criando um novo registro com dados semelhantes.
  * @param {string} id - O ID do inscrito a ser duplicado.
- * @param {Function} callbackSucesso - Função a ser chamada após a duplicação.
  */
 async function iniciarDuplicacao(id) {
     // 1. Busca os dados do inscrito original
-    const { data: original, error: fetchError } = await supabase
-        .from('cadastro_workshop')
-        .select('*')
-        .eq('id', id)
-        .single();
+    const { data: original, error: fetchError } = await fetchInscritoById(id);
 
     if (fetchError) {
         mostrarNotificacao('Erro ao buscar dados para duplicação.', 'erro');
@@ -910,9 +792,8 @@ async function iniciarDuplicacao(id) {
 /**
  * Exibe um modal para confirmar a exclusão de um inscrito.
  * @param {string} nomeInscrito - O nome do inscrito a ser exibido no modal.
- * @returns {Promise<boolean>} Retorna true se o usuário confirmar, false caso contrário.
  */
-function mostrarModalConfirmacaoDeletar(titulo, mensagem, textoBotaoConfirmar) {
+function mostrarModalConfirmacao(titulo, mensagem, textoBotaoConfirmar) {
     return new Promise(resolve => {
         const modal = document.getElementById('delete-confirm-modal');
         const titleEl = modal.querySelector('h3');
@@ -1007,58 +888,39 @@ function atualizarIconesOrdenacao(headers, colunaAtiva, direcao) {
 }
 
 /**
- * Preenche os cartões de métricas com os dados agregados.
- * @param {Array} inscritos - A lista de objetos de inscritos.
+ * Cria e gerencia um card interativo com múltiplas visualizações.
+ * @param {string} wrapperId - O ID do elemento que envolve os cards.
+ * @param {Array<object>} views - Um array de objetos, cada um definindo uma visualização do card.
+ *        Ex: [{ cardId: '...', valueId: '...', calculate: (inscritos) => ... }]
  */
-function preencherMetricas(inscritos) {
-    // Esta função agora pode ser usada para outras métricas estáticas no futuro.
-    // A métrica "Total de Inscritos" foi movida para o card interativo de "Participantes".
-}
+function criarCardInterativo(wrapperId, views) {
+    const wrapper = document.getElementById(wrapperId);
+    if (!wrapper) return;
 
-/**
- * Configura o card interativo de Empresas.
- * @param {Array} inscritos - A lista de objetos de inscritos.
- */
-function configurarCardEmpresasInterativo(inscritos) {
-    const wrapper = document.getElementById('card-empresas-wrapper');
-    const cards = [
-        document.getElementById('card-empresas-total'),
-        document.getElementById('card-empresas-mais-inscritos'),
-        document.getElementById('card-empresas-menos-inscritos')
-    ];
-    const valores = [
-        document.getElementById('card-empresas-total-valor'),
-        document.getElementById('card-empresas-mais-inscritos-valor'),
-        document.getElementById('card-empresas-menos-inscritos-valor')
-    ];
-    const indicators = wrapper ? wrapper.querySelectorAll('.indicator-dot') : [];
-
-    if (!wrapper || cards.some(c => !c) || valores.some(v => !v) || indicators.length === 0) return;
-    
-    let isAnimating = false;
-    let estadoAtual = 0; // 0: Total, 1: Mais inscritos, 2: Menos inscritos
-    let autoRotateTimeout;
+    const cards = views.map(v => document.getElementById(v.cardId));
+    const valueElements = views.map(v => document.getElementById(v.valueId));
+    const indicators = wrapper.querySelectorAll('.indicator-dot');
     const progressBar = wrapper.querySelector('.card-progress-bar');
-    const autoRotateDelay = 10000;
 
-    const preencherDados = () => {
-        const empresasUnicas = new Set(inscritos.map(i => i.empresa).filter(Boolean));
-        valores[0].textContent = empresasUnicas.size;
+    if (cards.some(c => !c) || valueElements.some(v => !v) || !progressBar) {
+        console.warn(`Card interativo "${wrapperId}" não pôde ser inicializado: elementos ausentes.`);
+        return;
+    }
 
-        const contagemEmpresas = inscritos.reduce((acc, { empresa }) => {
-            if (empresa) acc[empresa] = (acc[empresa] || 0) + 1;
-            return acc;
-        }, {});
+    let estadoAtual = 0;
+    let isAnimating = false;
+    let autoRotateTimeout;
+    const autoRotateDelay = 10000; // 10 segundos
 
-        const sortedEmpresas = Object.entries(contagemEmpresas).sort(([,a],[,b]) => b-a);
+    // Função para atualizar os valores de todos os cards de uma vez
+    function atualizarValores(inscritos) {
+        views.forEach((view, index) => {
+            const valor = view.calculate(inscritos);
+            valueElements[index].textContent = valor;
+        });
+    }
 
-        const maisInscritos = sortedEmpresas.length > 0 ? sortedEmpresas[0][0] : 'N/A';
-        valores[1].textContent = maisInscritos;
-
-        const menosInscritos = sortedEmpresas.length > 0 ? sortedEmpresas[sortedEmpresas.length - 1][0] : 'N/A';
-        valores[2].textContent = menosInscritos;
-    };
-
+    // Funções de controle da UI
     const atualizarIndicadores = () => {
         indicators.forEach((dot, index) => dot.classList.toggle('active', index === estadoAtual));
     };
@@ -1097,10 +959,14 @@ function configurarCardEmpresasInterativo(inscritos) {
     };
 
     wrapper.addEventListener('click', avancarCard);
-    preencherDados();
     atualizarIndicadores();
     startProgressBar();
     autoRotateTimeout = setTimeout(avancarCard, autoRotateDelay);
+
+    // Ouve o evento para atualizar os dados quando a UI principal for renderizada
+    document.addEventListener('atualizarCards', (e) => {
+        atualizarValores(e.detail.inscritos);
+    });
 }
 
 /**
@@ -1173,6 +1039,7 @@ function configurarCardMunicipiosInterativo(inscritos) {
         resetProgressBar();
 
         const cardAnterior = cards[estadoAtual];
+        const numCards = cards.length;
         const proximoCardVisivel = cards[(estadoAtual + 2) % cards.length];
         estadoAtual = (estadoAtual + 1) % cards.length;
 
@@ -1373,33 +1240,59 @@ function configurarCardParticipantesInterativo(inscritos) {
  * Configura o botão para exportar os dados da tabela para um arquivo CSV.
  * Exporta apenas as linhas visíveis (respeitando o filtro).
  */
-function configurarExportacaoCSV() {
+function configurarExportacoes() {
     const exportBtn = document.getElementById('export-csv-btn');
-    if (!exportBtn) return;
+    const exportPdfBtn = document.getElementById('export-pdf-btn');
+    const exportChecklistBtn = document.getElementById('export-checklist-btn');
+    const bulkCsvBtn = document.getElementById('bulk-export-csv-btn');
+    const bulkPdfBtn = document.getElementById('bulk-export-pdf-btn');
+    const bulkChecklistBtn = document.getElementById('bulk-export-checklist-btn');
 
-    exportBtn.addEventListener('click', () => gerarCSV(obterLinhasParaExportacao(), todosInscritos));
+    const getDadosParaExportar = () => {
+        const selecionados = obterIdsSelecionados();
+        if (selecionados.length > 0) {
+            return estado.inscritos.filter(i => selecionados.includes(i.id));
+        }
+        return getDadosFiltradosEOrdenados();
+    };
+
+    exportBtn?.addEventListener('click', () => gerarCSV(getDadosFiltradosEOrdenados()));
+    exportPdfBtn?.addEventListener('click', () => gerarPDF(getDadosFiltradosEOrdenados()));
+    exportChecklistBtn?.addEventListener('click', () => gerarChecklist(getDadosFiltradosEOrdenados()));
+
+    bulkCsvBtn?.addEventListener('click', () => gerarCSV(getDadosParaExportar()));
+    bulkPdfBtn?.addEventListener('click', () => gerarPDF(getDadosParaExportar()));
+    bulkChecklistBtn?.addEventListener('click', () => gerarChecklist(getDadosParaExportar()));
 }
 
 /**
  * Gera e baixa um arquivo CSV com base nas linhas da tabela fornecidas.
  * @param {Element[]} linhasTabela 
  */
-function gerarCSV(linhasTabela, todosInscritos) {
+function gerarCSV(dados) {
         let csvContent = "";
 
         // Cabeçalho do CSV
-        const headers = ["Nome Completo", "E-mail", "Telefone", "Empresa", "Município", "Dias"];
+        const headers = ["Nome Completo", "Código", "E-mail", "CPF", "Telefone", "Empresa", "Município", "Dias", "Certificado"];
         csvContent += headers.join(";") + "\r\n";
 
-        linhasTabela.forEach(linha => {
-            const colunas = linha.querySelectorAll('td');
-            const dadosLinha = Array.from(colunas).map(coluna => {
-                // Limpa o texto e coloca entre aspas para evitar problemas com vírgulas
-                let dado = coluna.innerText.replace(/"/g, '""');
-                return `"${dado}"`; // Envolve em aspas
-            });
-            // Pula a primeira coluna (checkbox) e a última (ações)
-            csvContent += dadosLinha.slice(1, -2).join(";") + "\r\n";
+        dados.forEach(inscrito => {
+            const dias = `${inscrito.participa_dia_13 ? '13' : ''}${inscrito.participa_dia_13 && inscrito.participa_dia_14 ? ', ' : ''}${inscrito.participa_dia_14 ? '14' : ''}`;
+            const certificado = inscrito.status_pagamento;
+
+            const linha = [
+                inscrito.nome_completo,
+                inscrito.codigo_inscricao,
+                inscrito.email,
+                inscrito.cpf,
+                inscrito.telefone,
+                inscrito.empresa,
+                inscrito.municipio,
+                dias,
+                certificado
+            ].map(dado => `"${String(dado || '').replace(/"/g, '""')}"`);
+
+            csvContent += linha.join(";") + "\r\n";
         });
 
         // Cria o link para download
@@ -1419,28 +1312,17 @@ function gerarCSV(linhasTabela, todosInscritos) {
 }
 
 /**
- * Configura o botão para exportar os dados da tabela para um arquivo PDF.
- * Exporta apenas as linhas visíveis (respeitando o filtro).
- */
-function configurarExportacaoPDF() {
-    const exportBtn = document.getElementById('export-pdf-btn');
-    if (!exportBtn) return;
-
-    exportBtn.addEventListener('click', () => gerarPDF(obterLinhasParaExportacao(), todosInscritos));
-}
-
-/**
  * Gera e baixa um arquivo PDF com a lista de inscritos.
- * @param {Element[]} linhasTabela 
+ * @param {Array} dados - Array de objetos de inscritos.
  */
-function gerarPDF(linhasTabela, todosInscritos) {
+function gerarPDF(dados) {
     const { jsPDF } = window.jspdf; // Acessa o jsPDF do objeto global
         const doc = new jsPDF();
         const dataAtual = new Date().toLocaleDateString('pt-BR');
 
         // Define o cabeçalho do documento
         doc.setFontSize(18);
-        doc.setTextColor('#062E51');
+        doc.setTextColor('#062E51'); // Azul escuro
         doc.text("Lista de Inscritos - WORKSHOP", 14, 22);
         doc.setFontSize(11);
         doc.setTextColor(100);
@@ -1450,9 +1332,16 @@ function gerarPDF(linhasTabela, todosInscritos) {
         const head = [["Nome Completo", "E-mail", "Telefone", "Empresa", "Município", "Dias"]];
         const body = [];
 
-        linhasTabela.forEach(linha => {
-            const colunas = linha.querySelectorAll('td');
-            const dadosLinha = Array.from(colunas).slice(1, -2).map(c => c.innerText);
+        dados.forEach(inscrito => {
+            const dias = `${inscrito.participa_dia_13 ? '13' : ''}${inscrito.participa_dia_13 && inscrito.participa_dia_14 ? ', ' : ''}${inscrito.participa_dia_14 ? '14' : ''}`;
+            const dadosLinha = [
+                inscrito.nome_completo,
+                inscrito.email,
+                inscrito.telefone,
+                inscrito.empresa,
+                inscrito.municipio,
+                dias
+            ];
             body.push(dadosLinha);
         });
 
@@ -1483,24 +1372,10 @@ function gerarPDF(linhasTabela, todosInscritos) {
 }
 
 /**
- * Configura o botão para exportar uma lista de chamada (checklist) em PDF.
- */
-function configurarExportacaoChecklist() {
-    const exportBtn = document.getElementById('export-checklist-btn');
-    if (!exportBtn) return;
-
-    exportBtn.addEventListener('click', async () => {
-        // Garante que estamos usando os dados mais recentes antes de exportar.
-        todosInscritos = await buscarInscritos();
-        gerarChecklist(obterLinhasParaExportacao(), todosInscritos);
-    });
-}
-
-/**
  * Gera e baixa um arquivo PDF formatado como lista de chamada.
- * @param {Element[]} linhasTabela 
+ * @param {Array} dados - Array de objetos de inscritos.
  */
-function gerarChecklist(linhasTabela, todosInscritos) {
+function gerarChecklist(dados) {
     const { jsPDF } = window.jspdf; // Acessa o jsPDF do objeto global
         const doc = new jsPDF();
         const dataAtual = new Date().toLocaleDateString('pt-BR');
@@ -1518,11 +1393,10 @@ function gerarChecklist(linhasTabela, todosInscritos) {
         const body = [];
 
         let contador = 1;
-        linhasTabela.forEach(linha => {
-            const colunas = linha.querySelectorAll('td');
-            const nome = colunas[1] ? colunas[1].innerText : 'N/A';
-            const codigo = colunas[2] ? colunas[2].innerText : 'N/A'; // Pega o código direto da nova coluna
-            const empresa = colunas[7] ? colunas[7].innerText : 'N/A'; // O índice da empresa mudou para 7
+        dados.forEach(inscrito => {
+            const nome = inscrito.nome_completo || 'N/A';
+            const codigo = inscrito.codigo_inscricao || 'N/A';
+            const empresa = inscrito.empresa || 'N/A';
             
             body.push([contador, codigo, nome, empresa, '']); // Adiciona o código e a coluna de assinatura
             contador++;
@@ -1679,19 +1553,18 @@ function criarGraficos(inscritos) {
  * A duplicidade é baseada no e-mail. O inscrito mais recente é mantido.
  */
 function configurarExclusaoDuplicados() {
-    const deleteBtn = document.getElementById('delete-duplicates-btn');
-    if (!deleteBtn) return;
+    const deleteBtn = document.getElementById('delete-duplicates-btn'); // Corrigido
+    if (!deleteBtn) return; // Corrigido
 
     deleteBtn.addEventListener('click', async () => {
-        // Busca os dados mais recentes para garantir que estamos trabalhando com a lista atual.
-        const todosInscritos = await buscarInscritos();
-        if (!todosInscritos) {
-            mostrarNotificacao('Não foi possível buscar os inscritos para verificar duplicados.', 'erro');
+        // Usa os dados do estado global, que já estão carregados.
+        if (!estado.inscritos || estado.inscritos.length === 0) {
+            mostrarNotificacao('Não há inscritos carregados para verificar duplicados.', 'aviso');
             return;
         }
 
         // 1. Agrupa inscritos por nome completo (ignorando maiúsculas/minúsculas)
-        const inscritosPorNome = todosInscritos.reduce((acc, inscrito) => {
+        const inscritosPorNome = estado.inscritos.reduce((acc, inscrito) => {
             const nome = inscrito.nome_completo.toLowerCase().trim();
             if (!acc[nome]) {
                 acc[nome] = [];
@@ -1718,7 +1591,7 @@ function configurarExclusaoDuplicados() {
         }
 
         // 3. Pede confirmação ao usuário
-        const confirmado = await mostrarModalConfirmacaoDeletar(
+        const confirmado = await mostrarModalConfirmacao(
             `Excluir ${idsParaDeletar.length} Duplicados`,
             `Foram encontrados ${idsParaDeletar.length} inscritos duplicados (baseado no nome completo). Deseja mover os registros mais antigos para a lixeira, mantendo apenas o mais recente de cada?`,
             `Sim, mover para lixeira`
@@ -1726,13 +1599,12 @@ function configurarExclusaoDuplicados() {
 
         // 4. Executa a exclusão (movendo para a lixeira)
         if (confirmado) {
-            const { error } = await supabase.from('cadastro_workshop').update({ is_deleted: true }).in('id', idsParaDeletar);
-            if (error) {
-                mostrarNotificacao('Ocorreu um erro ao excluir os duplicados.', 'erro');
-            } else {
+            try {
+                await updateInscritosBatch(idsParaDeletar, { is_deleted: true });
                 mostrarNotificacao(`${idsParaDeletar.length} registro(s) duplicado(s) movido(s) para a lixeira.`, 'sucesso');
-                // Atualiza a UI para refletir a mudança
-                document.location.reload(); // A forma mais simples de garantir que tudo seja recarregado
+                document.body.dispatchEvent(new CustomEvent('dadosAlterados'));
+            } catch (error) {
+                mostrarNotificacao(error.message, 'erro');
             }
         }
     });
@@ -1860,8 +1732,70 @@ function criarConfetes() {
     }
 }
 
-// Inicia a execução do script da página.
-document.addEventListener('DOMContentLoaded', inicializarPainelAdministrativo);
+document.addEventListener('DOMContentLoaded', () => {
+    inicializarPainelAdministrativo();
+
+    // --- INICIALIZAÇÃO DOS CARDS INTERATIVOS ---
+    criarCardInterativo('card-empresas-wrapper', [
+        {
+            cardId: 'card-empresas-total', valueId: 'card-empresas-total-valor',
+            calculate: (inscritos) => new Set(inscritos.map(i => i.empresa).filter(Boolean)).size
+        },
+        {
+            cardId: 'card-empresas-mais-inscritos', valueId: 'card-empresas-mais-inscritos-valor',
+            calculate: (inscritos) => {
+                const contagem = inscritos.reduce((acc, { empresa }) => { if (empresa) acc[empresa] = (acc[empresa] || 0) + 1; return acc; }, {});
+                const sorted = Object.entries(contagem).sort(([, a], [, b]) => b - a);
+                return sorted.length > 0 ? sorted[0][0] : 'N/A';
+            }
+        },
+        {
+            cardId: 'card-empresas-menos-inscritos', valueId: 'card-empresas-menos-inscritos-valor',
+            calculate: (inscritos) => {
+                const contagem = inscritos.reduce((acc, { empresa }) => { if (empresa) acc[empresa] = (acc[empresa] || 0) + 1; return acc; }, {});
+                const sorted = Object.entries(contagem).sort(([, a], [, b]) => a - b);
+                return sorted.length > 0 ? sorted[0][0] : 'N/A';
+            }
+        }
+    ]);
+
+    criarCardInterativo('card-municipios-wrapper', [
+        {
+            cardId: 'card-municipios-total', valueId: 'card-municipios-total-valor',
+            calculate: (inscritos) => new Set(inscritos.map(i => i.municipio).filter(Boolean)).size
+        },
+        {
+            cardId: 'card-municipios-mais-inscritos', valueId: 'card-municipios-mais-inscritos-valor',
+            calculate: (inscritos) => {
+                const contagem = inscritos.reduce((acc, { municipio }) => { if (municipio) acc[municipio] = (acc[municipio] || 0) + 1; return acc; }, {});
+                const sorted = Object.entries(contagem).sort(([, a], [, b]) => b - a);
+                return sorted.length > 0 ? sorted[0][0] : 'N/A';
+            }
+        },
+        {
+            cardId: 'card-municipios-menos-inscritos', valueId: 'card-municipios-menos-inscritos-valor',
+            calculate: (inscritos) => {
+                const contagem = inscritos.reduce((acc, { municipio }) => { if (municipio) acc[municipio] = (acc[municipio] || 0) + 1; return acc; }, {});
+                const sorted = Object.entries(contagem).sort(([, a], [, b]) => a - b);
+                return sorted.length > 0 ? sorted[0][0] : 'N/A';
+            }
+        }
+    ]);
+
+    criarCardInterativo('card-adesao-wrapper', [
+        { cardId: 'card-adesao-percent', valueId: 'card-certificado-percent-valor', calculate: i => `${(i.filter(u => u.quer_certificado).length / (i.length || 1) * 100).toFixed(0)}%` },
+        { cardId: 'card-adesao-count', valueId: 'card-certificado-count-valor', calculate: i => i.filter(u => u.quer_certificado).length },
+        { cardId: 'card-adesao-receita', valueId: 'card-certificado-receita-valor', calculate: i => `R$ ${(i.filter(u => u.status_pagamento === 'pendente').length * 20).toFixed(2).replace('.', ',')}` },
+        { cardId: 'card-adesao-receita-paga', valueId: 'card-certificado-receita-paga-valor', calculate: i => `R$ ${(i.filter(u => u.status_pagamento === 'pago').length * 20).toFixed(2).replace('.', ',')}` }
+    ]);
+
+    criarCardInterativo('card-participantes-wrapper', [
+        { cardId: 'card-participantes-total', valueId: 'card-participantes-total-valor', calculate: i => i.length },
+        { cardId: 'card-participantes-dia13', valueId: 'card-participantes-dia13-valor', calculate: i => i.filter(u => u.participa_dia_13).length },
+        { cardId: 'card-participantes-dia14', valueId: 'card-participantes-dia14-valor', calculate: i => i.filter(u => u.participa_dia_14).length },
+        { cardId: 'card-participantes-ambos', valueId: 'card-participantes-ambos-valor', calculate: i => i.filter(u => u.participa_dia_13 && u.participa_dia_14).length }
+    ]);
+});
 
 /**
  * Formata uma string para o formato "Título", tratando preposições comuns em português.
@@ -1877,9 +1811,8 @@ function formatarParaTitulo(str) {
 
 /**
  * Configura o modal para adicionar um novo inscrito manualmente.
- * @param {Function} callbackSucesso - Função a ser chamada após adicionar com sucesso.
  */
-function configurarModalAdicionarInscrito(callbackSucesso) {
+function configurarModalAdicionarInscrito() {
     const openBtn = document.getElementById('add-inscrito-btn');
     const modal = document.getElementById('add-inscrito-modal');
     const form = document.getElementById('add-inscrito-form');
@@ -1951,16 +1884,14 @@ function configurarModalAdicionarInscrito(callbackSucesso) {
             return false;
         }
 
-        const { error } = await supabase.from('cadastro_workshop').insert([novoInscrito]);
-
-        if (error) {
-            mostrarNotificacao(error.code === '23505' ? 'Este e-mail já está cadastrado.' : 'Ocorreu um erro ao salvar.', 'erro');
-            console.error('Erro ao adicionar inscrito:', error);
-            return false;
-        } else {
+        try {
+            await addInscrito(novoInscrito);
             mostrarNotificacao('Novo inscrito adicionado com sucesso!', 'sucesso');
-            callbackSucesso();
+            document.body.dispatchEvent(new CustomEvent('dadosAlterados'));
             return true;
+        } catch (error) {
+            mostrarNotificacao(error.code === '23505' ? 'Este e-mail já está cadastrado.' : 'Ocorreu um erro ao salvar.', 'erro');
+            return false;
         }
     };
 
@@ -2021,9 +1952,8 @@ function abrirModalAdicionarComDados(dados) {
 
 /**
  * Configura o modal para editar um inscrito existente.
- * @param {Function} callbackSucesso - Função a ser chamada após editar com sucesso.
  */
-function configurarModalEditarInscrito(callbackSucesso) {
+function configurarModalEditarInscrito() {
     const modal = document.getElementById('edit-inscrito-modal');
     const form = document.getElementById('edit-inscrito-form');
     const closeBtn = document.getElementById('edit-modal-close-btn');
@@ -2058,15 +1988,13 @@ function configurarModalEditarInscrito(callbackSucesso) {
             participa_dia_14: formData.has('dia14'),
         };
 
-        const { error } = await supabase.from('cadastro_workshop').update(dadosAtualizados).eq('id', id);
-
-        if (error) {
-            mostrarNotificacao('Ocorreu um erro ao salvar as alterações.', 'erro');
-            console.error('Erro ao editar inscrito:', error);
-        } else {
+        try {
+            await updateInscrito(id, dadosAtualizados);
             esconderModal();
             mostrarNotificacao('Inscrito atualizado com sucesso!', 'sucesso');
-            callbackSucesso();
+            document.body.dispatchEvent(new CustomEvent('dadosAlterados'));
+        } catch (error) {
+            mostrarNotificacao(error.message, 'erro');
         }
 
         submitButton.disabled = false;

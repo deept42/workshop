@@ -184,12 +184,13 @@ export function configurarValidacaoFormulario() {
         step1.classList.remove('hidden');
         // Limpa todas as classes de validação
         form.querySelectorAll('.form-group, .days-selection-group').forEach(el => {
-            el.classList.remove('error', 'success');
+            el.classList.remove('error', 'success'); // Mantém a limpeza de validação
         });
-        mensagensForm.innerHTML = ''; // Clear form messages
+        mensagensForm.innerHTML = ''; // Limpa as mensagens de erro do formulário
         if (progressBar) {
             progressBar.style.width = '50%';
         }
+        mostrarFeedbackSucessoTopo(); // Mostra a barra de sucesso no topo
         form.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 
@@ -312,10 +313,9 @@ export function configurarValidacaoFormulario() {
         const { data: cpfExistente, error: cpfError } = await supabase
             .from('cadastro_workshop')
             .select('cpf')
-            .eq('cpf', cpfLimpo)
-            .single();
+            .eq('cpf', cpfLimpo); // Removido .single()
 
-        if (cpfExistente) {
+        if (cpfExistente && cpfExistente.length > 0) {
             mostrarNotificacao('Este CPF já foi cadastrado. Verifique os dados ou entre em contato.', 'erro');
             return; // Sai da função, o finally será executado
         }
@@ -324,10 +324,9 @@ export function configurarValidacaoFormulario() {
         const { data: emailExistente, error: emailError } = await supabase
             .from('cadastro_workshop')
             .select('email')
-            .eq('email', emailLimpo)
-            .single();
+            .eq('email', emailLimpo); // Removido .single()
 
-        if (emailExistente) {
+        if (emailExistente && emailExistente.length > 0) {
             mostrarNotificacao('Este e-mail já foi cadastrado. Por favor, utilize outro.', 'erro');
             return; // Sai da função, o finally será executado
         }
@@ -365,11 +364,10 @@ export function configurarValidacaoFormulario() {
             const dadosInscrito = { id: data[0].id, nome, email, cpf, telefone, municipio, cep, codigo_inscricao: codigoInscricao };
 
             mostrarNotificacao('Inscrição confirmada! Verifique as opções de certificado.', 'sucesso');
-            mostrarFeedbackSucessoTopo(); // Reativando a barra de sucesso no topo
             resetarParaPasso1(); // Reseta o formulário e volta para o passo 1
 
             // Passa os dados coletados para a função do modal
-            mostrarModalCertificado(dadosInscrito);
+            mostrarModalCertificado(dadosInscrito); // Corrigido para passar o objeto completo
 
             // Tenta enviar o e-mail de confirmação chamando a Edge Function
             try {
@@ -397,23 +395,31 @@ export function configurarValidacaoFormulario() {
     });
 
     function mostrarFeedbackSucessoTopo() {
-        const topBar = document.getElementById('top-bar');
-        const title = topBar.querySelector('.top-bar-title');
-        const countdown = topBar.querySelector('#countdown-timer');
-        const subtitle = topBar.querySelector('.top-bar-subtitle');
-
-        if (!topBar || !title || !countdown || !subtitle) return;
-        
-        // Esconde os elementos que não são necessários na mensagem de sucesso
-        title.style.display = 'none';
-        countdown.style.display = 'none';
-        
-        // Aplica o estado de sucesso
-        topBar.style.background = 'linear-gradient(to right, #16A34A, #15803D, #16A34A)'; // Gradiente verde
-        topBar.style.color = 'white'; // Garante que o texto fique legível no fundo verde
-        subtitle.textContent = 'INSCRIÇÃO CONFIRMADA COM SUCESSO!';
-        subtitle.style.fontWeight = 'bold';
-        subtitle.style.display = 'block'; // Garante que o subtítulo esteja visível
+        const ctaFlutuante = document.getElementById('inscricao-cta-flutuante');
+        if (!ctaFlutuante) return;
+    
+        const ctaContent = ctaFlutuante.querySelector('.cta-content');
+        if (!ctaContent) return;
+    
+        // Guarda o conteúdo original para restaurar depois
+        const originalContentHTML = ctaContent.innerHTML;
+    
+        // Modifica o estilo e o conteúdo para a mensagem de sucesso
+        ctaFlutuante.style.backgroundColor = '#16A34A'; // Verde sucesso
+        ctaContent.innerHTML = `
+            <p class="cta-title font-bold">INSCRIÇÃO REALIZADA!</p>
+            <p class="cta-subtitle">Verifique as opções de certificado.</p>
+        `;
+    
+        // Restaura o estado original após 5 segundos
+        setTimeout(() => {
+            if (ctaFlutuante) {
+                ctaFlutuante.style.backgroundColor = ''; // Remove a cor de fundo customizada
+            }
+            if (ctaContent) {
+                ctaContent.innerHTML = originalContentHTML; // Restaura o conteúdo original
+            }
+        }, 5000);
     }
 
     function validarCampo(input) {
@@ -679,33 +685,33 @@ export async function configurarAutocompletarComDadosSalvos() {
                 .select('nome_completo, cargo_funcao, cpf, empresa, telefone, municipio, cep')
                 .eq('email', email)                
                 .order('created_at', { ascending: false })
-                .limit(1)
-                .single();
+                .limit(1); // Removido o .single()
 
             // Se houver um erro (ex: e-mail não encontrado), simplesmente ignora e não faz nada.
             // Isso evita que o site quebre para novos usuários.
-            if (data && !error) {
+            if (!error && data && data.length > 0) {
+                const dadosEncontrados = data[0]; // Pega o primeiro resultado
                 // Se encontrou dados, preenche o formulário
-                form.elements['nome'].value = data.nome_completo || '';
-                form.elements['cargo'].value = data.cargo_funcao || '';
+                form.elements['nome'].value = dadosEncontrados.nome_completo || '';
+                form.elements['cargo'].value = dadosEncontrados.cargo_funcao || '';
                 const inputCPF = form.elements['cpf'];
-                if (inputCPF && data.cpf) {
-                    inputCPF.value = data.cpf;
+                if (inputCPF && dadosEncontrados.cpf) {
+                    inputCPF.value = dadosEncontrados.cpf;
                     // Dispara o evento 'input' para que a máscara seja aplicada
                     inputCPF.dispatchEvent(new Event('input', { bubbles: true }));
                 }
-                form.elements['empresa'].value = data.empresa || '';
+                form.elements['empresa'].value = dadosEncontrados.empresa || '';
                 const inputCEP = form.elements['cep'];
-                if (inputCEP && data.cep) {
-                    inputCEP.value = data.cep;
+                if (inputCEP && dadosEncontrados.cep) {
+                    inputCEP.value = dadosEncontrados.cep;
                     // Dispara o evento 'input' para que a máscara seja aplicada
                     inputCEP.dispatchEvent(new Event('input', { bubbles: true }));
                 }
-                form.elements['municipio'].value = data.municipio || '';
+                form.elements['municipio'].value = dadosEncontrados.municipio || '';
 
                 const inputTelefone = form.elements['telefone'];
-                if (inputTelefone && data.telefone) {
-                    inputTelefone.value = data.telefone;
+                if (inputTelefone && dadosEncontrados.telefone) {
+                    inputTelefone.value = dadosEncontrados.telefone;
                     // Dispara o evento 'input' para que a máscara de telefone seja aplicada
                     inputTelefone.dispatchEvent(new Event('input', { bubbles: true }));
                 }
