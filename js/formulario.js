@@ -303,6 +303,7 @@ export function configurarValidacaoFormulario() {
         };
         const codigoInscricao = gerarCodigoInscricao();
 
+    try {
         // --- VERIFICAÇÃO DE CPF E E-MAIL DUPLICADOS ANTES DE INSERIR ---
         const cpfLimpo = cpf.replace(/\D/g, '');
         const emailLimpo = email.toLowerCase();
@@ -316,9 +317,7 @@ export function configurarValidacaoFormulario() {
 
         if (cpfExistente) {
             mostrarNotificacao('Este CPF já foi cadastrado. Verifique os dados ou entre em contato.', 'erro');
-            // Reseta o botão e interrompe a execução
-            submitBtn.disabled = false; submitBtn.classList.remove('is-loading'); submitBtn.textContent = 'Inscrever-se Agora';
-            return;
+            return; // Sai da função, o finally será executado
         }
 
         // 2. Verifica se o E-mail já existe
@@ -330,8 +329,7 @@ export function configurarValidacaoFormulario() {
 
         if (emailExistente) {
             mostrarNotificacao('Este e-mail já foi cadastrado. Por favor, utilize outro.', 'erro');
-            submitBtn.disabled = false; submitBtn.classList.remove('is-loading'); submitBtn.textContent = 'Inscrever-se Agora';
-            return;
+            return; // Sai da função, o finally será executado
         }
 
         // Envio para o Supabase
@@ -357,18 +355,11 @@ export function configurarValidacaoFormulario() {
 
         if (error) {
             console.error('Objeto completo do erro do Supabase:', error);
-            // Se houver um erro de banco de dados que não seja de duplicidade (já tratado acima)
-            // ou se a busca por CPF/e-mail falhou por outro motivo (ex: rede)
             if (error.code === '23505') { // Fallback para erro de unicidade que pode ter passado
                 mostrarNotificacao('Erro de duplicidade inesperado. CPF ou E-mail já cadastrado.', 'erro');
-            } else if (cpfError || emailError) { // Erro na busca de duplicidade
-                mostrarNotificacao('Erro ao verificar CPF. Tente novamente.', 'erro');
             } else {
                 mostrarNotificacao('Ocorreu um erro inesperado na inscrição. Tente novamente.', 'erro');
             }
-            submitBtn.disabled = false;
-            submitBtn.classList.remove('is-loading');
-            submitBtn.textContent = 'Inscrever-se Agora';
         } else {
             // Coleta os dados ANTES de limpar o formulário
             const dadosInscrito = { id: data[0].id, nome, email, cpf, telefone, municipio, cep, codigo_inscricao: codigoInscricao };
@@ -382,24 +373,27 @@ export function configurarValidacaoFormulario() {
 
             // Tenta enviar o e-mail de confirmação chamando a Edge Function
             try {
-                const { error: emailError } = await supabase.functions.invoke('send-confirmation-email', {
+                const { error: emailInvokeError } = await supabase.functions.invoke('send-confirmation-email', {
                     body: { nome, email, codigo_inscricao: codigoInscricao },
                 });
-                if (emailError) {
-                    throw emailError;
+                if (emailInvokeError) {
+                    throw emailInvokeError;
                 }
             } catch (invokeError) {
                 // Se o envio do e-mail falhar, apenas loga no console para não confundir o usuário,
                 // pois a inscrição em si foi um sucesso.
                 console.error("Falha ao enviar e-mail de confirmação:", invokeError);
             }
-
-            setTimeout(() => {
-                submitBtn.disabled = false;
-                submitBtn.classList.remove('is-loading');
-                submitBtn.textContent = 'Inscrever-se Agora';
-            }, 3000);
         }
+    } catch (generalError) {
+        console.error("Erro geral no processo de submissão:", generalError);
+        mostrarNotificacao('Ocorreu um erro inesperado. Verifique o console para mais detalhes.', 'erro');
+    } finally {
+        // Este bloco será executado independentemente do resultado do envio de e-mail ou Supabase.
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('is-loading');
+            submitBtn.textContent = 'Inscrever-se Agora';
+    }
     });
 
     function mostrarFeedbackSucessoTopo() {
@@ -443,7 +437,7 @@ export function configurarValidacaoFormulario() {
                 ehValido = valor && validarCEP(valor);
                 break;
             default: // Para nome, empresa, municipio
-                ehValido = !!valor;
+                ehValido = !input.required || !!valor;
                 break;
         }
 
