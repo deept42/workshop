@@ -174,7 +174,7 @@ body {
      * - A partir de 75% da altura, começa a transicionar para a cor de fundo do site (rgb(247, 250, 252)).
      * - No final (100%), a cor é totalmente sólida, criando uma transição suave para a próxima seção.
      */
-    background: linear-gradient(to bottom, #193b5b4d 0%, #193b5b4d 75%, rgb(247, 250, 252) 100%);
+    background: linear-gradient(to bottom, #193b5bf1 0%, #193b5b34 50%, rgba(247, 250, 252, 0.801) 100%);
     z-index: 1;
 }
 
@@ -198,24 +198,6 @@ body {
     height: 100%;
 }
 
-/* --- Estilos para o Mapa Responsivo --- */
-.map-container {
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-    padding-top: 75%; /* Proporção 4:3 (450/600) */
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.map-container iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
 /* Estilos para o elemento de vídeo de fundo */
 .hero-video-element {
     position: absolute;
@@ -228,19 +210,6 @@ body {
     z-index: 0;
 }
 
-/* Fundos para as outras seções */
-.folder-panel {
-    background-size: cover;
-    background-position: center;
-}
-
-/* --- Fundo Genérico para Seções --- */
-.section-with-gradient-bg {
-    /* Esta classe não precisa de estilos específicos */
-}
-#programacao, #patrocinadores, #palestrantes, #inscricao {
-    /* Herda o fundo claro do body */
-}
 
 
 /* --- Fundo de Quadrados Animados (Integrado) --- */
@@ -291,6 +260,28 @@ body {
 .panel-content {
     position: relative;
     z-index: 1;
+}
+
+/* --- EFEITO DE TRANSIÇÃO ENTRE SEÇÕES --- */
+
+/*
+ * A seção #sobre, que vem logo após o vídeo, terá um pseudo-elemento ::before
+ * para criar uma transição suave a partir do final da seção do vídeo.
+ */
+#sobre::before {
+    content: '';
+    position: absolute;
+    bottom: 100%; /* Posiciona o início do gradiente no topo exato da seção #sobre */
+    left: 0;
+    width: 100%;
+    height: 25vh; /* Altura da área de transição (25% da altura da tela) */
+    /*
+     * O gradiente começa totalmente transparente e transiciona para a cor de fundo do site.
+     * Isso cria um "fade" suave que começa sobre a parte inferior do vídeo.
+     */
+    background: linear-gradient(to bottom, transparent 0%, rgb(247, 250, 252) 100%);
+    pointer-events: none; /* Garante que o gradiente não interfira com cliques */
+    z-index: 5; /* Garante que fique acima do vídeo, mas abaixo do conteúdo */
 }
 
 /* --- FIM DA NOVA LÓGICA --- */
