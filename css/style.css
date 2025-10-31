@@ -168,8 +168,13 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    /* NOVA COR: Sobreposição clara para legibilidade de texto escuro */
-    background-color: #193b5b4d;
+    /* 
+     * Gradiente de sobreposição:
+     * - Começa com uma cor escura semi-transparente (#193b5b4d) para garantir a legibilidade do texto.
+     * - A partir de 75% da altura, começa a transicionar para a cor de fundo do site (rgb(247, 250, 252)).
+     * - No final (100%), a cor é totalmente sólida, criando uma transição suave para a próxima seção.
+     */
+    background: linear-gradient(to bottom, #193b5b4d 0%, #193b5b4d 75%, rgb(247, 250, 252) 100%);
     z-index: 1;
 }
 
