@@ -51,12 +51,18 @@
 
 html {
     scroll-behavior: smooth; /* Garante que a rolagem seja suave */
+    /* SOLUÇÃO DEFINITIVA: Impede a barra de rolagem horizontal no nível mais alto, sem afetar os cálculos de largura. */
+    overflow-x: clip;
 }
-
+/* NOVO: Wrapper para controlar o overflow */
+#page-wrapper {
+    position: relative;
+    width: 100%;
+    overflow-x: hidden;
+}
 body {
     margin: 0;
     padding: 0;
-    overflow-x: hidden;
     font-family: 'Inter', sans-serif;
     /* NOVA COR: Fundo base claro (cinza-50 do Tailwind) */
     background-color: #f8fafc;
@@ -1967,4 +1973,54 @@ button[type="submit"].is-loading {
 .floating-nav-link:hover {
     background-color: #e5e7eb; /* gray-200 */
     color: #062E51;
+}
+
+/* --- NOVOS ESTILOS PARA O CARROSSEL DE PALESTRANTES (EFEITO SNAKE) --- */
+.speaker-carousel {
+    overflow: hidden; /* Esconde o conteúdo que sai da tela */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem; /* Espaço entre as duas fileiras */
+    /* FAZ O CARROSSEL SE ESTENDER ALÉM DAS BORDAS DA TELA */
+    margin-left: -5vw;
+    margin-right: -5vw;
+}
+
+/* Estilo comum para ambas as pistas de animação */
+.speaker-track {
+    display: flex;
+    flex-shrink: 0; /* Impede que as pistas encolham */
+    gap: 2rem; /* 32px de espaço entre os cards */
+}
+
+/* Pausa a animação de ambas as pistas quando o mouse está sobre o carrossel */
+.speaker-carousel:hover .speaker-track {
+    animation-play-state: paused;
+}
+
+/* Pista 1: Animação da direita para a esquerda */
+.speaker-track-1 {
+    /* (Largura do card 360px + gap 32px) * 4 cards = 1568px. Duplicado = 3136px */
+    width: calc((360px + 2rem) * 8); /* 4 cards originais + 4 duplicados */
+    animation: scroll-right-to-left 40s linear infinite;
+}
+
+/* Pista 2: Animação da esquerda para a direita */
+.speaker-track-2 {
+    /* (Largura do card 360px + gap 32px) * 5 cards = 1960px. Duplicado = 3920px */
+    width: calc((360px + 2rem) * 10); /* 5 cards originais + 5 duplicados */
+    /* A direção da animação é revertida para criar o movimento oposto */
+    animation: scroll-right-to-left 50s linear infinite reverse;
+}
+
+/* Animação que move da direita para a esquerda */
+@keyframes scroll-right-to-left {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%); /* Move até a metade, onde os duplicados começam */
+    }
+}
 }
