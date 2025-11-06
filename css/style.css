@@ -651,14 +651,15 @@ body {
         height: 5rem; /* 80px */
     }
     .badge-photo-container {
-        bottom: -50px;
+        bottom: -55px;
+        padding: 0.3rem;
     }
     .badge-photo {
-        width: 100px;
-        height: 100px;
+        width: 110px;
+        height: 110px;
     }
     .badge-content {
-        padding-top: 3.75rem; /* 60px */
+        padding-top: 4.25rem; /* 68px - ajustado para a nova altura da foto */
     }
     .badge-name {
         font-size: 1.5rem;
@@ -989,36 +990,92 @@ body {
 /* --- Estilos para o Crachá do Palestrante (TEMA CLARO) --- */
 .speaker-badge {
     background-color: white;
-    border-radius: 1rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     width: 100%;
     max-width: 22.5rem;
     position: relative;
-    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    border: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+.speaker-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #E63946, #062E51, #E63946);
+    background-size: 200% 100%;
+    opacity: 0;
+    transition: opacity 0.4s ease;
 }
 
 .speaker-badge:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 25px 50px -12px rgba(6, 46, 81, 0.25), 0 0 0 1px rgba(230, 57, 70, 0.1);
+    border-color: rgba(230, 57, 70, 0.3);
+}
+
+.speaker-badge:hover::before {
+    opacity: 1;
+    animation: gradient-shift 3s ease infinite;
+}
+
+@keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
 }
 
 .badge-top-part {
-    background-color: #062E51; /* Azul escuro do tema */
-    height: 6.25rem;
+    background: linear-gradient(135deg, #062E51 0%, #0a3d6b 50%, #062E51 100%);
+    background-size: 200% 200%;
+    height: 7rem;
     position: relative;
-    border-radius: 1rem 1rem 0 0;
+    border-radius: 1.5rem 1.5rem 0 0;
+    overflow: hidden;
+    transition: background-position 0.6s ease;
 }
+
+.speaker-badge:hover .badge-top-part {
+    background-position: 100% 0%;
+}
+
+.badge-top-part::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 20%, rgba(230, 57, 70, 0.15) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.speaker-badge:hover .badge-top-part::after {
+    opacity: 1;
+}
+
 .badge-header { /* Elemento decorativo */ }
 
 .badge-photo-container {
     position: absolute;
-    bottom: -60px;
+    bottom: -65px;
     left: 50%;
     transform: translateX(-50%);
     border-radius: 50%;
-    padding: 0.25rem;
-    background-color: white;
-    transition: transform 0.3s ease;
+    padding: 0.35rem;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 16px rgba(6, 46, 81, 0.15);
+}
+
+.speaker-badge:hover .badge-photo-container {
+    transform: translateX(-50%) scale(1.05);
+    box-shadow: 0 12px 24px rgba(6, 46, 81, 0.2);
 }
 
 .badge-photo-container::before {
@@ -1029,47 +1086,96 @@ body {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background: linear-gradient(45deg, #E63946, #f77f00);
-    transform: translate(-50%, -50%) scale(0.95);
+    background: linear-gradient(135deg, #E63946 0%, #f77f00 50%, #E63946 100%);
+    background-size: 200% 200%;
+    transform: translate(-50%, -50%) scale(0.9);
     z-index: -1;
     opacity: 0;
-    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .speaker-badge:hover .badge-photo-container::before {
-    transform: translate(-50%, -50%) scale(1.1);
+    transform: translate(-50%, -50%) scale(1.15);
     opacity: 1;
+    animation: gradient-rotate 3s ease infinite;
+}
+
+@keyframes gradient-rotate {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
 }
 
 .badge-photo {
-    width: 7.5rem;
-    height: 7.5rem;
+    width: 8rem;
+    height: 8rem;
     border-radius: 50%;
     object-fit: cover;
     position: relative;
     z-index: 1;
+    transition: filter 0.3s ease;
+}
+
+.speaker-badge:hover .badge-photo {
+    filter: brightness(1.05) contrast(1.05);
 }
 
 .badge-content {
-    padding: 4.5rem 1.5rem 1.5rem 1.5rem;
+    padding: 5.25rem 1.75rem 1.75rem 1.75rem;
     text-align: center;
-    background-color: white;
-    border-radius: 0 0 1rem 1rem;
+    background: linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%);
+    border-radius: 0 0 1.5rem 1.5rem;
+    position: relative;
+}
+
+.badge-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #E63946, transparent);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.speaker-badge:hover .badge-content::before {
+    opacity: 1;
 }
 
 .badge-name {
-    font-size: 1.5rem;
+    font-size: 1.625rem;
     font-weight: 800;
     color: #062E51;
-    line-height: 1.2;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+    transition: color 0.3s ease;
+    position: relative;
+}
+
+.speaker-badge:hover .badge-name {
+    color: #0a3d6b;
 }
 
 .badge-title {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     font-weight: 700;
     color: #E63946;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.1em;
     margin-top: 0.25rem;
+    text-transform: uppercase;
+    position: relative;
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: rgba(230, 57, 70, 0.08);
+    border-radius: 9999px;
+    transition: all 0.3s ease;
+}
+
+.speaker-badge:hover .badge-title {
+    background: rgba(230, 57, 70, 0.15);
+    transform: scale(1.05);
 }
 
 .badge-details {
@@ -1077,6 +1183,50 @@ body {
     font-size: 0.875rem;
     color: #4B5563; /* gray-600 */
     line-height: 1.5;
+}
+
+/* --- Estilos Melhorados para o Botão "Ver Bio" --- */
+.toggle-bio-btn {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #E63946 0%, #c9323d 100%);
+    border: none;
+    box-shadow: 0 4px 12px rgba(230, 57, 70, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-bio-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.toggle-bio-btn:hover {
+    background: linear-gradient(135deg, #c9323d 0%, #E63946 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(230, 57, 70, 0.4);
+}
+
+.toggle-bio-btn:hover::before {
+    left: 100%;
+}
+
+.toggle-bio-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(230, 57, 70, 0.3);
+}
+
+.toggle-bio-btn .material-symbols-outlined {
+    transition: transform 0.3s ease;
+}
+
+.toggle-bio-btn:hover .material-symbols-outlined {
+    transform: translateX(4px);
 }
 
 .bio-full {
@@ -2021,6 +2171,341 @@ button[type="submit"].is-loading {
     }
     to {
         transform: translateX(-50%); /* Move até a metade, onde os duplicados começam */
+    }
+}
+
+/* --- NOVO CARROSSEL MODERNO DE PALESTRANTES COM TIMER --- */
+.speakers-carousel-modern {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 0;
+}
+
+.carousel-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.speaker-card-modern {
+    min-width: 100%;
+    opacity: 0;
+    transform: translateX(50px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    pointer-events: none;
+    display: none;
+}
+
+.speaker-card-modern.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+    display: block;
+}
+
+.speaker-card-header {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #062E51 0%, #0a3d6b 100%);
+    border-radius: 1.5rem 1.5rem 0 0;
+}
+
+.speaker-photo-wrapper {
+    flex-shrink: 0;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid #E63946;
+    box-shadow: 0 8px 20px rgba(230, 57, 70, 0.3);
+    background: white;
+    padding: 4px;
+}
+
+.speaker-photo-modern {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.speaker-header-info {
+    flex: 1;
+    color: white;
+}
+
+.speaker-name-modern {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: white;
+}
+
+.speaker-title-modern {
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #E63946;
+    background: rgba(230, 57, 70, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    display: inline-block;
+}
+
+.speaker-card-body {
+    padding: 2rem;
+    background: white;
+    border-radius: 0 0 1.5rem 1.5rem;
+}
+
+.speaker-bio-modern {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 1rem;
+}
+
+.speaker-bio-modern::-webkit-scrollbar {
+    width: 8px;
+}
+
+.speaker-bio-modern::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.speaker-bio-modern::-webkit-scrollbar-thumb {
+    background: #E63946;
+    border-radius: 4px;
+}
+
+.speaker-bio-modern::-webkit-scrollbar-thumb:hover {
+    background: #c9323d;
+}
+
+.speaker-bio-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.speaker-bio-list li {
+    padding: 0.75rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+    color: #4a5568;
+    line-height: 1.6;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.speaker-bio-list li:last-child {
+    border-bottom: none;
+}
+
+.speaker-bio-list li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: #E63946;
+    font-weight: bold;
+}
+
+.speaker-bio-list li a {
+    color: #E63946;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.speaker-bio-list li a:hover {
+    color: #c9323d;
+    text-decoration: underline;
+}
+
+/* Controles de Navegação */
+.carousel-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #E63946 0%, #c9323d 100%);
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(230, 57, 70, 0.4);
+    transition: all 0.3s ease;
+}
+
+.carousel-nav-btn:hover {
+    background: linear-gradient(135deg, #c9323d 0%, #E63946 100%);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 6px 20px rgba(230, 57, 70, 0.5);
+}
+
+.carousel-nav-btn:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.carousel-nav-btn .material-symbols-outlined {
+    font-size: 28px;
+}
+
+.carousel-prev {
+    left: -25px;
+}
+
+.carousel-next {
+    right: -25px;
+}
+
+/* Barra de Progresso */
+.carousel-progress-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 0 0 1.5rem 1.5rem;
+    overflow: hidden;
+}
+
+.carousel-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #E63946, #062E51, #E63946);
+    background-size: 200% 100%;
+}
+
+@keyframes gradient-shift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* Indicadores */
+.carousel-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.carousel-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    background: #cbd5e0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.carousel-indicator:hover {
+    background: #E63946;
+    transform: scale(1.2);
+}
+
+.carousel-indicator.active {
+    background: #E63946;
+    width: 32px;
+    border-radius: 6px;
+    transform: scale(1);
+}
+
+/* Responsivo */
+@media (max-width: 1023px) {
+    .speakers-carousel-modern {
+        padding: 1rem;
+    }
+    
+    .carousel-nav-btn {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .carousel-nav-btn .material-symbols-outlined {
+        font-size: 24px;
+    }
+    
+    .carousel-prev {
+        left: -20px;
+    }
+    
+    .carousel-next {
+        right: -20px;
+    }
+    
+    .speaker-card-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+    
+    .speaker-photo-wrapper {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .speaker-name-modern {
+        font-size: 1.5rem;
+    }
+    
+    .speaker-bio-modern {
+        max-height: 300px;
+    }
+}
+
+@media (max-width: 640px) {
+    .carousel-nav-btn {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .carousel-prev {
+        left: 10px;
+    }
+    
+    .carousel-next {
+        right: 10px;
+    }
+    
+    .speaker-card-header {
+        padding: 1.5rem;
+    }
+    
+    .speaker-card-body {
+        padding: 1.5rem;
+    }
+    
+    .speaker-photo-wrapper {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .speaker-name-modern {
+        font-size: 1.25rem;
     }
 }
 }

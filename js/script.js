@@ -9,6 +9,7 @@ import { configurarValidacaoFormulario, configurarAutocompletar, configurarMasca
 import { configurarRolagemSuave, configurarBarraProgressoRolagem, configurarMenuMobile } from './navegacao.js';
 import { configurarContagemRegressiva, configurarPlayerCustomizado, configurarModalPalestrante } from './ui.js';
 import { configurarLoginAdmin, fazerLogout } from './auth.js';
+import { configurarCarrosselPalestrantes } from './speakers-carousel.js';
 import './notificacoes.js'; // Importa para registrar a função globalmente, se necessário
 import { supabase } from './supabaseClient.js';
 
@@ -162,6 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         configurarContagemRegressiva();
         configurarModalPalestrante();
         configurarPlayerCustomizado();
+        configurarCarrosselPalestrantes();
 
         // Outros
         configurarControlesAcessibilidade();
