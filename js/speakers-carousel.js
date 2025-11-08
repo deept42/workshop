@@ -3,7 +3,6 @@ export function configurarCarrosselPalestrantes() {
     const carouselTrack = document.getElementById('speakers-carousel-track');
     const prevBtn = document.querySelector('.carousel-prev');
     const nextBtn = document.querySelector('.carousel-next');
-    const progressBar = document.getElementById('carousel-progress-bar');
     const indicatorsContainer = document.getElementById('carousel-indicators');
     
     if (!carouselTrack) return;
@@ -238,6 +237,10 @@ export function configurarCarrosselPalestrantes() {
                         ${bioHTML}
                     </ul>
                 </div>
+                <!-- Barra de Progresso do Timer - Agora dentro do card -->
+                <div class="carousel-progress-container">
+                    <div class="carousel-progress-bar" data-progress-bar="${index}"></div>
+                </div>
             </div>
         `;
         
@@ -274,18 +277,28 @@ export function configurarCarrosselPalestrantes() {
             indicator.classList.toggle('active', index === currentIndex);
         });
         
-        // Resetar barra de progresso
+        // Resetar barra de progresso do card ativo
         resetProgressBar();
         startProgressBar();
     }
     
+    function getCurrentProgressBar() {
+        const activeCard = cards[currentIndex];
+        if (!activeCard) return null;
+        return activeCard.querySelector(`[data-progress-bar="${currentIndex}"]`);
+    }
+    
     function resetProgressBar() {
+        const progressBar = getCurrentProgressBar();
+        if (!progressBar) return;
         progressBar.style.transition = 'width 0s';
         progressBar.style.width = '0%';
         void progressBar.offsetWidth; // Force reflow
     }
     
     function startProgressBar() {
+        const progressBar = getCurrentProgressBar();
+        if (!progressBar) return;
         progressBar.style.transition = `width ${autoRotateDelay / 1000}s linear`;
         progressBar.style.width = '100%';
     }
@@ -316,13 +329,20 @@ export function configurarCarrosselPalestrantes() {
     function pauseAutoRotate() {
         isPaused = true;
         clearTimeout(autoRotateTimeout);
-        progressBar.style.animationPlayState = 'paused';
+        const progressBar = getCurrentProgressBar();
+        if (progressBar) {
+            progressBar.style.animationPlayState = 'paused';
+            progressBar.style.transition = 'none';
+        }
     }
     
     function resumeAutoRotate() {
         isPaused = false;
         resetAutoRotate();
-        progressBar.style.animationPlayState = 'running';
+        const progressBar = getCurrentProgressBar();
+        if (progressBar) {
+            progressBar.style.animationPlayState = 'running';
+        }
     }
     
     // Event listeners

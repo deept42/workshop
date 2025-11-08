@@ -579,7 +579,7 @@ body {
     color: #E63946;
     transform: scale(1.05);
 }
-/* --- Otimização para Mobile (até 767px) --- */
+/* --- Otimização para Tablet e Mobile --- */
 @media (max-width: 1023px) {
     html {
         font-size: 100%;
@@ -663,6 +663,94 @@ body {
     }
     .badge-name {
         font-size: 1.5rem;
+    }
+    
+    /* Botões FAB responsivos */
+    .fixed.top-4.right-6 {
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+    
+    .login-fab {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+    
+    .login-fab-text {
+        display: none; /* Esconde texto em tablets */
+    }
+    
+    /* Header responsivo */
+    #header-content {
+        max-width: 95%;
+        padding: 0.75rem 1rem;
+    }
+    
+    /* Vídeo responsivo */
+    #sobre-player,
+    .cld-video-player {
+        width: 100% !important;
+        height: auto !important;
+    }
+}
+
+/* --- Melhorias para Mobile Pequeno --- */
+@media (max-width: 640px) {
+    .panel-content {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    
+    #inicio h1 {
+        font-size: clamp(1.25rem, 6vw, 1.75rem);
+    }
+    
+    .section-title {
+        font-size: clamp(1.2rem, 6vw, 1.6rem);
+    }
+    
+    .hero-button {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.9rem;
+    }
+    
+    .logo-apoio {
+        height: 2rem;
+    }
+    
+    /* Botões FAB menores em mobile */
+    .fixed.top-4.right-6 {
+        top: 0.25rem;
+        right: 0.25rem;
+    }
+    
+    .login-fab {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+    
+    .login-fab .material-symbols-outlined {
+        font-size: 1.25rem;
+    }
+    
+    /* Header mais compacto em mobile */
+    #header-content {
+        max-width: 98%;
+        padding: 0.5rem 0.75rem;
+    }
+    
+    /* Grid de programação em coluna única */
+    #programacao .grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    /* Formulário responsivo */
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    
+    .form-input {
+        font-size: 1rem;
     }
 }
 
@@ -2177,9 +2265,10 @@ button[type="submit"].is-loading {
 /* --- NOVO CARROSSEL MODERNO DE PALESTRANTES COM TIMER --- */
 .speakers-carousel-modern {
     position: relative;
-    max-width: 1200px;
+    max-width: 900px; /* Largura fixa baseada no card Rangel Ancelotti */
+    width: 100%;
     margin: 0 auto;
-    padding: 2rem 0;
+    padding: 2rem 80px 2rem 80px; /* Padding lateral para os botões não sobreporem */
 }
 
 .carousel-container {
@@ -2188,6 +2277,9 @@ button[type="submit"].is-loading {
     border-radius: 1.5rem;
     background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
 }
 
 .carousel-track {
@@ -2197,27 +2289,35 @@ button[type="submit"].is-loading {
 
 .speaker-card-modern {
     min-width: 100%;
+    width: 100%;
+    max-width: 100%;
     opacity: 0;
     transform: translateX(50px);
     transition: opacity 0.6s ease, transform 0.6s ease;
     pointer-events: none;
     display: none;
+    height: 420px; /* Altura fixa padrão - tamanho do card Rangel Ancelotti */
+    flex-direction: column;
+    box-sizing: border-box;
 }
 
 .speaker-card-modern.active {
     opacity: 1;
     transform: translateX(0);
     pointer-events: auto;
-    display: block;
+    display: flex;
+    flex-direction: column;
 }
 
 .speaker-card-header {
     display: flex;
     align-items: center;
     gap: 2rem;
-    padding: 2rem;
+    padding: 1.5rem 2rem;
     background: linear-gradient(135deg, #062E51 0%, #0a3d6b 100%);
     border-radius: 1.5rem 1.5rem 0 0;
+    flex-shrink: 0;
+    min-height: 200px;
 }
 
 .speaker-photo-wrapper {
@@ -2264,48 +2364,48 @@ button[type="submit"].is-loading {
 }
 
 .speaker-card-body {
-    padding: 2rem;
+    padding: 1.25rem 1.75rem;
     background: white;
     border-radius: 0 0 1.5rem 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 .speaker-bio-modern {
-    max-height: 400px;
-    overflow-y: auto;
-    padding-right: 1rem;
-}
-
-.speaker-bio-modern::-webkit-scrollbar {
-    width: 8px;
-}
-
-.speaker-bio-modern::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-}
-
-.speaker-bio-modern::-webkit-scrollbar-thumb {
-    background: #E63946;
-    border-radius: 4px;
-}
-
-.speaker-bio-modern::-webkit-scrollbar-thumb:hover {
-    background: #c9323d;
+    flex: 1;
+    overflow: hidden; /* Remove a barra de rolagem e corta o conteúdo */
+    padding-right: 0;
+    min-height: 0;
+    max-height: 180px; /* Altura máxima fixa para manter todos os cards iguais */
+    box-sizing: border-box;
 }
 
 .speaker-bio-list {
     list-style: none;
     padding: 0;
     margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 }
 
 .speaker-bio-list li {
-    padding: 0.75rem 0;
+    padding: 0.4rem 0;
     padding-left: 1.5rem;
     position: relative;
     color: #4a5568;
-    line-height: 1.6;
-    border-bottom: 1px solid #e2e8f0;
+    line-height: 1.4;
+    border-bottom: none;
+    font-size: 0.9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Máximo 2 linhas por item */
+    -webkit-box-orient: vertical;
 }
 
 .speaker-bio-list li:last-child {
@@ -2332,58 +2432,70 @@ button[type="submit"].is-loading {
     text-decoration: underline;
 }
 
-/* Controles de Navegação */
+/* Controles de Navegação - Melhorados - Agora completamente fora do card */
 .carousel-nav-btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    z-index: 10;
-    width: 50px;
-    height: 50px;
+    z-index: 30;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #E63946 0%, #c9323d 100%);
-    border: none;
-    color: white;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 2px solid #E63946;
+    color: #E63946;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 15px rgba(230, 57, 70, 0.4);
-    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(230, 57, 70, 0.3), 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 600;
 }
 
 .carousel-nav-btn:hover {
-    background: linear-gradient(135deg, #c9323d 0%, #E63946 100%);
-    transform: translateY(-50%) scale(1.1);
-    box-shadow: 0 6px 20px rgba(230, 57, 70, 0.5);
+    background: #E63946;
+    color: white;
+    transform: translateY(-50%) scale(1.15);
+    box-shadow: 0 6px 25px rgba(230, 57, 70, 0.5), 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-color: #c9323d;
 }
 
 .carousel-nav-btn:active {
-    transform: translateY(-50%) scale(0.95);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.carousel-nav-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.3), 0 6px 25px rgba(230, 57, 70, 0.5);
 }
 
 .carousel-nav-btn .material-symbols-outlined {
-    font-size: 28px;
+    font-size: 32px;
+    font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24;
 }
 
 .carousel-prev {
-    left: -25px;
+    left: 10px; /* Posicionado fora, à esquerda do container */
 }
 
 .carousel-next {
-    right: -25px;
+    right: 10px; /* Posicionado fora, à direita do container */
 }
 
-/* Barra de Progresso */
+/* Barra de Progresso - Agora dentro do card */
 .carousel-progress-container {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: rgba(0, 0, 0, 0.1);
+    height: 6px;
+    background: rgba(0, 0, 0, 0.05);
     border-radius: 0 0 1.5rem 1.5rem;
     overflow: hidden;
+    z-index: 5;
 }
 
 .carousel-progress-bar {
@@ -2391,6 +2503,8 @@ button[type="submit"].is-loading {
     width: 0%;
     background: linear-gradient(90deg, #E63946, #062E51, #E63946);
     background-size: 200% 100%;
+    animation: gradient-shift 3s ease infinite;
+    border-radius: 0 0 1.5rem 1.5rem;
 }
 
 @keyframes gradient-shift {
@@ -2434,33 +2548,47 @@ button[type="submit"].is-loading {
     transform: scale(1);
 }
 
-/* Responsivo */
+/* Responsivo - Tablet */
 @media (max-width: 1023px) {
     .speakers-carousel-modern {
-        padding: 1rem;
+        padding: 1rem 60px; /* Reduz padding lateral para tablets */
+        max-width: 100%;
+    }
+    
+    .speaker-card-modern {
+        height: 420px; /* Mantém a mesma altura padrão */
+    }
+    
+    .speaker-bio-modern {
+        max-height: 160px; /* Altura ajustada para tablets */
+    }
+    
+    .speaker-bio-list li {
+        -webkit-line-clamp: 2; /* Máximo 2 linhas por item em tablets */
     }
     
     .carousel-nav-btn {
-        width: 40px;
-        height: 40px;
+        width: 48px;
+        height: 48px;
     }
     
     .carousel-nav-btn .material-symbols-outlined {
-        font-size: 24px;
+        font-size: 28px;
     }
     
     .carousel-prev {
-        left: -20px;
+        left: 5px; /* Mais próximo nas laterais em tablets */
     }
     
     .carousel-next {
-        right: -20px;
+        right: 5px;
     }
     
     .speaker-card-header {
         flex-direction: column;
         text-align: center;
         gap: 1.5rem;
+        padding: 1.5rem;
     }
     
     .speaker-photo-wrapper {
@@ -2472,31 +2600,80 @@ button[type="submit"].is-loading {
         font-size: 1.5rem;
     }
     
-    .speaker-bio-modern {
-        max-height: 300px;
+    .speaker-card-body {
+        padding: 1.25rem 1.5rem;
     }
 }
 
-@media (max-width: 640px) {
+/* Responsivo - Mobile */
+@media (max-width: 768px) {
+    .speakers-carousel-modern {
+        padding: 1rem 50px; /* Menor padding para mobile */
+        max-width: 100%;
+    }
+    
     .carousel-nav-btn {
-        width: 35px;
-        height: 35px;
+        width: 42px;
+        height: 42px;
+    }
+    
+    .carousel-nav-btn .material-symbols-outlined {
+        font-size: 24px;
     }
     
     .carousel-prev {
-        left: 10px;
+        left: 5px;
     }
     
     .carousel-next {
-        right: 10px;
+        right: 5px;
+    }
+    
+}
+
+@media (max-width: 640px) {
+    .speakers-carousel-modern {
+        padding: 1rem 45px; /* Padding mínimo para mobile pequeno */
+        max-width: 100%;
+    }
+    
+    .speaker-card-modern {
+        height: 420px; /* Mantém a mesma altura padrão */
+    }
+    
+    .speaker-bio-modern {
+        max-height: 140px; /* Altura ajustada para mobile */
+    }
+    
+    .speaker-bio-list li {
+        -webkit-line-clamp: 1; /* 1 linha por item em mobile pequeno */
+        font-size: 0.875rem;
+    }
+    
+    .carousel-nav-btn {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .carousel-nav-btn .material-symbols-outlined {
+        font-size: 22px;
+    }
+    
+    .carousel-prev {
+        left: 5px;
+    }
+    
+    .carousel-next {
+        right: 5px;
     }
     
     .speaker-card-header {
-        padding: 1.5rem;
+        padding: 1.25rem;
+        min-height: 180px;
     }
     
     .speaker-card-body {
-        padding: 1.5rem;
+        padding: 1rem 1.25rem;
     }
     
     .speaker-photo-wrapper {
@@ -2506,6 +2683,10 @@ button[type="submit"].is-loading {
     
     .speaker-name-modern {
         font-size: 1.25rem;
+    }
+    
+    .carousel-progress-container {
+        height: 5px;
     }
 }
 }
