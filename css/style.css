@@ -1731,25 +1731,40 @@ button[type="submit"].is-loading span {
 
 /* Garante que a seção de login tenha fundo branco */
 #login-admin {
-    background: radial-gradient(circle at top, rgba(6, 46, 81, 0.65), rgba(6, 46, 81, 0.85));
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: rgba(6, 46, 81, 0.25);
+    backdrop-filter: blur(24px) saturate(120%);
+    -webkit-backdrop-filter: blur(24px) saturate(120%);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: clamp(1.5rem, 4vw, 3rem);
+    padding: clamp(1.5rem, 4vw, 3.5rem);
     overflow-y: auto;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+}
+
+#login-admin::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(6, 46, 81, 0.55);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    z-index: -1;
 }
 
 .login-modal {
-    width: min(960px, 100%);
-    background: #ffffff;
-    border-radius: 28px;
-    box-shadow: 0 40px 80px -32px rgba(6, 46, 81, 0.45);
+    width: min(1320px, calc(100% - 2rem));
+    height: min(720px, calc(100% - 2rem));
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 36px;
+    box-shadow: 0 48px 120px rgba(6, 46, 81, 0.45);
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     overflow: hidden;
     position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .login-pane-left,
@@ -1856,8 +1871,8 @@ button[type="submit"].is-loading span {
 }
 
 .login-pane-right {
-    background: #ffffff;
-    padding: clamp(2rem, 4vw, 3rem);
+    background: rgba(255, 255, 255, 0.92);
+    padding: clamp(2.25rem, 4vw, 3.5rem);
     display: flex;
     flex-direction: column;
     gap: 1.75rem;
@@ -2900,43 +2915,25 @@ body.login-open {
 /* Ajuste para os links da navegação com ícones */
 .nav-link-main,
 .nav-link-mobile {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 0.6rem;
-    overflow: visible;
-    text-decoration: none;
+    /* O gap foi removido para ser controlado pelo margin do texto */
+    overflow: hidden; /* Garante que o conteúdo não vaze durante a animação */
 }
 
-.nav-link-main span:first-child,
-.nav-link-mobile span:first-child {
-    font-size: 1.15rem;
+/* Estilo para o texto dentro do link de navegação (desktop) */
+.nav-link-main span:last-child {
+    /* Por padrão, o texto fica escondido */
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap; /* Impede que o texto quebre a linha durante a transição */
+    transition: max-width 0.4s ease-in-out, margin-left 0.4s ease-in-out;
 }
 
-.nav-link-main span:last-child,
-.nav-link-mobile span:last-child {
-    white-space: nowrap;
-}
-
-@media (min-width: 1024px) {
-    .nav-link-main,
-    .nav-link-mobile {
-        overflow: hidden;
-        gap: 0;
-    }
-
-    .nav-link-main span:last-child {
-        max-width: 0;
-        overflow: hidden;
-        white-space: nowrap;
-        margin-left: 0;
-        transition: max-width 0.4s ease-in-out, margin-left 0.4s ease-in-out;
-    }
-
-    .nav-link-main:hover span:last-child,
-    .nav-link-main.active-link span:last-child {
-        max-width: 150px;
-        margin-left: 0.5rem;
-    }
+/* Quando o link está ativo, o texto se expande */
+.nav-link-main.active-link span:last-child {
+    max-width: 150px; /* Largura suficiente para o maior texto */
+    margin-left: 0.5rem; /* Adiciona o espaçamento apenas quando visível */
 }
 
 /* --- ESTILOS PARA O COMPORTAMENTO DE ROLAGEM DA NAVEGAÇÃO --- */

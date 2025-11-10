@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const bannerCountdown = bannerInscricao?.querySelector('.banner-countdown');
     const bannerActionText = bannerInscricao?.querySelector('.banner-action-text');
     const body = document.body;
+    const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
 
     if (bannerTitle && !bannerTitle.dataset.baseText) {
         bannerTitle.dataset.baseText = bannerTitle.textContent.trim();
