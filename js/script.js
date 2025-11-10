@@ -205,8 +205,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 body.classList.add('banner-hidden');
                 body.classList.remove('banner-collapsed');
+                if (mobileMenuOverlay && !mobileMenuOverlay.classList.contains('hidden')) {
+                    mobileMenuOverlay.classList.add('hidden');
+                    mobileMenuOverlay.innerHTML = '';
+                    document.body.classList.remove('mobile-menu-open');
+                }
                 if (loginFabBtn) loginFabBtn.classList.add('hidden'); // Esconde o próprio botão de login
                 if (logoutFabBtn) logoutFabBtn.classList.add('hidden'); // Esconde o botão de logout
+                body.classList.add('login-open');
                 // Adiciona a classe 'is-active' para iniciar a animação de entrada
                 setTimeout(() => {
                     leftPane?.classList.add('is-active');
@@ -229,6 +235,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         bannerWrapper.classList.remove('hidden');
                     }
                     body.classList.remove('banner-hidden');
+                    if (mobileMenuOverlay && !mobileMenuOverlay.classList.contains('hidden')) {
+                        mobileMenuOverlay.classList.add('hidden');
+                        mobileMenuOverlay.innerHTML = '';
+                        document.body.classList.remove('mobile-menu-open');
+                    }
+                    body.classList.remove('login-open');
                     atualizarEstadoBanner();
                     // A visibilidade dos botões de login/logout é controlada por configurarBotoesAuth
                     configurarBotoesAuth(estaLogado);
@@ -275,6 +287,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const backToSiteBtn = document.getElementById('back-to-site-btn');
         if (backToSiteBtn) {
             backToSiteBtn.onclick = (e) => {
+                e.preventDefault();
+                alternarTelaLogin(false);
+            };
+        }
+
+        const loginCloseBtn = document.getElementById('login-close-btn');
+        if (loginCloseBtn) {
+            loginCloseBtn.onclick = (e) => {
                 e.preventDefault();
                 alternarTelaLogin(false);
             };

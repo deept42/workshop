@@ -77,6 +77,10 @@ body.banner-hidden {
     --banner-offset: 0px;
 }
 
+body.login-open {
+    overflow: hidden;
+}
+
 /* --- NOVA LÓGICA: Fundo de Partículas Animadas (TEMA CLARO) --- */
 .fundo-particulas {
     position: fixed;
@@ -1727,27 +1731,336 @@ button[type="submit"].is-loading span {
 
 /* Garante que a seção de login tenha fundo branco */
 #login-admin {
-    background-color: white;
-    overflow-x: hidden;
+    background: radial-gradient(circle at top, rgba(6, 46, 81, 0.65), rgba(6, 46, 81, 0.85));
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1.5rem, 4vw, 3rem);
+    overflow-y: auto;
 }
 
-/* --- Animação da Tela de Login --- */
+.login-modal {
+    width: min(960px, 100%);
+    background: #ffffff;
+    border-radius: 28px;
+    box-shadow: 0 40px 80px -32px rgba(6, 46, 81, 0.45);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: hidden;
+    position: relative;
+}
+
 .login-pane-left,
 .login-pane-right {
-    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s ease;
+    transform: translateY(32px);
+    opacity: 0;
 }
-.login-pane-left { transform: translateX(-100%); }
-.login-pane-right { transform: translateX(100%); }
-.login-pane-left.is-active,
-.login-pane-right.is-active { transform: translateX(0); }
 
-/* Responsividade para a tela de login */
-@media (max-width: 768px) {
-    #login-admin .login-pane-left {
-        display: none; /* Esconde o painel esquerdo em mobile */
+.login-pane-left.is-active,
+.login-pane-right.is-active {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.login-pane-left {
+    background: linear-gradient(135deg, #062E51 0%, #0f3b6d 40%, #062E51 100%);
+    color: #f3f7fb;
+    padding: clamp(2.5rem, 5vw, 3.5rem);
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+.login-pane-left-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2.25rem;
+}
+
+.login-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.login-brand img {
+    height: 64px;
+    width: auto;
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.25));
+}
+
+.login-brand-text h2 {
+    font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+}
+
+.login-brand-label {
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.login-pane-left-subtitle {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: rgba(243, 247, 251, 0.85);
+}
+
+.login-feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.login-feature-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.login-feature-list .material-symbols-outlined {
+    font-size: 1.75rem;
+    color: #f97373;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 0.65rem;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.login-feature-list h3 {
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+}
+
+.login-feature-list p {
+    margin: 0;
+    color: rgba(243, 247, 251, 0.72);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.login-pane-left-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding-top: 1.5rem;
+    font-size: 0.9rem;
+    color: rgba(243, 247, 251, 0.7);
+}
+
+.login-pane-right {
+    background: #ffffff;
+    padding: clamp(2rem, 4vw, 3rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+}
+
+.login-pane-right-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.login-pane-right-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: #0c3b66;
+}
+
+.login-pane-right-title .material-symbols-outlined {
+    font-size: 1.5rem;
+    color: #e63946;
+}
+
+.login-close-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(6, 46, 81, 0.08);
+    color: #062E51;
+    transition: background 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
+}
+
+.login-close-btn:hover {
+    background: rgba(230, 57, 70, 0.12);
+    transform: translateY(-1px);
+}
+
+.login-pane-right-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.login-form-intro h2 {
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    font-weight: 800;
+    color: #062E51;
+    margin-bottom: 0.5rem;
+}
+
+.login-form-intro p {
+    color: #4b5563;
+    font-size: 0.98rem;
+}
+
+.login-submit-btn {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 0.95rem 1.25rem;
+    background: linear-gradient(135deg, #E63946 0%, #c9323d 55%, #a71f35 100%);
+    color: #ffffff;
+    border-radius: 0.75rem;
+    border: none;
+    box-shadow: 0 20px 32px rgba(230, 57, 70, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 28px 44px rgba(230, 57, 70, 0.4);
+}
+
+.login-submit-btn .material-symbols-outlined {
+    font-size: 1.3rem;
+}
+
+.login-pane-right-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: auto;
+}
+
+.login-back-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1.25rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(6, 46, 81, 0.18);
+    background: rgba(6, 46, 81, 0.05);
+    color: #062E51;
+    font-weight: 600;
+    transition: background 0.3s ease, border 0.3s ease;
+}
+
+.login-back-btn:hover {
+    background: rgba(6, 46, 81, 0.12);
+    border-color: rgba(6, 46, 81, 0.3);
+}
+
+.login-access-hint {
+    font-size: 0.85rem;
+    color: #6b7280;
+    text-align: center;
+    line-height: 1.5;
+}
+
+@media (max-width: 1024px) {
+    .login-modal {
+        width: min(720px, 100%);
+        grid-template-columns: 1fr;
+        border-radius: 24px;
     }
-    #login-admin .login-pane-right {
-        width: 100% !important; /* Painel direito ocupa toda a largura */
+
+    .login-pane-left {
+        padding: 2.5rem 2rem;
+        gap: 2rem;
+    }
+
+    .login-pane-right {
+        border-top: 1px solid rgba(6, 46, 81, 0.08);
+    }
+}
+
+@media (max-width: 768px) {
+    .login-modal {
+        border-radius: 20px;
+    }
+
+    .login-pane-left {
+        padding: 2rem 1.75rem;
+    }
+
+    .login-brand {
+        align-items: flex-start;
+    }
+
+    .login-pane-right {
+        padding: 2rem 1.5rem 1.75rem;
+    }
+
+    .login-pane-right-header {
+        align-items: flex-start;
+    }
+
+    .login-pane-right-title {
+        font-size: 0.75rem;
+        letter-spacing: 0.18em;
+    }
+}
+
+@media (max-width: 540px) {
+    #login-admin {
+        padding: 1.5rem 1rem;
+    }
+
+    .login-modal {
+        border-radius: 18px;
+        box-shadow: 0 28px 48px -28px rgba(6, 46, 81, 0.55);
+    }
+
+    .login-pane-left {
+        padding: 1.75rem;
+        gap: 1.75rem;
+    }
+
+    .login-pane-left-subtitle {
+        font-size: 0.95rem;
+    }
+
+    .login-pane-right {
+        padding: 1.75rem;
+        gap: 1.5rem;
+    }
+
+    .login-form-intro h2 {
+        font-size: 1.65rem;
+    }
+
+    .login-submit-btn {
+        padding: 0.85rem 1rem;
+        font-size: 0.95rem;
+    }
+
+    .login-back-btn {
+        font-size: 0.9rem;
     }
 }
 
@@ -2157,7 +2470,8 @@ button[type="submit"].is-loading {
     gap: 1.5rem;
 }
 
-body.mobile-menu-open {
+body.mobile-menu-open,
+body.login-open {
     overflow: hidden;
 }
 

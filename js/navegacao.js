@@ -87,11 +87,25 @@ export function configurarMenuMobile() {
         document.body.classList.remove('mobile-menu-open');
     };
 
-    hamburgerBtn.addEventListener('click', openMenu);
+    const toggleMenu = () => {
+        if (mobileMenuOverlay.classList.contains('hidden')) {
+            openMenu();
+        } else {
+            closeMenu();
+        }
+    };
+
+    hamburgerBtn.addEventListener('click', toggleMenu);
 
     // Fecha o menu com a tecla 'Esc'
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && !mobileMenuOverlay.classList.contains('hidden')) {
+            closeMenu();
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth >= 1024 && !mobileMenuOverlay.classList.contains('hidden')) {
             closeMenu();
         }
     });

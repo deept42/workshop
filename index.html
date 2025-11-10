@@ -98,59 +98,76 @@
     <div id="mobile-menu-overlay" class="hidden"></div>
 
     <!-- TELA DE LOGIN DO ADMINISTRADOR -->
-    <div id="login-admin" class="hidden fixed inset-0 z-[200] bg-white">
-        <div class="flex h-full w-full">
+    <div id="login-admin" class="hidden fixed inset-0 z-[200] login-admin-overlay">
+        <div class="login-modal">
             <!-- Painel Esquerdo - Informações/Branding -->
-            <div class="login-pane-left w-1/2 bg-gradient-to-br from-[#062E51] to-[#1e3a5f] flex flex-col justify-center items-center p-12 text-white">
-                <div class="max-w-md">
-                    <div class="mb-8">
-                        <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo CBMPR" class="h-20 w-auto mb-6">
-                        <h1 class="text-4xl font-bold mb-4">Painel Administrativo</h1>
-                        <p class="text-xl text-gray-300">Acesso exclusivo para administradores do Workshop WMRD-PR</p>
-                    </div>
-                    <div class="space-y-4 text-gray-200">
-                        <div class="flex items-start gap-3">
-                            <span class="material-symbols-outlined text-[#E63946]">security</span>
-                            <div>
-                                <h3 class="font-semibold mb-1">Acesso Seguro</h3>
-                                <p class="text-sm">Autenticação protegida via Supabase Auth</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3">
-                            <span class="material-symbols-outlined text-[#E63946]">dashboard</span>
-                            <div>
-                                <h3 class="font-semibold mb-1">Gestão Completa</h3>
-                                <p class="text-sm">Visualize e gerencie todas as inscrições</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3">
-                            <span class="material-symbols-outlined text-[#E63946]">analytics</span>
-                            <div>
-                                <h3 class="font-semibold mb-1">Relatórios e Análises</h3>
-                                <p class="text-sm">Exporte dados e visualize estatísticas</p>
-                            </div>
+            <div class="login-pane-left">
+                <div class="login-pane-left-content">
+                    <div class="login-brand">
+                        <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo CBMPR">
+                        <div class="login-brand-text">
+                            <span class="login-brand-label">Workshop</span>
+                            <h2>Municípios Mais Resilientes</h2>
                         </div>
                     </div>
+                    <p class="login-pane-left-subtitle">Gerencie inscrições, certificados e comunicações oficiais em uma experiência pensada para equipes da Defesa Civil e parceiros estratégicos.</p>
+
+                    <ul class="login-feature-list">
+                        <li>
+                            <span class="material-symbols-outlined">security</span>
+                            <div>
+                                <h3>Acesso protegido</h3>
+                                <p>Autenticação segura via Supabase com monitoramento em tempo real.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="material-symbols-outlined">dashboard</span>
+                            <div>
+                                <h3>Operação integrada</h3>
+                                <p>Visualize inscrições, status de certificados e relatórios de presença em um único painel.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="material-symbols-outlined">insights</span>
+                            <div>
+                                <h3>Decisão orientada por dados</h3>
+                                <p>Exportação rápida e indicadores para apoiar a estratégia do evento.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="login-pane-left-footer">
+                    <p>Suporte às equipes: <strong>(41) 3271-1234</strong></p>
                 </div>
             </div>
 
             <!-- Painel Direito - Formulário de Login -->
-            <div class="login-pane-right w-1/2 bg-white flex flex-col justify-center items-center p-12">
-                <div class="w-full max-w-md">
-                    <div class="mb-8 text-center">
-                        <h2 class="text-3xl font-bold text-[#062E51] mb-2">Bem-vindo de volta</h2>
-                        <p class="text-gray-600">Faça login para acessar o painel administrativo</p>
+            <div class="login-pane-right">
+                <div class="login-pane-right-header">
+                    <div class="login-pane-right-title">
+                        <span class="material-symbols-outlined">shield_person</span>
+                        <span>Acesso administrativo</span>
+                    </div>
+                    <button id="login-close-btn" type="button" class="login-close-btn" aria-label="Fechar painel administrativo">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+
+                <div class="login-pane-right-inner">
+                    <div class="login-form-intro">
+                        <h2>Bem-vindo de volta</h2>
+                        <p>Digite suas credenciais para entrar no painel administrativo do workshop.</p>
                     </div>
 
                     <form id="login-form" class="space-y-6">
                         <div class="form-group">
                             <span class="material-symbols-outlined form-icon">mail</span>
-                            <input 
-                                type="email" 
-                                id="login-email" 
-                                name="login-email" 
-                                class="form-input" 
-                                placeholder=" " 
+                            <input
+                                type="email"
+                                id="login-email"
+                                name="login-email"
+                                class="form-input"
+                                placeholder=" "
                                 required
                                 autocomplete="email"
                             >
@@ -159,36 +176,38 @@
 
                         <div class="form-group">
                             <span class="material-symbols-outlined form-icon">lock</span>
-                            <input 
-                                type="password" 
-                                id="login-password" 
-                                name="login-password" 
-                                class="form-input" 
-                                placeholder=" " 
+                            <input
+                                type="password"
+                                id="login-password"
+                                name="login-password"
+                                class="form-input"
+                                placeholder=" "
                                 required
                                 autocomplete="current-password"
                             >
                             <label for="login-password" class="form-label">Senha</label>
                         </div>
 
-                        <button 
-                            type="submit" 
-                            class="w-full bg-[#E63946] text-white font-bold py-3 px-6 rounded-lg hover:bg-[#c9323d] transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
+                        <button
+                            type="submit"
+                            class="login-submit-btn"
                         >
                             <span>Entrar</span>
                             <span class="material-symbols-outlined">arrow_forward</span>
                         </button>
                     </form>
+                </div>
 
-                    <div class="mt-6 text-center">
-                        <button 
-                            id="back-to-site-btn" 
-                            class="text-[#062E51] hover:text-[#E63946] transition-colors flex items-center justify-center gap-2 mx-auto"
-                        >
-                            <span class="material-symbols-outlined">arrow_back</span>
-                            <span>Voltar ao site</span>
-                        </button>
-                    </div>
+                <div class="login-pane-right-footer">
+                    <button
+                        id="back-to-site-btn"
+                        type="button"
+                        class="login-back-btn"
+                    >
+                        <span class="material-symbols-outlined">arrow_back</span>
+                        <span>Voltar ao site</span>
+                    </button>
+                    <p class="login-access-hint">Acesso restrito à organização do evento. Dúvidas? Procure o comitê de credenciamento.</p>
                 </div>
             </div>
         </div>
