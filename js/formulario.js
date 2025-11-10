@@ -446,31 +446,31 @@ export function configurarValidacaoFormulario() {
     });
 
     function mostrarFeedbackSucessoTopo() {
-        const ctaFlutuante = document.getElementById('inscricao-cta-flutuante');
-        if (!ctaFlutuante) return;
-    
-        const ctaContent = ctaFlutuante.querySelector('.cta-content');
-        if (!ctaContent) return;
-    
-        // Guarda o conteúdo original para restaurar depois
-        const originalContentHTML = ctaContent.innerHTML;
-    
-        // Modifica o estilo e o conteúdo para a mensagem de sucesso
-        ctaFlutuante.style.backgroundColor = '#16A34A'; // Verde sucesso
-        ctaContent.innerHTML = `
-            <p class="cta-title font-bold">INSCRIÇÃO REALIZADA!</p>
-            <p class="cta-subtitle">Verifique as opções de certificado.</p>
-        `;
-    
-        // Restaura o estado original após 5 segundos
-        setTimeout(() => {
-            if (ctaFlutuante) {
-                ctaFlutuante.style.backgroundColor = ''; // Remove a cor de fundo customizada
-            }
-            if (ctaContent) {
-                ctaContent.innerHTML = originalContentHTML; // Restaura o conteúdo original
-            }
-        }, 5000);
+        const banner = document.getElementById('inscricao-banner');
+        if (!banner) return;
+
+        window.__inscricaoBannerControls?.stopTicker?.(false);
+
+        banner.classList.add('inscricao-banner-confirmado');
+        banner.classList.remove('inscricao-banner-collapsed');
+
+        const bannerTitle = banner.querySelector('.banner-title');
+        const actionText = banner.querySelector('.banner-action-text');
+
+        if (bannerTitle) {
+            bannerTitle.dataset.originalText = bannerTitle.dataset.originalText || bannerTitle.textContent;
+            bannerTitle.textContent = 'Cadastro concluído com sucesso';
+            bannerTitle.dataset.baseText = bannerTitle.textContent;
+            bannerTitle.classList.remove('ticker-hide', 'ticker-show');
+        }
+
+        if (actionText) {
+            actionText.dataset.originalText = actionText.dataset.originalText || actionText.textContent;
+            actionText.textContent = 'Verifique seu e-mail';
+            actionText.dataset.originalText = actionText.textContent;
+        }
+
+        window.__inscricaoBannerControls?.refreshStates?.();
     }
 
     function validarCampo(input) {

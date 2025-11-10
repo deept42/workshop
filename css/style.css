@@ -6,31 +6,27 @@
 
 /* O container principal que controla a posição e a animação. */
 #header-wrapper {
-    /* A transição suave é a chave para o efeito elegante. */
-    /* A transição não é mais necessária, pois o estado é permanente */
+    background: transparent;
 }
 
 /* O conteúdo interno do header agora é permanentemente flutuante. */
 #header-content {
-    max-width: 56rem; /* 896px - O conteúdo se contrai para o centro. */
-    margin-top: 0.5rem; /* Desce um pouco para dar a sensação de flutuar. */
-    border-radius: 0.75rem; /* Bordas arredondadas aparecem. */
-    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); /* Sombra sutil aparece. */
-    overflow: hidden; /* Garante que a barra de progresso respeite as bordas. */
-    margin-left: auto; /* Centraliza o header */
-    margin-right: auto; /* Centraliza o header */
-    /* Efeito de vidro fosco azul se torna o padrão */
-    background-color: rgba(6, 46, 81, 0.9); /* #062E51 com 90% de opacidade */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px); /* Para compatibilidade com Safari */
-    transition: background-color 0.4s ease, backdrop-filter 0.4s ease; /* Anima a mudança de cor */
+    max-width: 56rem;
+    margin-top: 0.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    overflow: hidden;
+    margin-left: auto;
+    margin-right: auto;
+    background: linear-gradient(135deg, rgba(6, 46, 81, 0.95), rgba(13, 78, 130, 0.92));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: background 0.4s ease, backdrop-filter 0.4s ease;
 }
 
 /* Quando a página é rolada, o header se torna transparente */
 #header-wrapper.scrolled #header-content {
-    /* Aplica um azul muito sutil para manter a tonalidade, mas com alta transparência */
-    background-color: rgba(6, 46, 81, 0.7); /* #062E51 com 70% de opacidade para um azul mais forte */
-    /* O backdrop-filter é mantido para preservar o efeito de vidro fosco */
+    background: linear-gradient(135deg, rgba(6, 46, 81, 0.8), rgba(13, 78, 130, 0.75));
 }
 
 /* Reset e configuração base para a experiência de tela cheia */
@@ -161,13 +157,22 @@ body {
 /* Painel 1: Vídeo de Fundo */
 .video-background {
     position: absolute;
-    top: 0;
-    left: 0;
+    inset: 0;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.hero-video-element {
+    position: absolute;
+    top: 50%;
+    left: 50%;
     width: 100%;
     height: 100%;
-    overflow: hidden;
+    object-fit: cover;
+    transform: translate(-50%, -50%) scale(1.2);
     z-index: 0;
 }
+
 .video-overlay {
     position: absolute;
     top: 0;
@@ -204,20 +209,6 @@ body {
     height: 100%;
 }
 
-/* Estilos para o elemento de vídeo de fundo */
-.hero-video-element {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transform: translate(-50%, -50%) scale(1.2);
-    z-index: 0;
-}
-
-
-
 /* --- Fundo de Quadrados Animados (Integrado) --- */
 .box {
   position: absolute;
@@ -233,18 +224,18 @@ body {
   position: absolute;
   width: 60px;
   height: 60px;
-  background-color: transparent;
-  /* COR MANTIDA: Já estava sutil e escura, perfeita para fundo claro */
-  border: 4px solid rgba(6, 46, 81, 0.08); /* Azul com baixa opacidade */
+  background-color: rgba(6, 46, 81, 0.12);
+  border: 3px solid rgba(6, 46, 81, 0.35);
+  box-shadow: 0 10px 25px rgba(6, 46, 81, 0.12);
 }
 
 .box div:nth-child(1) { top: 12%; left: 42%; animation: animate-squares 15s linear infinite; }
-.box div:nth-child(2) { top: 70%; left: 50%; animation: animate-squares 12s linear infinite; border-color: rgba(230, 57, 70, 0.1); } /* Vermelho */
+.box div:nth-child(2) { top: 70%; left: 50%; animation: animate-squares 12s linear infinite; }
 .box div:nth-child(3) { top: 17%; left: 6%; animation: animate-squares 14s linear infinite; }
 .box div:nth-child(4) { top: 20%; left: 60%; animation: animate-squares 18s linear infinite; }
-.box div:nth-child(5) { top: 67%; left: 10%; animation: animate-squares 11s linear infinite; border-color: rgba(230, 57, 70, 0.12); } /* Vermelho */
+.box div:nth-child(5) { top: 67%; left: 10%; animation: animate-squares 11s linear infinite; }
 .box div:nth-child(6) { top: 80%; left: 70%; animation: animate-squares 20s linear infinite; }
-.box div:nth-child(7) { top: 60%; left: 80%; animation: animate-squares 25s linear infinite; border-color: rgba(230, 57, 70, 0.08); } /* Vermelho */
+.box div:nth-child(7) { top: 60%; left: 80%; animation: animate-squares 25s linear infinite; }
 .box div:nth-child(8) { top: 32%; left: 25%; animation: animate-squares 22s linear infinite; }
 .box div:nth-child(9) { top: 90%; left: 25%; animation: animate-squares 13s linear infinite; }
 .box div:nth-child(10) { top: 20%; left: 80%; animation: animate-squares 10s linear infinite; }
@@ -457,102 +448,286 @@ body {
     text-transform: uppercase;
 }
 
-/* --- ESTILOS PARA O NOVO BOTÃO DE AÇÃO FLUTUANTE --- */
-#inscricao-cta-flutuante {
+#inscricao-banner {
     position: fixed;
-    bottom: 1.5rem; /* 24px */
-    right: 1.5rem; /* 24px */
-    z-index: 50;
+    top: calc(64px + 16px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 1280px;
+    background: linear-gradient(90deg, #E63946 0%, #d73740 50%, #E63946 100%);
+    color: white;
+    text-decoration: none;
+    z-index: 70;
+    box-shadow: 0 8px 24px rgba(230, 57, 70, 0.35);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, height 0.3s ease, padding 0.3s ease, border-radius 0.3s ease, width 0.3s ease;
+    height: 48px;
     display: flex;
     align-items: center;
-    gap: 0.75rem; /* 12px */
-    background-color: #E63946; /* Vermelho principal */
-    color: white;
-    padding: 0.75rem 1.25rem; /* 12px 20px */
-    border-radius: 9999px; /* Formato de pílula */
-    box-shadow: 0 10px 20px rgba(230, 57, 70, 0.3), 0 6px 6px rgba(230, 57, 70, 0.25);
-    text-decoration: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
-    animation: pulse-cta 2.5s infinite;
+    border-radius: 12px;
+    padding: 0 1rem;
 }
 
-#inscricao-cta-flutuante:hover {
-    transform: translateY(-5px) scale(1.05);
-    box-shadow: 0 15px 25px rgba(230, 57, 70, 0.4), 0 8px 10px rgba(230, 57, 70, 0.3);
-    animation-play-state: paused; /* Pausa a animação de pulso no hover */
+#inscricao-banner:hover {
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 0 16px 30px rgba(230, 57, 70, 0.45);
 }
 
-.cta-icon-container {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    padding: 0.5rem; /* 8px */
+#inscricao-banner.inscricao-banner-collapsed {
+    height: 32px;
+    padding: 0 0.75rem;
+    border-radius: 9999px;
+    box-shadow: 0 6px 18px rgba(230, 57, 70, 0.25);
+    width: auto;
+    max-width: none;
+    display: inline-flex;
+}
+
+#inscricao-banner.inscricao-banner-collapsed .banner-separator,
+#inscricao-banner.inscricao-banner-collapsed .banner-countdown,
+#inscricao-banner.inscricao-banner-collapsed .banner-action-text {
+    display: none;
+}
+
+#inscricao-banner.inscricao-banner-collapsed .banner-title {
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+}
+
+#inscricao-banner.inscricao-banner-collapsed:hover {
+    height: 48px;
+    padding: 0 1rem;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 1280px;
+    display: flex;
+}
+
+#inscricao-banner.inscricao-banner-collapsed:hover .banner-separator {
+    display: inline;
+}
+
+#inscricao-banner.inscricao-banner-collapsed:hover .banner-countdown,
+#inscricao-banner.inscricao-banner-collapsed:hover .banner-action-text {
+    display: inline-flex;
+}
+
+.inscricao-banner-content {
+    max-width: 1280px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0.25rem 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.cta-icon {
-    font-size: 1.75rem; /* 28px */
-    transition: transform 0.3s ease;
-}
-
-.group:hover .cta-icon {
-    transform: rotate(-15deg) scale(1.1);
-}
-
-.cta-content {
-    text-align: left;
-}
-
-.cta-title {
-    font-weight: 800;
-    font-size: 0.875rem; /* 14px */
-    letter-spacing: 0.05em;
+    gap: 1.1rem;
     text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    flex-wrap: wrap;
 }
 
-.cta-countdown {
-    font-size: 0.75rem; /* 12px */
-    font-weight: 500;
-    opacity: 0.9;
+#inscricao-banner.inscricao-banner-collapsed .inscricao-banner-content {
+    width: auto;
+    padding: 0 0.75rem;
+    gap: 0.45rem;
 }
 
-.cta-subtitle {
-    font-size: 0.75rem; /* 12px */
-    font-weight: 500;
-    opacity: 0.9;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+.banner-title,
+.banner-countdown,
+.banner-action-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.banner-label {
+    opacity: 0.85;
+}
+
+.banner-separator {
+    opacity: 0.45;
+    font-size: 0.9rem;
 }
 
 #countdown-timer {
+    display: inline-flex;
+    gap: 0.35rem;
+    align-items: center;
+}
+
+.inscricao-banner-confirmado {
+    background: linear-gradient(90deg, #16A34A 0%, #0f9a41 50%, #16A34A 100%) !important;
+    box-shadow: 0 10px 28px rgba(22, 163, 74, 0.4) !important;
+}
+
+.inscricao-banner-confirmado .banner-action-text,
+.inscricao-banner-confirmado .banner-title,
+.inscricao-banner-confirmado .banner-label,
+.inscricao-banner-confirmado .banner-countdown {
+    color: white;
+}
+
+.inscricao-banner-spacer {
+    height: calc(48px + 16px);
+    transition: height 0.3s ease;
+}
+
+#inscricao-banner.inscricao-banner-collapsed + .inscricao-banner-spacer {
+    height: calc(32px + 16px);
+}
+
+#inscricao-banner.hidden + .inscricao-banner-spacer {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .inscricao-banner-content {
+        flex-direction: column;
+        gap: 0.6rem;
+        padding: 0.75rem 1.25rem;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .inscricao-banner-content {
+        gap: 0.4rem;
+        font-size: 0.78rem;
+    }
+}
+
+.banner-icon {
     display: flex;
-    gap: 1rem;
     align-items: center;
     justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 9999px;
+    background-color: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
-.countdown-item {
+.inscricao-banner-content .material-symbols-outlined {
+    font-size: 1.75rem;
+}
+
+.banner-title {
+    font-size: 0.95rem;
+}
+
+.banner-countdown {
     display: flex;
-    flex-direction: row; /* Alterado para linha */
     align-items: center;
-    gap: 0.5rem; /* Espaçamento entre o número e o rótulo */
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
 }
 
-.countdown-number {
-    font-size: 1.125rem; /* 18px, mais próximo do título */
+.banner-label {
     font-weight: 700;
-    line-height: 1;
+    opacity: 0.9;
 }
 
-.countdown-label {
-    font-size: 0.9rem; /* Mesmo tamanho do título */
+.banner-action {
+    display: none;
+}
+
+.inscricao-banner-confirmado .banner-action-text,
+.inscricao-banner-confirmado .banner-title,
+.inscricao-banner-confirmado .banner-label,
+.inscricao-banner-confirmado .banner-countdown {
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .inscricao-banner-content {
+        flex-direction: column;
+        gap: 0.6rem;
+        padding: 1rem 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .inscricao-banner-content {
+        gap: 0.4rem;
+        font-size: 0.78rem;
+    }
+}
+
+.banner-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 9999px;
+    background-color: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.inscricao-banner-content .material-symbols-outlined {
+    font-size: 1.75rem;
+}
+
+.banner-title {
+    font-size: 0.95rem;
+}
+
+.banner-countdown {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.banner-label {
+    font-weight: 700;
+    opacity: 0.9;
+}
+
+#countdown-timer {
+    display: inline-flex;
+    gap: 0.35rem;
+    align-items: center;
+}
+
+.banner-action {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
     text-transform: uppercase;
-    opacity: 0.8;
+    font-size: 0.85rem;
     font-weight: 700;
+    letter-spacing: 0.08em;
 }
 
+.inscricao-banner-confirmado {
+    background: linear-gradient(90deg, #16A34A 0%, #0f9a41 50%, #16A34A 100%) !important;
+    box-shadow: 0 10px 28px rgba(22, 163, 74, 0.4) !important;
+}
+
+.inscricao-banner-confirmado .banner-icon {
+    background-color: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+@media (max-width: 768px) {
+    .inscricao-banner-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 1rem 1.25rem;
+    }
+
+    .banner-action {
+        align-self: stretch;
+        justify-content: space-between;
+    }
+}
 
 /* --- Estilos para o Menu Mobile --- */
 #mobile-menu {
@@ -1422,7 +1597,9 @@ body {
     border-bottom: none;
 }
 .program-list li:nth-child(even) {
-    background-color: #f9fafb; /* cinza-50 */
+    background-color: rgba(230, 57, 70, 0.15);
+    border-color: rgba(230, 57, 70, 0.4);
+    box-shadow: 0 12px 28px rgba(230, 57, 70, 0.18);
 }
 
 /* --- Estilos para Seleção de Dias (Checkbox como Botão) --- */
@@ -1737,8 +1914,9 @@ button[type="submit"].is-loading {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
+    transition: transform 0.3s ease, filter 0.3s ease, opacity 0.3s ease;
     opacity: 1;
-    transition: transform 0.3s ease;
+    filter: none;
 }
 
 .sponsor-card:hover .sponsor-logo,
@@ -1762,10 +1940,11 @@ button[type="submit"].is-loading {
 }
 
 .sponsor-caption {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #062E51;
-    line-height: 1.4;
+    font-size: 0.75rem;
+    color: rgba(226, 232, 240, 0.76);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-align: center;
 }
 
 @media (max-width: 640px) {
@@ -2739,4 +2918,280 @@ button[type="submit"].is-loading {
         height: 5px;
     }
 }
+
+.banner-title,
+.banner-countdown,
+.banner-action-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
 }
+
+.banner-title {
+    position: relative;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.banner-title.ticker-hide {
+    opacity: 0;
+    transform: translateY(-6px);
+}
+
+.banner-title.ticker-show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.folder-panel:first-of-type .panel-content {
+    padding-top: 0.5rem;
+}
+
+.site-footer {
+    background: radial-gradient(circle at top right, rgba(6, 46, 81, 0.95), #021a36 65%);
+    color: #e2e8f0;
+    position: relative;
+    margin-top: 4rem;
+    overflow: hidden;
+}
+
+.site-footer::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(230, 57, 70, 0.18), transparent 55%);
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.footer-top {
+    padding: 4rem 1.5rem 3rem;
+    position: relative;
+}
+
+.footer-grid {
+    max-width: 1200px; /* not correct property? need to ensure proper CSS. STOP** */
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 3.25rem;
+    row-gap: 2.75rem;
+}
++.footer-grid--compact {
++    grid-template-columns: repeat(12, minmax(0, 1fr));
++    column-gap: 4rem;
++}
+
+.footer-brand {
+    grid-column: span 5;
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+}
+
+.footer-brand-badge {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(230, 57, 70, 0.15);
+    color: #fca5a5;
+    box-shadow: inset 0 0 0 1px rgba(230, 57, 70, 0.3);
+}
+
+.footer-brand-badge .material-symbols-outlined { font-size: 2rem; }
+
+.footer-brand-title {
+    font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: #ffffff;
+}
+
+.footer-brand-text {
+    color: rgba(226, 232, 240, 0.75);
+    line-height: 1.6;
+    max-width: 28rem;
+}
+
+.footer-brand-highlight {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.65rem 1.1rem;
+    background: rgba(230, 57, 70, 0.15);
+    border-radius: 9999px;
+    font-weight: 600;
+    color: #f8fafc;
+    width: fit-content;
+    box-shadow: 0 12px 30px rgba(230, 57, 70, 0.25);
+}
+
+.footer-brand-highlight .material-symbols-outlined { font-size: 1.2rem; }
+
+.footer-column {
+    grid-column: span 2;
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+    min-width: 0;
+}
+
++.footer-column--nav { grid-column: span 3; }
++.footer-column--contact { grid-column: span 3; }
++.footer-column--insights { grid-column: span 2; }
++
+ .footer-heading {
+     font-size: 1rem;
+     font-weight: 700;
+     letter-spacing: 0.12em;
+     text-transform: uppercase;
+     color: #f1f5f9;
+     position: relative;
+ }
+ 
+ .footer-heading::after {
+     content: '';
+     display: block;
+     width: 32px;
+     height: 3px;
+     margin-top: 0.6rem;
+     background: linear-gradient(90deg, #f87171, rgba(230, 57, 70, 0));
+     border-radius: 9999px;
+ }
+ 
+ .footer-links,
+ .footer-info {
+     list-style: none;
+     margin: 0;
+     padding: 0;
+     display: flex;
+     flex-direction: column;
+     gap: 1rem;
+ }
+ 
+ .footer-links a,
+ .footer-info a {
+     color: rgba(226, 232, 240, 0.78);
+     text-decoration: none;
+     transition: color 0.25s ease, transform 0.25s ease;
+ }
+ 
+ .footer-links a:hover,
+ .footer-info a:hover {
+     color: #ffffff;
+     transform: translateX(4px);
+ }
+ 
+ .footer-info li {
+     display: flex;
+     align-items: center;
+     gap: 0.55rem;
+     color: rgba(226, 232, 240, 0.8);
+     line-height: 1.6;
+ }
+ 
+ .footer-info li .material-symbols-outlined { font-size: 1.1rem; }
+ 
+ .footer-info-text {
+     color: rgba(226, 232, 240, 0.72);
+     line-height: 1.5;
+ }
+ 
+ .footer-social {
+     display: flex;
+     gap: 1rem;
+ }
+ 
+ .footer-social a {
+     width: 40px;
+     height: 40px;
+     border-radius: 12px;
+     display: inline-flex;
+     align-items: center;
+     justify-content: center;
+     background: rgba(255, 255, 255, 0.08);
+     color: #f8fafc;
+     transition: background 0.3s ease, transform 0.3s ease;
+ }
+ 
+ .footer-social a:hover {
+     background: rgba(230, 57, 70, 0.6);
+     transform: translateY(-3px);
+ }
+ 
+ .footer-badges,
+ .footer-hashtags {
+     display: flex;
+     flex-wrap: wrap;
+     gap: 0.5rem;
+ }
+ 
+ .footer-badges span,
+ .footer-hashtags span {
+     padding: 0.35rem 0.8rem;
+     border-radius: 9999px;
+     background: rgba(6, 46, 81, 0.45);
+     color: #cbd5f5;
+     font-size: 0.75rem;
+     letter-spacing: 0.08em;
+ }
+ 
+ .footer-hashtags { margin-top: 1rem; }
+ 
+ .footer-badges--inline {
+     margin-top: 0.75rem;
+ }
+ 
+ .footer-bottom {
+     border-top: 1px solid rgba(148, 163, 184, 0.12);
+     padding: 1.5rem 1.5rem 2rem;
+     background: rgba(1, 13, 26, 0.4);
+     position: relative;
+ }
+ 
+ .footer-bottom p {
+     text-align: center;
+     font-size: 0.9rem;
+     letter-spacing: 0.05em;
+     color: rgba(226, 232, 240, 0.8);
+     margin-bottom: 0.75rem;
+ }
+ 
+ .footer-credits {
+     max-width: 960px;
+     margin: 0.5rem auto 0;
+     display: flex;
+     justify-content: center;
+     gap: 1.5rem;
+     flex-wrap: wrap;
+     font-size: 0.8rem;
+     color: rgba(226, 232, 240, 0.65);
+ }
+ 
+ @media (max-width: 1024px) {
+     .footer-grid {
+         grid-template-columns: repeat(8, minmax(0, 1fr));
+     }
+     .footer-brand { grid-column: span 8; }
+     .footer-column--nav,
+     .footer-column--contact,
+     .footer-column--insights { grid-column: span 4; }
+ }
+ 
+ @media (max-width: 768px) {
+     .footer-top { padding: 3rem 1rem 2rem; }
+     .footer-grid {
+         grid-template-columns: repeat(1, minmax(0, 1fr));
+         gap: 2rem;
+     }
+     .footer-brand,
+     .footer-column--nav,
+     .footer-column--contact,
+     .footer-column--insights { grid-column: span 1; }
+     .footer-brand-text { max-width: none; }
+     .footer-bottom { padding: 1.5rem 1rem 2rem; }
+ }

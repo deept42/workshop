@@ -36,8 +36,12 @@ export function configurarContagemRegressiva() {
             });
         } else {
             clearInterval(intervalo);
-            // Esconde o botão quando o evento começa
-            document.getElementById('inscricao-cta-flutuante')?.classList.add('hidden');
+            // Esconde o banner quando o evento começa
+            const banner = document.getElementById('inscricao-banner');
+            if (banner) {
+                banner.classList.add('hidden');
+                window.__inscricaoBannerControls?.stopTicker?.(false);
+            }
         }
     }, 1000);
 }

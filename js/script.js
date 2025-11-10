@@ -47,6 +47,109 @@ document.addEventListener('DOMContentLoaded', () => {
     rodarDiagnosticoInicial(); // Executa o diagnóstico assim que a página carrega
 
     const folderContainer = document.getElementById('folder-container');
+    const bannerInscricao = document.getElementById('inscricao-banner');
+    const bannerTitle = bannerInscricao?.querySelector('.banner-title');
+    const bannerCountdown = bannerInscricao?.querySelector('.banner-countdown');
+    const bannerActionText = bannerInscricao?.querySelector('.banner-action-text');
+
+    if (bannerTitle && !bannerTitle.dataset.baseText) {
+        bannerTitle.dataset.baseText = bannerTitle.textContent.trim();
+    }
+    if (bannerActionText && !bannerActionText.dataset.originalText) {
+        bannerActionText.dataset.originalText = bannerActionText.textContent.trim();
+    }
+
+    let collapsedTickerInterval = null;
+    let collapsedTickerIndex = -1;
+
+    const shouldRunTicker = () =>
+        bannerInscricao &&
+        bannerInscricao.classList.contains('inscricao-banner-collapsed') &&
+        !bannerInscricao.classList.contains('inscricao-banner-confirmado') &&
+        !bannerInscricao.classList.contains('hidden');
+
+    const getCollapsedStates = () => {
+        const baseTitle = bannerTitle?.dataset.baseText || 'Evento Imperdível';
+        const countdownTimerEl = document.getElementById('countdown-timer');
+        const countdownText = countdownTimerEl ? countdownTimerEl.textContent.replace(/\s+/g, ' ').trim() : '';
+        const countdownState = countdownText ? `Começa em ${countdownText}` : 'Começa em breve';
+        const actionState = bannerActionText?.dataset.originalText || 'Vagas se esgotando';
+        return [baseTitle, countdownState, actionState];
+    };
+
+    const animateBannerTitle = (newText) => {
+        if (!bannerTitle) return;
+        if (bannerTitle.textContent === newText) return;
+        bannerTitle.classList.remove('ticker-show');
+        bannerTitle.classList.add('ticker-hide');
+        setTimeout(() => {
+            if (!bannerTitle) return;
+            bannerTitle.textContent = newText;
+            bannerTitle.classList.remove('ticker-hide');
+            bannerTitle.classList.add('ticker-show');
+            setTimeout(() => bannerTitle?.classList.remove('ticker-show'), 280);
+        }, 160);
+    };
+
+    const advanceCollapsedState = () => {
+        const states = getCollapsedStates();
+        if (!states.length) return;
+        collapsedTickerIndex = (collapsedTickerIndex + 1) % states.length;
+        animateBannerTitle(states[collapsedTickerIndex]);
+    };
+
+    const startCollapsedTicker = () => {
+        if (!shouldRunTicker() || collapsedTickerInterval) return;
+        collapsedTickerIndex = -1;
+        advanceCollapsedState();
+        collapsedTickerInterval = window.setInterval(advanceCollapsedState, 3200);
+    };
+
+    const stopCollapsedTicker = (restore = true) => {
+        if (collapsedTickerInterval) {
+            clearInterval(collapsedTickerInterval);
+            collapsedTickerInterval = null;
+        }
+        if (restore && bannerTitle && bannerTitle.dataset.baseText && !bannerInscricao?.classList.contains('inscricao-banner-confirmado')) {
+            bannerTitle.classList.remove('ticker-hide', 'ticker-show');
+            bannerTitle.textContent = bannerTitle.dataset.baseText;
+        }
+    };
+
+    if (bannerInscricao) {
+        bannerInscricao.addEventListener('mouseenter', () => {
+            stopCollapsedTicker();
+        });
+        bannerInscricao.addEventListener('mouseleave', () => {
+            if (shouldRunTicker()) {
+                startCollapsedTicker();
+            }
+        });
+    }
+
+    const atualizarEstadoBanner = () => {
+        if (!bannerInscricao) return;
+        const deveColapsar = window.scrollY > 160 && !bannerInscricao.classList.contains('inscricao-banner-confirmado');
+        if (deveColapsar) {
+            if (!bannerInscricao.classList.contains('inscricao-banner-collapsed')) {
+                bannerInscricao.classList.add('inscricao-banner-collapsed');
+            }
+            startCollapsedTicker();
+        } else {
+            if (bannerInscricao.classList.contains('inscricao-banner-collapsed')) {
+                bannerInscricao.classList.remove('inscricao-banner-collapsed');
+            }
+            stopCollapsedTicker();
+        }
+    };
+
+    atualizarEstadoBanner();
+    window.addEventListener('scroll', atualizarEstadoBanner);
+    window.__inscricaoBannerControls = {
+        stopTicker: stopCollapsedTicker,
+        startTicker: startCollapsedTicker,
+        refreshStates: atualizarEstadoBanner
+    };
 
     // --- GERENCIAMENTO DE ESTADO DE AUTENTICAÇÃO (onAuthStateChange) ---
     supabase.auth.onAuthStateChange((event, session) => {
@@ -55,7 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const rodape = document.querySelector('footer');
         // Precisamos controlar o wrapper principal do header, não apenas o conteúdo interno.
         const headerWrapper = document.getElementById('header-wrapper');
-        const ctaFlutuante = document.getElementById('inscricao-cta-flutuante');
 
         // Elementos do novo botão de login flutuante
         const logoutFabBtn = document.getElementById('logout-fab-btn');
@@ -76,7 +178,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (areaPrincipal) areaPrincipal.style.display = 'none';
                 if (rodape) rodape.style.display = 'none';                
                 if (headerWrapper) headerWrapper.style.display = 'none'; // Esconde todo o header
-                if (ctaFlutuante) ctaFlutuante.classList.add('hidden'); // Esconde o botão de inscrição
+                if (bannerInscricao) {
+                    bannerInscricao.classList.add('hidden'); // Esconde o banner de inscrição
+                    stopCollapsedTicker(false);
+                }
                 if (loginFabBtn) loginFabBtn.classList.add('hidden'); // Esconde o próprio botão de login
                 if (logoutFabBtn) logoutFabBtn.classList.add('hidden'); // Esconde o botão de logout
                 // Adiciona a classe 'is-active' para iniciar a animação de entrada
@@ -94,7 +199,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (areaPrincipal) areaPrincipal.style.display = 'block';
                     if (rodape) rodape.style.display = 'block';                    
                     if (headerWrapper) headerWrapper.style.display = ''; // Mostra o header novamente (display: flex é o padrão do browser)
-                    if (ctaFlutuante) ctaFlutuante.classList.remove('hidden'); // Mostra o botão de inscrição novamente
+                    if (bannerInscricao) {
+                        bannerInscricao.classList.remove('hidden'); // Mostra o banner de inscrição novamente
+                        atualizarEstadoBanner();
+                    }
                     // A visibilidade dos botões de login/logout é controlada por configurarBotoesAuth
                     configurarBotoesAuth(estaLogado);
                 };
