@@ -431,7 +431,24 @@
                         <h2 class="text-3xl font-bold text-[#062E51] mb-2">Garanta sua Vaga no WORKSHOP</h2>
                         <p class="text-center text-gray-600 mb-6">Preencha o formulário abaixo para confirmar sua participação.</p>
                         
+                        <!-- Indicadores de Progresso -->
+                        <div class="flex items-center justify-center gap-4 mb-8">
+                            <div class="progress-step active">
+                                <span>1</span>
+                            </div>
+                            <div id="progress-line" class="flex-1 h-1 bg-gray-200 rounded" style="max-width: 200px;">
+                                <div class="h-full bg-[#E63946] rounded" style="width: 50%;"></div>
+                            </div>
+                            <div class="progress-step">
+                                <span>2</span>
+                            </div>
+                        </div>
+
+                        <!-- Mensagens de Erro -->
+                        <div id="form-messages" class="mb-4"></div>
+                        
                         <form id="lead-form" class="space-y-6" novalidate>
+                            <!-- PASSO 1: Informações Básicas -->
                             <div id="form-step-1" class="space-y-6">
                                 <p class="text-center text-sm text-gray-500 italic">Olá! Para garantir sua vaga, vamos começar com o essencial.</p>
                                 <div class="form-group">
@@ -449,53 +466,79 @@
                                     <input type="text" id="cpf" name="cpf" class="form-input" placeholder=" " required>
                                     <label for="cpf" class="form-label">CPF</label>
                                 </div>
+                                
+                                <!-- Seleção de Dias de Participação -->
+                                <div class="days-selection-group">
+                                    <label class="block text-sm font-medium text-gray-700 mb-3">Dias de Participação *</label>
+                                    <div class="flex flex-col sm:flex-row gap-4">
+                                        <label class="flex items-center gap-2 cursor-pointer p-3 border-2 border-gray-300 rounded-lg hover:border-[#E63946] transition-colors">
+                                            <input type="checkbox" id="dia13" name="dia13" class="w-5 h-5 text-[#E63946] rounded focus:ring-[#E63946]">
+                                            <span class="text-gray-700 font-medium">Dia 13 de Novembro</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 cursor-pointer p-3 border-2 border-gray-300 rounded-lg hover:border-[#E63946] transition-colors">
+                                            <input type="checkbox" id="dia14" name="dia14" class="w-5 h-5 text-[#E63946] rounded focus:ring-[#E63946]">
+                                            <span class="text-gray-700 font-medium">Dia 14 de Novembro</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <button type="button" id="next-step-btn" class="w-full bg-[#E63946] text-white font-bold py-3 px-6 rounded-lg hover:bg-[#c9323d] transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2">
+                                    <span>Próximo Passo</span>
+                                    <span class="material-symbols-outlined">arrow_forward</span>
+                                </button>
+                            </div>
+
+                            <!-- PASSO 2: Informações Adicionais -->
+                            <div id="form-step-2" class="space-y-6 hidden">
+                                <p class="text-center text-sm text-gray-500 italic">Agora vamos completar seus dados de contato e localização.</p>
+                                <div class="form-group">
+                                    <span class="material-symbols-outlined form-icon">work</span>
+                                    <input type="text" id="cargo" name="cargo" class="form-input" placeholder=" ">
+                                    <label for="cargo" class="form-label">Cargo / Função (opcional)</label>
+                                </div>
                                 <div class="form-group">
                                     <span class="material-symbols-outlined form-icon">phone</span>
                                     <input type="tel" id="telefone" name="telefone" class="form-input" placeholder=" " required>
-                                    <label for="telefone" class="form-label">Telefone</label>
+                                    <label for="telefone" class="form-label">Telefone com WhatsApp</label>
+                                </div>
+                                <div class="form-group">
+                                    <span class="material-symbols-outlined form-icon">business</span>
+                                    <input type="text" id="empresa" name="empresa" class="form-input" placeholder=" " required>
+                                    <label for="empresa" class="form-label">Empresa / Instituição</label>
+                                </div>
+                                <div class="form-group">
+                                    <span class="material-symbols-outlined form-icon">location_city</span>
+                                    <div class="autocomplete-container relative">
+                                        <input type="text" id="municipio-input" class="form-input" placeholder=" " required autocomplete="off">
+                                        <input type="hidden" id="municipio" name="municipio">
+                                        <label for="municipio-input" class="form-label">Digite seu Município</label>
+                                        <div id="municipio-suggestions" class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto"></div>
+                                    </div>
                                 </div>
                                 <div class="form-group">
                                     <span class="material-symbols-outlined form-icon">location_on</span>
                                     <input type="text" id="cep" name="cep" class="form-input" placeholder=" " required>
                                     <label for="cep" class="form-label">CEP</label>
                                 </div>
-                                <div class="form-group">
-                                    <span class="material-symbols-outlined form-icon">home</span>
-                                    <input type="text" id="endereco" name="endereco" class="form-input" placeholder=" " required>
-                                    <label for="endereco" class="form-label">Endereço</label>
+                                
+                                <!-- Checkbox de Consentimento -->
+                                <div class="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
+                                    <input type="checkbox" id="consent" name="consent" class="mt-1 w-5 h-5 text-[#E63946] rounded focus:ring-[#E63946]" required>
+                                    <label for="consent" class="text-sm text-gray-700">
+                                        Concordo em receber comunicações sobre o evento por e-mail e WhatsApp. *
+                                    </label>
                                 </div>
-                                <div class="form-group">
-                                    <span class="material-symbols-outlined form-icon">location_city</span>
-                                    <input type="text" id="cidade" name="cidade" class="form-input" placeholder=" " required>
-                                    <label for="cidade" class="form-label">Cidade</label>
-                                    </div>
-                                <div class="form-group">
-                                    <span class="material-symbols-outlined form-icon">flag</span>
-                                    <input type="text" id="estado" name="estado" class="form-input" placeholder=" " required>
-                                    <label for="estado" class="form-label">Estado</label>
+                                
+                                <div class="flex gap-4">
+                                    <button type="button" id="prev-step-btn" class="flex-1 bg-gray-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-600 transition-all duration-300 flex items-center justify-center gap-2">
+                                        <span class="material-symbols-outlined">arrow_back</span>
+                                        <span>Voltar</span>
+                                    </button>
+                                    <button type="submit" class="flex-1 bg-[#E63946] text-white font-bold py-3 px-6 rounded-lg hover:bg-[#c9323d] transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2">
+                                        <span>Inscrever-se Agora</span>
+                                        <span class="material-symbols-outlined">check_circle</span>
+                                    </button>
                                 </div>
-                                <div class="form-group">
-                                    <span class="material-symbols-outlined form-icon">work</span>
-                                    <input type="text" id="profissao" name="profissao" class="form-input" placeholder=" " required>
-                                    <label for="profissao" class="form-label">Profissão</label>
-                                </div>
-                                <div class="form-group">
-                                    <span class="material-symbols-outlined form-icon">business</span>
-                                    <input type="text" id="instituicao" name="instituicao" class="form-input" placeholder=" " required>
-                                    <label for="instituicao" class="form-label">Instituição</label>
-                                </div>
-                                <div class="form-group">
-                                    <span class="material-symbols-outlined form-icon">workspace_premium</span>
-                                    <select id="certificado" name="certificado" class="form-input" required>
-                                        <option value="">Selecione...</option>
-                                        <option value="sim">Sim, desejo o certificado (R$ 20,00)</option>
-                                        <option value="nao">Não, não desejo o certificado</option>
-                                    </select>
-                                    <label for="certificado" class="form-label">Deseja certificado?</label>
-                                </div>
-                                <button type="submit" class="w-full bg-[#E63946] text-white font-bold py-3 px-6 rounded-lg hover:bg-[#c9323d] transition-all duration-300 transform hover:scale-105">
-                                    Confirmar Inscrição
-                                </button>
                             </div>
                         </form>
                     </div>
@@ -534,6 +577,29 @@
             <p class="text-sm">&copy; 2025 WORKSHOP: Municípios Resilientes - Litoral do Paraná. Todos os direitos reservados.</p>
         </div>
     </footer>
+
+    <!-- Container de Notificações -->
+    <div id="notification-container" class="fixed top-20 right-4 z-[9999] flex flex-col gap-3 max-w-md"></div>
+
+    <!-- Modal de Certificado -->
+    <div id="certificate-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full text-center">
+            <span class="material-symbols-outlined text-6xl text-[#E63946] mx-auto mb-4">workspace_premium</span>
+            <h3 class="text-2xl font-bold text-[#062E51] mb-2">Certificado do Workshop</h3>
+            <p class="text-gray-600 mb-4">Sua inscrição foi confirmada!</p>
+            <p class="text-sm text-gray-500 mb-2">Código de Inscrição:</p>
+            <p id="codigo-inscricao-display" class="text-2xl font-bold text-[#E63946] mb-6">-</p>
+            <p class="text-gray-700 mb-6">Deseja solicitar o certificado digital do workshop? (R$ 20,00)</p>
+            <div class="flex gap-4 justify-center">
+                <button id="cert-btn-no" class="px-6 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold transition-colors">
+                    Não, obrigado
+                </button>
+                <button id="cert-btn-yes" class="px-6 py-2 rounded-lg bg-[#E63946] hover:bg-[#c9323d] text-white font-semibold transition-colors">
+                    Sim, quero o certificado
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://unpkg.com/cloudinary-video-player@1.10.0/dist/cld-video-player.min.css" rel="stylesheet">

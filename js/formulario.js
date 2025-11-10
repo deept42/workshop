@@ -163,6 +163,16 @@ export function configurarValidacaoFormulario() {
             if (progressBar) {
                 progressBar.style.width = '100%';
             }
+            // Atualiza os indicadores de progresso
+            const progressSteps = document.querySelectorAll('.progress-step');
+            if (progressSteps.length >= 2) {
+                progressSteps[0].classList.remove('active');
+                progressSteps[1].classList.add('active');
+            }
+            const progressLine = document.getElementById('progress-line');
+            if (progressLine) {
+                progressLine.querySelector('div').style.width = '100%';
+            }
             // Garante que o scroll vá para o topo do formulário no próximo passo
             form.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
@@ -173,6 +183,16 @@ export function configurarValidacaoFormulario() {
         step1.classList.remove('hidden');
         if (progressBar) {
             progressBar.style.width = '50%';
+        }
+        // Atualiza os indicadores de progresso
+        const progressSteps = document.querySelectorAll('.progress-step');
+        if (progressSteps.length >= 2) {
+            progressSteps[1].classList.remove('active');
+            progressSteps[0].classList.add('active');
+        }
+        const progressLine = document.getElementById('progress-line');
+        if (progressLine) {
+            progressLine.querySelector('div').style.width = '50%';
         }
         form.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
@@ -190,6 +210,16 @@ export function configurarValidacaoFormulario() {
         if (progressBar) {
             progressBar.style.width = '50%';
         }
+        // Reseta os indicadores de progresso
+        const progressSteps = document.querySelectorAll('.progress-step');
+        if (progressSteps.length >= 2) {
+            progressSteps[1].classList.remove('active');
+            progressSteps[0].classList.add('active');
+        }
+        const progressLine = document.getElementById('progress-line');
+        if (progressLine) {
+            progressLine.querySelector('div').style.width = '50%';
+        }
         mostrarFeedbackSucessoTopo(); // Mostra a barra de sucesso no topo
         form.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
@@ -201,13 +231,33 @@ export function configurarValidacaoFormulario() {
     if (inputCargo) inputCargo.addEventListener('blur', () => validarCampo(inputCargo));
 
     // --- Validação em Tempo Real ---
-    const camposParaValidar = ['nome', 'cargo', 'cpf', 'empresa', 'email', 'telefone', 'municipio', 'cep'];
+    const camposParaValidar = ['nome', 'cargo', 'cpf', 'empresa', 'email', 'telefone', 'cep'];
     camposParaValidar.forEach(nomeCampo => {
         const input = form.elements[nomeCampo];
         if (input) {
             input.addEventListener('blur', () => validarCampo(input));
         }
     });
+    
+    // Validação especial para o campo de município (que usa autocomplete)
+    const campoMunicipio = document.getElementById('municipio-input');
+    if (campoMunicipio) {
+        // Sincroniza o valor sempre que o usuário digitar
+        campoMunicipio.addEventListener('input', () => {
+            const hiddenMunicipio = form.elements['municipio'];
+            if (hiddenMunicipio) {
+                hiddenMunicipio.value = campoMunicipio.value;
+            }
+        });
+        campoMunicipio.addEventListener('blur', () => {
+            // Sincroniza o valor com o campo oculto
+            const hiddenMunicipio = form.elements['municipio'];
+            if (hiddenMunicipio) {
+                hiddenMunicipio.value = campoMunicipio.value;
+            }
+            validarCampo(campoMunicipio);
+        });
+    }
 
     ['dia13', 'dia14'].forEach(idDia => {
         const checkbox = document.getElementById(idDia);
@@ -229,7 +279,8 @@ export function configurarValidacaoFormulario() {
         const empresa = form.elements['empresa'].value.trim();
         const email = form.elements['email'].value.trim();
         const telefone = form.elements['telefone'].value.trim();
-        const municipio = form.elements['municipio'].value.trim();
+        // Pega o valor do município do campo de input visível ou do campo oculto
+        const municipio = campoMunicipio ? campoMunicipio.value.trim() : (form.elements['municipio'] ? form.elements['municipio'].value.trim() : '');
         const cep = form.elements['cep'].value.trim();
         const consentimento = form.elements['consent'].checked;
         const participaDia13 = form.elements['dia13'].checked;
@@ -275,7 +326,7 @@ export function configurarValidacaoFormulario() {
             errosFormulario.push('O campo "Empresa / Instituição" é obrigatório.');
             temErroSubmit = true;
         }
-        if (!validarCampo(form.elements['municipio'])) {
+        if (campoMunicipio && !validarCampo(campoMunicipio)) {
             errosFormulario.push('O campo "Digite seu Município" é obrigatório.');
             temErroSubmit = true;
         }
@@ -429,22 +480,35 @@ export function configurarValidacaoFormulario() {
         let ehValido = false;
         const valor = input.value.trim();
 
-        switch (input.name) {
-            case 'email':
-                ehValido = valor && validarEmail(valor);
-                break;
-            case 'telefone':
-                ehValido = valor && validarTelefone(valor);
-                break;
-            case 'cpf':
-                ehValido = valor && validarCPF(valor);
-                break;
-            case 'cep':
-                ehValido = valor && validarCEP(valor);
-                break;
-            default: // Para nome, empresa, municipio
-                ehValido = !input.required || !!valor;
-                break;
+        // Validação especial para o campo de município (que não tem name, mas tem id)
+        if (input.id === 'municipio-input') {
+            ehValido = !!valor && valor.length >= 3;
+            // Sincroniza com o campo oculto
+            const hiddenMunicipio = form.elements['municipio'];
+            if (hiddenMunicipio) {
+                hiddenMunicipio.value = valor;
+            }
+        } else {
+            switch (input.name) {
+                case 'email':
+                    ehValido = valor && validarEmail(valor);
+                    break;
+                case 'telefone':
+                    ehValido = valor && validarTelefone(valor);
+                    break;
+                case 'cpf':
+                    ehValido = valor && validarCPF(valor);
+                    break;
+                case 'cep':
+                    ehValido = valor && validarCEP(valor);
+                    break;
+                case 'nome':
+                    ehValido = !!valor && valor.length >= 3;
+                    break;
+                default: // Para empresa, cargo
+                    ehValido = !input.required || !!valor;
+                    break;
+            }
         }
 
         grupo.classList.remove('success', 'error');
@@ -622,7 +686,14 @@ export function configurarAutocompletar() {
             itemSugestao.textContent = cidade;
             itemSugestao.addEventListener('click', () => {
                 input.value = cidade;
+                // Sincroniza com o campo oculto se existir
+                const form = document.getElementById('lead-form');
+                if (form && form.elements['municipio']) {
+                    form.elements['municipio'].value = cidade;
+                }
                 containerSugestoes.classList.add('hidden');
+                // Dispara o evento blur para validar
+                input.dispatchEvent(new Event('blur', { bubbles: true }));
             });
             containerSugestoes.appendChild(itemSugestao);
         });
@@ -707,7 +778,12 @@ export async function configurarAutocompletarComDadosSalvos() {
                     // Dispara o evento 'input' para que a máscara seja aplicada
                     inputCEP.dispatchEvent(new Event('input', { bubbles: true }));
                 }
-                form.elements['municipio'].value = dadosEncontrados.municipio || '';
+                const inputMunicipio = document.getElementById('municipio-input');
+                const hiddenMunicipio = form.elements['municipio'];
+                if (inputMunicipio && dadosEncontrados.municipio) {
+                    inputMunicipio.value = dadosEncontrados.municipio || '';
+                    if (hiddenMunicipio) hiddenMunicipio.value = dadosEncontrados.municipio || '';
+                }
 
                 const inputTelefone = form.elements['telefone'];
                 if (inputTelefone && dadosEncontrados.telefone) {
