@@ -2157,6 +2157,96 @@ button[type="submit"].is-loading {
     gap: 1.5rem;
 }
 
+body.mobile-menu-open {
+    overflow: hidden;
+}
+
+.mobile-menu-container {
+    width: min(90%, 360px);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.mobile-menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.mobile-menu-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: white;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+.mobile-menu-brand img {
+    height: 36px;
+    width: auto;
+}
+
+.mobile-menu-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+}
+
+.mobile-menu-nav a {
+    width: 100%;
+    justify-content: flex-start;
+    font-size: 1.25rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.mobile-menu-nav a .material-symbols-outlined {
+    font-size: 1.35rem;
+}
+
+.mobile-menu-footer {
+    margin-top: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.mobile-menu-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.85rem 1.25rem;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #E63946 0%, #c9323d 55%, #a71f35 100%);
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    box-shadow: 0 16px 32px rgba(230, 57, 70, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mobile-menu-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 22px 42px rgba(230, 57, 70, 0.5);
+}
+
+.mobile-menu-cta .material-symbols-outlined {
+    font-size: 1.5rem;
+}
+
 /* --- ESTILOS PARA O COMPORTAMENTO DE ROLAGEM DA NAVEGAÇÃO --- */
 
 /* Mostra o elemento flutuante inferior quando a página é rolada */
@@ -2494,26 +2584,45 @@ button[type="submit"].is-loading {
 }
 
 /* Ajuste para os links da navegação com ícones */
-.nav-link-main, .nav-link-mobile {
-    display: flex;
+.nav-link-main,
+.nav-link-mobile {
+    display: inline-flex;
     align-items: center;
-    /* O gap foi removido para ser controlado pelo margin do texto */
-    overflow: hidden; /* Garante que o conteúdo não vaze durante a animação */
+    gap: 0.6rem;
+    overflow: visible;
+    text-decoration: none;
 }
 
-/* Estilo para o texto dentro do link de navegação (desktop) */
-.nav-link-main span:last-child {
-    /* Por padrão, o texto fica escondido */
-    max-width: 0;
-    overflow: hidden;
-    white-space: nowrap; /* Impede que o texto quebre a linha durante a transição */
-    transition: max-width 0.4s ease-in-out, margin-left 0.4s ease-in-out;
+.nav-link-main span:first-child,
+.nav-link-mobile span:first-child {
+    font-size: 1.15rem;
 }
 
-/* Quando o link está ativo, o texto se expande */
-.nav-link-main.active-link span:last-child {
-    max-width: 150px; /* Largura suficiente para o maior texto */
-    margin-left: 0.5rem; /* Adiciona o espaçamento apenas quando visível */
+.nav-link-main span:last-child,
+.nav-link-mobile span:last-child {
+    white-space: nowrap;
+}
+
+@media (min-width: 1024px) {
+    .nav-link-main,
+    .nav-link-mobile {
+        overflow: hidden;
+        gap: 0;
+    }
+
+    .nav-link-main span:last-child {
+        max-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        margin-left: 0;
+        transition: max-width 0.4s ease-in-out, margin-left 0.4s ease-in-out;
+    }
+
+    .nav-link-main:hover span:last-child,
+    .nav-link-main.active-link span:last-child {
+        max-width: 150px;
+        margin-left: 0.5rem;
+    }
 }
 
 /* --- ESTILOS PARA O COMPORTAMENTO DE ROLAGEM DA NAVEGAÇÃO --- */
