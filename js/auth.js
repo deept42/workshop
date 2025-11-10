@@ -10,39 +10,48 @@ import { mostrarModalErro, mostrarModalSucesso, mostrarModalSucessoLogin } from 
  * Configura o formulário de login para autenticar com o Supabase.
  */
 export function configurarLoginAdmin() {
-    const formLogin = document.getElementById('login-form');
-    if (!formLogin) return;
+    const attachLoginHandler = (form) => {
+        if (!form || form.dataset.loginBound === 'true') return;
 
-    formLogin.addEventListener('submit', async (evento) => {
-        evento.preventDefault();
+        form.dataset.loginBound = 'true';
 
-        const email = formLogin.elements['login-email'].value;
-        const password = formLogin.elements['login-password'].value;
-        const botaoEntrar = formLogin.querySelector('button[type="submit"]');
+        form.addEventListener('submit', async (evento) => {
+            evento.preventDefault();
 
-        botaoEntrar.disabled = true;
-        botaoEntrar.textContent = 'Verificando...';
+            const emailInput = form.elements['login-email'];
+            const passwordInput = form.elements['login-password'];
+            const submitButton = form.querySelector('button[type="submit"]');
 
-        // Tenta fazer o login com o Supabase
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password,
+            if (!emailInput || !passwordInput || !submitButton) return;
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            const originalButtonContent = submitButton.innerHTML;
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span>Verificando...</span>';
+
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password
+            });
+
+            if (error) {
+                mostrarNotificacao('Usuário ou senha inválidos.', 'erro');
+                console.error('Erro de autenticação:', error.message);
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonContent;
+            } else {
+                mostrarNotificacao(`Login realizado com sucesso! Bem-vindo, ${data.user.email}. Redirecionando...`, 'sucesso');
+                submitButton.innerHTML = '<span>Redirecionando...</span>';
+                window.location.href = 'admin.html';
+            }
         });
+    };
 
-        if (error) {
-            // Se houver erro, mostra o modal de erro personalizado.
-            mostrarNotificacao('Usuário ou senha inválidos.', 'erro');
-            console.error('Erro de autenticação:', error.message);
-            botaoEntrar.disabled = false;
-            botaoEntrar.textContent = 'Entrar';
-        } else {
-            // Se o login for bem-sucedido, mostra o modal de sucesso.
-            // A UI será atualizada pelo 'onAuthStateChange'.
-            mostrarNotificacao(`Login realizado com sucesso! Bem-vindo, ${data.user.email}. Redirecionando...`, 'sucesso');
-            // Apenas redireciona para o painel de administração após o sucesso.
-            window.location.href = 'admin.html';
-        }
-    });
+    document.querySelectorAll('[data-admin-login-form]').forEach(attachLoginHandler);
+
+    window.__attachAdminLoginForm = attachLoginHandler;
 }
 
 /**

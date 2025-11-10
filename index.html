@@ -17,53 +17,38 @@
 <!-- NOVO: Wrapper para controlar o overflow e permitir o carrossel de ponta a ponta -->
 <div id="page-wrapper">
 
-<!-- CONTAINER PARA BOTÕES DE AÇÃO NO CANTO SUPERIOR DIREITO -->
-<div class="fixed top-4 right-6 z-[100] flex items-center gap-2">
-    <!-- Botão de Logout (inicialmente escondido) -->
-    <button id="logout-fab-btn" class="login-fab group hidden" type="button">
-        <span class="material-symbols-outlined">logout</span>
-    </button>
-    <!-- Botão de Login/Painel Admin -->
-    <a href="#" id="login-fab-btn" class="login-fab group">
-        <span id="login-fab-icon" class="material-symbols-outlined">login</span>
-        <span id="login-fab-text" class="login-fab-text">Área do Admin</span>
-    </a>
-</div>
-
 <!-- CONTAINER PRINCIPAL DO HEADER QUE SERÁ ANIMADO -->
 <div id="header-wrapper" class="fixed top-0 left-0 w-full z-[60]">
     <div id="header-content" class="max-w-full mx-auto transition-all duration-300">
         <!-- BARRA DE NAVEGAÇÃO -->
         <header id="main-header" class="w-full">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <!-- Logo -->
-                <div class="flex-shrink-0">
-                    <a href="#inicio" class="flex items-center gap-2 text-white font-bold">
-                        <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo CBMPR" class="h-8 w-auto">
-                        <span class="hidden sm:inline">WMRD-PR</span>
-                    </a>
-                </div>
+        <div class="nav-shell max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16">
+            <a href="#inicio" class="nav-brand">
+                <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo CBMPR">
+                <span class="sr-only">WMRD-PR</span>
+            </a>
 
-                <!-- Links de Navegação (Desktop) -->
-                <nav class="flex items-center justify-center gap-4">
-                    <a href="#inicio" class="nav-link-main"><span class="material-symbols-outlined">home</span><span>Início</span></a>
-                    <a href="#sobre" class="nav-link-main"><span class="material-symbols-outlined">info</span><span>Sobre</span></a>
-                    <a href="#programacao" class="nav-link-main"><span class="material-symbols-outlined">calendar_month</span><span>Programação</span></a>
-                    <a href="#palestrantes" class="nav-link-main"><span class="material-symbols-outlined">mic</span><span>Palestrantes</span></a>
-                    <a href="#informacoes" class="nav-link-main"><span class="material-symbols-outlined">help_center</span><span>Informações</span></a>
-                    <a href="#inscricao" class="nav-link-main"><span class="material-symbols-outlined">edit_square</span><span>Inscrição</span></a>
-                </nav>
+            <nav class="nav-links" aria-label="Seções principais">
+                <a href="#inicio" class="nav-link-main"><span class="material-symbols-outlined">home</span><span>Início</span></a>
+                <a href="#sobre" class="nav-link-main"><span class="material-symbols-outlined">info</span><span>Sobre</span></a>
+                <a href="#programacao" class="nav-link-main"><span class="material-symbols-outlined">calendar_month</span><span>Programação</span></a>
+                <a href="#palestrantes" class="nav-link-main"><span class="material-symbols-outlined">mic</span><span>Palestrantes</span></a>
+                <a href="#informacoes" class="nav-link-main"><span class="material-symbols-outlined">help_center</span><span>Informações</span></a>
+                <a href="#inscricao" class="nav-link-main"><span class="material-symbols-outlined">edit_square</span><span>Inscrição</span></a>
+            </nav>
 
-                <!-- Div de espaçamento para centralizar a navegação -->
-                <div class="flex-shrink-0 w-28"></div>
-
-                <!-- Botão Hamburger (Mobile) -->
-                <div class="hidden items-center">
-                    <button id="hamburger-btn" class="inline-flex items-center justify-center p-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-                        <span class="material-symbols-outlined">menu</span>
-                    </button>
-                </div>
+            <div class="nav-actions">
+                <button id="nav-admin-btn" type="button" class="nav-btn nav-btn--primary nav-btn-desktop">
+                    <span class="material-symbols-outlined">login</span>
+                    <span>Área do Admin</span>
+                </button>
+                <button id="nav-logout-btn" type="button" class="nav-btn nav-btn--outline nav-btn-desktop hidden">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span>Sair</span>
+                </button>
+                <button id="nav-mobile-toggle" type="button" class="nav-mobile-toggle" aria-label="Abrir menu principal">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
             </div>
         </div>
         </header>
@@ -82,7 +67,7 @@
             <span class="banner-title">Evento Imperdível</span>
             <span class="banner-separator">•</span>
             <span class="banner-countdown">
-                <span class="banner-label">Começa em:</span>
+                <span class="banner-label">Começa em</span>
                 <span id="countdown-timer"></span>
             </span>
             <span class="banner-separator">•</span>
@@ -93,9 +78,36 @@
 
 <div class="inscricao-banner-spacer"></div>
 
-
-    <!-- Menu Overlay (Mobile) -->
-    <div id="mobile-menu-overlay" class="hidden"></div>
+    <div id="mobile-nav-panel" class="mobile-nav-panel" aria-hidden="true">
+        <div class="mobile-nav-panel__drawer">
+            <header class="mobile-nav-header">
+                <a href="#inicio" class="mobile-nav-brand" aria-label="Workshop Municípios Resilientes">
+                    <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo CBMPR">
+                </a>
+                <button id="mobile-nav-close" type="button" class="mobile-nav-close" aria-label="Fechar menu">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </header>
+            <nav class="mobile-nav-links" aria-label="Menu móvel">
+                <a href="#inicio" class="mobile-nav-link"><span class="material-symbols-outlined">home</span><span>Início</span></a>
+                <a href="#sobre" class="mobile-nav-link"><span class="material-symbols-outlined">info</span><span>Sobre</span></a>
+                <a href="#programacao" class="mobile-nav-link"><span class="material-symbols-outlined">calendar_month</span><span>Programação</span></a>
+                <a href="#palestrantes" class="mobile-nav-link"><span class="material-symbols-outlined">mic</span><span>Palestrantes</span></a>
+                <a href="#informacoes" class="mobile-nav-link"><span class="material-symbols-outlined">help_center</span><span>Informações</span></a>
+                <a href="#inscricao" class="mobile-nav-link"><span class="material-symbols-outlined">edit_square</span><span>Inscrição</span></a>
+            </nav>
+            <div class="mobile-nav-actions">
+                <button id="mobile-admin-btn" type="button" class="nav-btn nav-btn--primary nav-btn--block">
+                    <span class="material-symbols-outlined">login</span>
+                    <span>Área do Admin</span>
+                </button>
+                <button id="mobile-logout-btn" type="button" class="nav-btn nav-btn--outline nav-btn--surface nav-btn--block hidden">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span>Sair</span>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- TELA DE LOGIN DO ADMINISTRADOR -->
     <div id="login-admin" class="hidden fixed inset-0 z-[200] login-admin-overlay">
@@ -159,7 +171,7 @@
                         <p>Digite suas credenciais para entrar no painel administrativo do workshop.</p>
                     </div>
 
-                    <form id="login-form" class="space-y-6">
+                    <form id="login-form" class="space-y-6" data-admin-login-form>
                         <div class="form-group">
                             <span class="material-symbols-outlined form-icon">mail</span>
                             <input

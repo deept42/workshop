@@ -11,7 +11,7 @@
 
 /* O conteúdo interno do header agora é permanentemente flutuante. */
 #header-content {
-    max-width: 56rem;
+    max-width: 68rem;
     margin-top: 0.5rem;
     border-radius: 0.75rem;
     box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
@@ -78,6 +78,10 @@ body.banner-hidden {
 }
 
 body.login-open {
+    overflow: hidden;
+}
+
+body.mobile-menu-open {
     overflow: hidden;
 }
 
@@ -340,12 +344,11 @@ body.banner-hidden #inicio {
 
 .nav-links {
     display: flex;
-    flex-direction: column;
-    position: relative;
-    background-color: #ffffff;
-    padding: 0.5rem 0;
-    border-radius: 0 12px 12px 0;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    align-items: center;
+    justify-content: center;
+    gap: 1.4rem;
+    flex: 1 1 100%;
+    padding: 0 1rem;
 }
 
 .nav-link {
@@ -615,17 +618,46 @@ body.banner-hidden #inicio {
 
 @media (max-width: 768px) {
     .inscricao-banner-content {
-        flex-direction: column;
-        gap: 0.6rem;
-        padding: 0.75rem 1.25rem;
-        align-items: flex-start;
+        flex-direction: row;
+        gap: 0.45rem;
+        padding: 0.75rem 1rem;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #inscricao-banner .banner-title,
+    #inscricao-banner .banner-action-text,
+    #inscricao-banner .banner-separator {
+        display: none !important;
+    }
+
+    #inscricao-banner .banner-countdown {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.98rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: none;
+    }
+
+    #inscricao-banner .banner-label {
+        opacity: 0.95;
+    }
+
+    #inscricao-banner.inscricao-banner-collapsed .banner-countdown {
+        display: inline-flex !important;
     }
 }
 
 @media (max-width: 480px) {
     .inscricao-banner-content {
-        gap: 0.4rem;
-        font-size: 0.78rem;
+        padding: 0.7rem 0.85rem;
+        gap: 0.35rem;
+    }
+
+    #inscricao-banner .banner-countdown {
+        font-size: 0.9rem;
     }
 }
 
@@ -1752,6 +1784,7 @@ button[type="submit"].is-loading span {
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
     z-index: -1;
+    pointer-events: none;
 }
 
 .login-modal {
@@ -2413,40 +2446,48 @@ button[type="submit"].is-loading {
 
 /* Estilo base para os links da navegação no desktop */
 .nav-link-main {
-    color: #d1d5db; /* gray-300 */
-    font-weight: 500;
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.375rem;
-    transition: all 0.2s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
     position: relative;
+    color: rgba(255, 255, 255, 0.9);
     text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.45rem 0.65rem;
+    border-radius: 0.6rem;
+    transition: color 0.2s ease;
 }
 
 .nav-link-main::after {
     content: '';
     position: absolute;
-    bottom: 0;
+    bottom: 0.15rem;
     left: 50%;
     transform: translateX(-50%);
     width: 0;
     height: 2px;
-    background-color: #E63946; /* Vermelho */
-    transition: width 0.3s ease-in-out;
+    background-color: #E63946;
+    transition: width 0.3s ease;
+}
+
+.nav-link-main .material-symbols-outlined {
+    font-size: 1.1rem;
 }
 
 .nav-link-main:hover {
-    color: white;
-    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
 }
 
-/* Estilo para o link ativo */
-.nav-link-main.active-link {
-    color: white;
-    font-weight: 700;
-}
-
+.nav-link-main:hover::after,
 .nav-link-main.active-link::after {
     width: 60%;
+}
+
+.nav-link-main.active-link {
+    color: #ffffff;
 }
 
 /* Estilo para o botão de ação (Login/Admin) */
@@ -2468,50 +2509,68 @@ button[type="submit"].is-loading {
     color: white;
 }
 
-/* Estilos para o Menu Overlay Mobile */
-#mobile-menu-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(6, 46, 81, 0.95); /* Azul escuro com alta opacidade */
-    backdrop-filter: blur(10px);
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1.5rem;
-}
-
 body.mobile-menu-open,
 body.login-open {
     overflow: hidden;
 }
 
-.mobile-menu-container {
-    width: min(90%, 360px);
+/* --- NAVEGAÇÃO MOBILE (OFF-CANVAS) --- */
+#mobile-menu-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 140;
+    background: rgba(6, 46, 81, 0.45);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+}
+
+#mobile-menu-overlay.mobile-menu-overlay--active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+#mobile-menu-overlay.mobile-menu-overlay--active .mobile-menu-drawer {
+    transform: translateX(0);
+}
+
+.mobile-menu-drawer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: min(92%, 360px);
+    background: rgba(248, 250, 252, 0.96);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: -24px 0 48px rgba(6, 46, 81, 0.28);
+    transform: translateX(110%);
+    transition: transform 0.35s ease;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.75rem;
+    padding: 2rem 1.75rem 2.5rem;
 }
 
 .mobile-menu-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
+    gap: 1rem;
 }
 
 .mobile-menu-brand {
     display: inline-flex;
     align-items: center;
     gap: 0.75rem;
-    color: white;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
+    color: #062E51;
     text-decoration: none;
 }
 
@@ -2520,60 +2579,149 @@ body.login-open {
     width: auto;
 }
 
-.mobile-menu-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    width: 100%;
+.mobile-menu-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(6, 46, 81, 0.08);
+    color: #062E51;
+    transition: background 0.3s ease, transform 0.3s ease;
 }
 
-.mobile-menu-nav a {
-    width: 100%;
-    justify-content: flex-start;
-    font-size: 1.25rem;
-    padding: 0.75rem 1rem;
-    border-radius: 0.75rem;
-    background: rgba(255, 255, 255, 0.05);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+.mobile-menu-close:hover {
+    background: rgba(230, 57, 70, 0.12);
+    transform: translateY(-2px);
 }
 
-.mobile-menu-nav a .material-symbols-outlined {
-    font-size: 1.35rem;
-}
-
-.mobile-menu-footer {
-    margin-top: auto;
-    width: 100%;
+.mobile-menu-links {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-.mobile-menu-cta {
+.mobile-menu-link {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.9rem;
+    background: rgba(6, 46, 81, 0.05);
+    color: #062E51;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.mobile-menu-link .material-symbols-outlined {
+    font-size: 1.35rem;
+    color: #E63946;
+}
+
+.mobile-menu-link:hover {
+    background: rgba(6, 46, 81, 0.12);
+    transform: translateX(4px);
+}
+
+.mobile-menu-link span:last-child {
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    overflow: visible !important;
+}
+
+.mobile-menu-login {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(6, 46, 81, 0.08);
+}
+
+.mobile-menu-login h3 {
+    font-size: 0.9rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #0c3b66;
+}
+
+.mobile-menu-login p {
+    font-size: 0.9rem;
+    color: #4b5563;
+    line-height: 1.5;
+}
+
+.mobile-login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.mobile-login-field {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(6, 46, 81, 0.12);
+    border-radius: 0.9rem;
+    padding: 0.6rem 0.85rem;
+    box-shadow: 0 6px 18px rgba(6, 46, 81, 0.08);
+}
+
+.mobile-login-field .material-symbols-outlined {
+    color: #E63946;
+}
+
+.mobile-login-field input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-size: 0.95rem;
+    color: #062E51;
+}
+
+.mobile-login-field input:focus {
+    outline: none;
+}
+
+.mobile-login-submit {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    width: 100%;
-    padding: 0.85rem 1.25rem;
-    border-radius: 9999px;
-    background: linear-gradient(135deg, #E63946 0%, #c9323d 55%, #a71f35 100%);
-    color: #fff;
+    gap: 0.65rem;
+    padding: 0.85rem;
+    border-radius: 0.85rem;
+    border: none;
+    background: linear-gradient(135deg, #E63946 0%, #c9323d 60%, #a71f35 100%);
+    color: #ffffff;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    text-decoration: none;
-    box-shadow: 0 16px 32px rgba(230, 57, 70, 0.4);
+    box-shadow: 0 18px 36px rgba(230, 57, 70, 0.35);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.mobile-menu-cta:hover {
+.mobile-login-submit:hover {
     transform: translateY(-2px);
-    box-shadow: 0 22px 42px rgba(230, 57, 70, 0.5);
+    box-shadow: 0 24px 48px rgba(230, 57, 70, 0.45);
 }
 
-.mobile-menu-cta .material-symbols-outlined {
-    font-size: 1.5rem;
+.mobile-login-submit .material-symbols-outlined {
+    font-size: 1.2rem;
+}
+
+@media (max-width: 420px) {
+    .mobile-menu-drawer {
+        width: min(94%, 320px);
+        padding: 1.75rem 1.4rem 2.25rem;
+    }
+
+    .mobile-menu-link {
+        font-size: 1.05rem;
+    }
 }
 
 /* --- ESTILOS PARA O COMPORTAMENTO DE ROLAGEM DA NAVEGAÇÃO --- */
@@ -2792,25 +2940,6 @@ body.login-open {
     animation-timing-function: ease-in;
     animation-fill-mode: forwards; /* Mantém o estado final (invisível) */
 }
-/* --- ESTILOS PARA O MENU OVERLAY MOBILE (GLASSMORPHISM AZUL) --- */
-#mobile-menu-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /* Efeito de vidro fosco com o azul principal do site */
-    background-color: rgba(6, 46, 81, 0.9); /* #062E51 com 90% de opacidade */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px); /* Para compatibilidade com Safari */
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1.5rem; /* 24px */
-}
-
 /* --- ESTILOS PARA O BOTÃO DE LOGIN FLUTUANTE (FAB) --- */
 .login-fab {
     position: fixed;
@@ -2887,6 +3016,12 @@ body.login-open {
     font-size: 1.3rem;
 }
 
+.login-fab-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
 @media (max-width: 640px) {
     .login-fab {
         top: 0.75rem;
@@ -2894,6 +3029,11 @@ body.login-open {
         padding: 0.5rem 1rem 0.5rem 0.75rem;
         gap: 0.6rem;
         box-shadow: 0 12px 28px rgba(230, 57, 70, 0.32);
+    }
+
+    .login-fab-wrapper {
+        gap: 0.5rem;
+        right: 0.75rem;
     }
 
     #login-fab-icon {
@@ -2915,25 +3055,37 @@ body.login-open {
 /* Ajuste para os links da navegação com ícones */
 .nav-link-main,
 .nav-link-mobile {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    /* O gap foi removido para ser controlado pelo margin do texto */
-    overflow: hidden; /* Garante que o conteúdo não vaze durante a animação */
+    gap: 0.65rem;
+    text-decoration: none;
+    overflow: visible;
 }
 
-/* Estilo para o texto dentro do link de navegação (desktop) */
-.nav-link-main span:last-child {
-    /* Por padrão, o texto fica escondido */
-    max-width: 0;
-    overflow: hidden;
-    white-space: nowrap; /* Impede que o texto quebre a linha durante a transição */
-    transition: max-width 0.4s ease-in-out, margin-left 0.4s ease-in-out;
+.nav-link-main span:last-child,
+.nav-link-mobile span:last-child {
+    white-space: nowrap;
 }
 
-/* Quando o link está ativo, o texto se expande */
-.nav-link-main.active-link span:last-child {
-    max-width: 150px; /* Largura suficiente para o maior texto */
-    margin-left: 0.5rem; /* Adiciona o espaçamento apenas quando visível */
+@media (min-width: 1024px) {
+    .nav-link-main {
+        gap: 0;
+        overflow: hidden;
+    }
+
+    .nav-link-main span:last-child {
+        max-width: 0;
+        margin-left: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        transition: max-width 0.4s ease-in-out, margin-left 0.4s ease-in-out;
+    }
+
+    .nav-link-main:hover span:last-child,
+    .nav-link-main.active-link span:last-child {
+        max-width: 150px;
+        margin-left: 0.5rem;
+    }
 }
 
 /* --- ESTILOS PARA O COMPORTAMENTO DE ROLAGEM DA NAVEGAÇÃO --- */
@@ -3710,3 +3862,332 @@ body.login-open {
      .footer-brand-text { max-width: none; }
      .footer-bottom { padding: 1.5rem 1rem 2rem; }
  }
+
+/* --- NOVOS ESTILOS PARA NAVEGAÇÃO RESPONSIVA --- */
+.nav-shell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.nav-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #ffffff;
+}
+
+.nav-brand img {
+    height: 40px;
+    width: auto;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.6rem;
+    flex: 1 1 auto;
+    padding: 0 1rem;
+}
+
+.nav-link-main {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    color: rgba(255, 255, 255, 0.92);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.5rem 0.7rem;
+    border-radius: 0.6rem;
+    transition: color 0.2s ease, background 0.2s ease;
+}
+
+.nav-link-main .material-symbols-outlined {
+    font-size: 1.05rem;
+}
+
+.nav-link-main span:last-child {
+    white-space: nowrap;
+}
+
+.nav-link-main::after {
+    content: '';
+    position: absolute;
+    bottom: 0.15rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background-color: #E63946;
+    transition: width 0.3s ease;
+}
+
+.nav-link-main:hover,
+.nav-link-main:focus-visible {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.nav-link-main:hover::after,
+.nav-link-main:focus-visible::after,
+.nav-link-main.active-link::after {
+    width: 60%;
+}
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: auto;
+}
+
+.nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 0.68rem 1.6rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease, border 0.2s ease;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.nav-btn .material-symbols-outlined {
+    font-size: 1rem;
+    font-variation-settings: 'wght' 600;
+}
+
+.nav-btn--primary {
+    background: linear-gradient(135deg, #0b3c64 0%, #105a94 55%, #0b3c64 100%);
+    color: #f8fafc;
+    box-shadow: 0 18px 32px rgba(11, 60, 100, 0.35);
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.nav-btn--primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 24px 40px rgba(11, 60, 100, 0.45);
+}
+
+.nav-btn--outline {
+    background: rgba(255, 255, 255, 0.12);
+    color: #f6fbff;
+    border-color: rgba(255, 255, 255, 0.45);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.nav-btn--outline:hover {
+    background: rgba(255, 255, 255, 0.22);
+    transform: translateY(-1px);
+}
+
+.nav-btn--surface {
+    color: #062E51;
+    border: 1px solid rgba(6, 46, 81, 0.28);
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: none;
+}
+
+.nav-btn--surface:hover {
+    background: rgba(255, 255, 255, 0.92);
+    transform: translateY(-1px);
+}
+
+.nav-btn--block {
+    width: 100%;
+    justify-content: center;
+}
+
+.nav-mobile-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.nav-mobile-toggle:hover {
+    background: rgba(255, 255, 255, 0.22);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 1023px) {
+    .nav-links {
+        display: none;
+    }
+
+    .nav-btn-desktop {
+        display: none;
+    }
+
+    .nav-actions {
+        margin-left: 0;
+    }
+
+    .nav-mobile-toggle {
+        display: inline-flex;
+    }
+}
+
+@media (min-width: 1024px) {
+    .nav-mobile-toggle {
+        display: none;
+    }
+}
+
+.mobile-nav-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 130;
+    background: rgba(6, 46, 81, 0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.mobile-nav-panel.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.mobile-nav-panel__drawer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: min(88%, 340px);
+    background: rgba(248, 250, 252, 0.96);
+    box-shadow: -28px 0 52px rgba(6, 46, 81, 0.32);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    padding: 2rem 1.75rem 2.5rem;
+}
+
+.mobile-nav-panel.is-open .mobile-nav-panel__drawer {
+    transform: translateX(0);
+}
+
+.mobile-nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.mobile-nav-brand {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: rgba(6, 46, 81, 0.12);
+}
+
+.mobile-nav-brand img {
+    width: 32px;
+    height: 32px;
+}
+
+.mobile-nav-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(6, 46, 81, 0.1);
+    color: #062E51;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.mobile-nav-close:hover {
+    background: rgba(230, 57, 70, 0.18);
+    transform: translateY(-1px);
+}
+
+.mobile-nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.mobile-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.95rem;
+    background: rgba(6, 46, 81, 0.05);
+    color: #062E51;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.mobile-nav-link .material-symbols-outlined {
+    font-size: 1.35rem;
+    color: #E63946;
+}
+
+.mobile-nav-link:hover {
+    background: rgba(6, 46, 81, 0.12);
+    transform: translateX(4px);
+}
+
+.mobile-nav-actions {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.mobile-nav-actions .nav-btn {
+    width: 100%;
+    justify-content: center;
+}
+
+@media (max-width: 420px) {
+    .mobile-nav-panel__drawer {
+        width: min(92%, 320px);
+        padding: 1.75rem 1.4rem 2.25rem;
+    }
+
+    .mobile-nav-link {
+        font-size: 1.05rem;
+    }
+}
+
+/* --- ESTILOS PARA O COMPORTAMENTO DE ROLAGEM DA NAVEGAÇÃO --- */

@@ -53,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const bannerCountdown = bannerInscricao?.querySelector('.banner-countdown');
     const bannerActionText = bannerInscricao?.querySelector('.banner-action-text');
     const body = document.body;
-    const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
 
     if (bannerTitle && !bannerTitle.dataset.baseText) {
         bannerTitle.dataset.baseText = bannerTitle.textContent.trim();
@@ -178,26 +177,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const headerWrapper = document.getElementById('header-wrapper');
 
         // Elementos do novo botão de login flutuante
-        const logoutFabBtn = document.getElementById('logout-fab-btn');
-        const loginFabBtn = document.getElementById('login-fab-btn');
-        const loginFabIcon = document.getElementById('login-fab-icon');
-        const loginFabText = document.getElementById('login-fab-text');
+        const desktopAdminBtn = document.getElementById('nav-admin-btn');
+        const desktopLogoutBtn = document.getElementById('nav-logout-btn');
+        const mobileAdminBtn = document.getElementById('mobile-admin-btn');
+        const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
 
         const estaLogado = !!session;
 
-        // Função para mostrar/esconder a tela de login com animação
         const alternarTelaLogin = (mostrar, ehInstantaneo = false) => {
             const leftPane = document.querySelector('.login-pane-left');
             const rightPane = document.querySelector('.login-pane-right');
 
-            // Quando a tela de login é mostrada
             if (mostrar) {
-                if (areaLogin) areaLogin.classList.remove('hidden'); // Ação correta: remove a classe que esconde
+                if (areaLogin) areaLogin.classList.remove('hidden');
                 if (areaPrincipal) areaPrincipal.style.display = 'none';
-                if (rodape) rodape.style.display = 'none';                
-                if (headerWrapper) headerWrapper.style.display = 'none'; // Esconde todo o header
+                if (rodape) rodape.style.display = 'none';
+                if (headerWrapper) headerWrapper.style.display = 'none';
                 if (bannerInscricao) {
-                    bannerInscricao.classList.add('hidden'); // Esconde o banner de inscrição
+                    bannerInscricao.classList.add('hidden');
                     stopCollapsedTicker(false);
                 }
                 if (bannerWrapper) {
@@ -206,81 +203,99 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 body.classList.add('banner-hidden');
                 body.classList.remove('banner-collapsed');
-                if (mobileMenuOverlay && !mobileMenuOverlay.classList.contains('hidden')) {
-                    mobileMenuOverlay.classList.add('hidden');
-                    mobileMenuOverlay.innerHTML = '';
-                    document.body.classList.remove('mobile-menu-open');
+                if (typeof window.__closeMobileMenu === 'function') {
+                    window.__closeMobileMenu();
                 }
-                if (loginFabBtn) loginFabBtn.classList.add('hidden'); // Esconde o próprio botão de login
-                if (logoutFabBtn) logoutFabBtn.classList.add('hidden'); // Esconde o botão de logout
                 body.classList.add('login-open');
-                // Adiciona a classe 'is-active' para iniciar a animação de entrada
                 setTimeout(() => {
                     leftPane?.classList.add('is-active');
                     rightPane?.classList.add('is-active');
-                }, 10); // Pequeno delay para garantir que a transição ocorra
+                }, 10);
             } else {
-                // Quando a tela de login é escondida
                 leftPane?.classList.remove('is-active');
                 rightPane?.classList.remove('is-active');
-                
+
                 const mostrarConteudoPrincipal = () => {
-                    if (areaLogin) areaLogin.classList.add('hidden'); // Ação correta: adiciona a classe para esconder
+                    if (areaLogin) areaLogin.classList.add('hidden');
                     if (areaPrincipal) areaPrincipal.style.display = 'block';
-                    if (rodape) rodape.style.display = 'block';                    
-                    if (headerWrapper) headerWrapper.style.display = ''; // Mostra o header novamente (display: flex é o padrão do browser)
+                    if (rodape) rodape.style.display = 'block';
+                    if (headerWrapper) headerWrapper.style.display = '';
                     if (bannerInscricao) {
-                        bannerInscricao.classList.remove('hidden'); // Mostra o banner de inscrição novamente
+                        bannerInscricao.classList.remove('hidden');
                     }
                     if (bannerWrapper) {
                         bannerWrapper.classList.remove('hidden');
                     }
                     body.classList.remove('banner-hidden');
-                    if (mobileMenuOverlay && !mobileMenuOverlay.classList.contains('hidden')) {
-                        mobileMenuOverlay.classList.add('hidden');
-                        mobileMenuOverlay.innerHTML = '';
-                        document.body.classList.remove('mobile-menu-open');
+                    if (typeof window.__closeMobileMenu === 'function') {
+                        window.__closeMobileMenu();
                     }
                     body.classList.remove('login-open');
                     atualizarEstadoBanner();
-                    // A visibilidade dos botões de login/logout é controlada por configurarBotoesAuth
                     configurarBotoesAuth(estaLogado);
                 };
 
-                // Esconde a tela de login e mostra o site após a animação
-                setTimeout(mostrarConteudoPrincipal, ehInstantaneo ? 0 : 500); // Duração da transição
+                setTimeout(mostrarConteudoPrincipal, ehInstantaneo ? 0 : 500);
             }
         };
 
-        // Se o usuário estiver logado, esconde a tela de login.
         if (estaLogado) {
-            alternarTelaLogin(false, true); // Esconde instantaneamente ao carregar a página se já estiver logado
+            alternarTelaLogin(false, true);
         }
 
-        // Função para configurar um botão de autenticação
         const configurarBotoesAuth = (logado) => {
-            if (!loginFabBtn || !logoutFabBtn || !loginFabIcon || !loginFabText) return;
+            const configurarBotaoAdmin = (botao, isMobile = false) => {
+                if (!botao) return;
+                botao.classList.remove('nav-btn--primary', 'nav-btn--outline', 'nav-btn--surface');
+                botao.onclick = null;
 
-            loginFabBtn.classList.remove('hidden');
-            loginFabBtn.classList.add('login-fab-active');
+                if (logado) {
+                    botao.textContent = 'Painel Admin';
+                    botao.classList.add('nav-btn--outline');
+                    if (isMobile) {
+                        botao.classList.add('nav-btn--surface');
+                    }
+                    botao.onclick = () => {
+                        window.location.href = 'admin.html';
+                    };
+                } else {
+                    botao.textContent = 'Área do Admin';
+                    botao.classList.add('nav-btn--primary');
+                    botao.onclick = (event) => {
+                        event.preventDefault();
+                        if (typeof window.__closeMobileMenu === 'function') {
+                            window.__closeMobileMenu();
+                        }
+                        alternarTelaLogin(true);
+                    };
+                }
+            };
 
-            if (logado) {
-                // Estado LOGADO
-                loginFabIcon.textContent = 'admin_panel_settings';
-                loginFabText.textContent = 'Painel Admin';
-                loginFabBtn.href = 'admin.html'; // Link direto para o painel
-                loginFabBtn.onclick = null;
-                logoutFabBtn.classList.remove('hidden'); // Mostra o botão de logout
+            const configurarBotaoLogout = (botao, isMobile = false) => {
+                if (!botao) return;
+                botao.onclick = null;
+                if (isMobile) {
+                    botao.classList.add('nav-btn--surface');
+                }
 
-                logoutFabBtn.onclick = () => fazerLogout();
-            } else {
-                // Estado DESLOGADO
-                loginFabIcon.textContent = 'login';
-                loginFabText.textContent = 'Área do Admin';
-                loginFabBtn.href = '#'; // Ação de abrir modal
-                logoutFabBtn.classList.add('hidden'); // Esconde o botão de logout
-                loginFabBtn.onclick = (e) => { e.preventDefault(); alternarTelaLogin(true); };
-            }
+                if (logado) {
+                    botao.classList.remove('hidden');
+                    botao.onclick = (event) => {
+                        event.preventDefault();
+                        if (typeof window.__closeMobileMenu === 'function') {
+                            window.__closeMobileMenu();
+                        }
+                        fazerLogout();
+                    };
+                } else {
+                    botao.classList.add('hidden');
+                }
+            };
+
+            configurarBotaoAdmin(desktopAdminBtn, false);
+            configurarBotaoAdmin(mobileAdminBtn, true);
+            configurarBotaoLogout(desktopLogoutBtn, false);
+            configurarBotaoLogout(mobileLogoutBtn, true);
         };
         configurarBotoesAuth(estaLogado);
 

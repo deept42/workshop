@@ -34,47 +34,58 @@ export function configurarRolagemSuave() {
  * Gerencia a funcionalidade do menu hambúrguer para dispositivos móveis.
  */
 export function configurarMenuMobile() {
-    const hamburgerBtn = document.getElementById('hamburger-btn');
-    const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+    const toggleBtn = document.getElementById('nav-mobile-toggle');
+    const panel = document.getElementById('mobile-nav-panel');
+    const drawer = panel?.querySelector('.mobile-nav-panel__drawer');
+    const closeBtn = document.getElementById('mobile-nav-close');
 
-    if (!hamburgerBtn || !mobileMenuOverlay) return;
+    if (!toggleBtn || !panel || !drawer || !closeBtn) return;
 
     const openMenu = () => {
-        mobileMenuOverlay.innerHTML = `
-            <button id="mobile-menu-close-btn" class="absolute top-6 right-6 text-white p-2">
-                <span class="material-symbols-outlined text-[2.5rem]">close</span>
-            </button>
-            <nav class="flex flex-col items-start gap-6 text-center text-[1.5rem] font-bold">
-                <a href="#inicio" class="nav-link-mobile nav-link-main"><span class="material-symbols-outlined">home</span><span>Início</span></a>
-                <a href="#sobre" class="nav-link-mobile nav-link-main"><span class="material-symbols-outlined">info</span><span>Sobre</span></a>
-                <a href="#programacao" class="nav-link-mobile nav-link-main"><span class="material-symbols-outlined">calendar_month</span><span>Programação</span></a>
-                <a href="#palestrantes" class="nav-link-mobile nav-link-main"><span class="material-symbols-outlined">mic</span><span>Palestrantes</span></a>
-                <a href="#informacoes" class="nav-link-mobile nav-link-main"><span class="material-symbols-outlined">help_center</span><span>Informações</span></a>
-                <a href="#inscricao" class="nav-link-mobile nav-link-main"><span class="material-symbols-outlined">edit_square</span><span>Inscrição</span></a>
-            </nav>
-        `;
-        mobileMenuOverlay.classList.remove('hidden');
-
-        // Adiciona listeners aos novos elementos
-        document.getElementById('mobile-menu-close-btn').addEventListener('click', closeMenu);
-        mobileMenuOverlay.querySelectorAll('.nav-link-mobile').forEach(link => {
-            link.addEventListener('click', closeMenu);
-        });
+        panel.classList.add('is-open');
+        panel.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('mobile-menu-open');
     };
 
     const closeMenu = () => {
-        mobileMenuOverlay.classList.add('hidden');
-        mobileMenuOverlay.innerHTML = ''; // Limpa o conteúdo para remover listeners
+        if (!panel.classList.contains('is-open')) return;
+        panel.classList.remove('is-open');
+        panel.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('mobile-menu-open');
     };
 
-    hamburgerBtn.addEventListener('click', openMenu);
+    toggleBtn.addEventListener('click', () => {
+        if (panel.classList.contains('is-open')) {
+            closeMenu();
+        } else {
+            openMenu();
+        }
+    });
 
-    // Fecha o menu com a tecla 'Esc'
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !mobileMenuOverlay.classList.contains('hidden')) {
+    closeBtn.addEventListener('click', closeMenu);
+    panel.addEventListener('click', (event) => {
+        if (event.target === panel) {
             closeMenu();
         }
     });
+
+    panel.querySelectorAll('.mobile-nav-link').forEach(link => {
+        link.addEventListener('click', closeMenu);
+    });
+
+    window.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && panel.classList.contains('is-open')) {
+            closeMenu();
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth >= 1024) {
+            closeMenu();
+        }
+    });
+
+    window.__closeMobileMenu = closeMenu;
 }
 
 /**
