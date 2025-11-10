@@ -67,7 +67,7 @@ export function configurarCarrosselPalestrantes() {
         },
         {
             name: 'Fernanda de Souza Sezerino',
-            photo: 'https://ui-avatars.com/api/?name=Fernanda+Sezerino&background=062E51&color=fff&size=128',
+            photo: 'https://i.ibb.co/LXRHCC6q/Whats-App-Image-2025-10-27-at-17-28-24.jpg',
             bio: [
                 'Gestora Ambiental e Geógrafa, especialista em Gestão Pública e Mestra em Desenvolvimento Territorial Sustentável pela UFPR.',
                 'Atualmente é docente do Instituto Federal do Paraná- campus Paranaguá, doutoranda em Geografia na UFPR e atua como Gestora de Projetos no Laboratório de Geoprocessamento e Estudos Ambientais (LAGEAMB-UFPR).',
@@ -77,7 +77,7 @@ export function configurarCarrosselPalestrantes() {
         },
         {
             name: 'Rangel Ancelotti',
-            photo: 'https://ui-avatars.com/api/?name=Rangel+Ancelotti&background=062E51&color=fff&size=128',
+            photo: 'https://i.ibb.co/KxQdDrcN/Whats-App-Image-2025-10-27-at-17-27-58.jpg',
             bio: [
                 'Professor da UFPR.',
                 'Oceanógrafo, Mestre em sistemas costeiros e oceânicos e Doutor em meio ambiente e desenvolvimento.'
@@ -127,7 +127,7 @@ export function configurarCarrosselPalestrantes() {
         },
         {
             name: 'Cel QOBM Antônio Schinda',
-            photo: 'https://ui-avatars.com/api/?name=Antonio+Schinda&background=062E51&color=fff&size=128',
+            photo: 'https://i.ibb.co/m5J6zrgk/Whats-App-Image-2025-10-27-at-17-27-45.jpg',
             bio: [
                 'Possui Doutorado em Ciências Policiais de Segurança e Ordem Pública (Curso Superior de Polícia) realizado no Centro de Altos Estudos em Segurança (CAES) da Polícia Militar do Estado de São Paulo concluído no ano de 2021.',
                 'Mestrado em Educação pela Universidade do Oeste do Paraná concluído em 2013.',
@@ -136,14 +136,14 @@ export function configurarCarrosselPalestrantes() {
         },
         {
             name: 'Rodrigo Brych',
-            photo: 'https://ui-avatars.com/api/?name=Rodrigo+Brych&background=062E51&color=fff&size=128',
+            photo: 'https://i.ibb.co/8hLTsv0/Whats-App-Image-2025-10-29-at-10-00-17.jpg',
             bio: [
                 'Coordenador de Obras da concessionária Arteris Litoral Sul.'
             ]
         },
         {
             name: 'Felipe Zacharias',
-            photo: 'https://ui-avatars.com/api/?name=Felipe+Zacharias&background=062E51&color=fff&size=128',
+            photo: 'https://i.ibb.co/rDTskmT/Whats-App-Image-2025-10-28-at-15-20-43.jpg',
             bio: [
                 'Assessor Especialista de Saúde e Segurança do Trabalho.',
                 'Gestor Público.'
@@ -158,7 +158,7 @@ export function configurarCarrosselPalestrantes() {
         },
         {
             name: 'Cap QOBM Pedro Rocha de Faria',
-            photo: 'https://ui-avatars.com/api/?name=Pedro+Rocha&background=062E51&color=fff&size=128',
+            photo: 'https://i.ibb.co/9kcJXX85/Whats-App-Image-2025-11-03-at-15-48-57.jpg',
             bio: [
                 'Integrante do Grupo de Operações de Socorro Tático do CBMPR.',
                 'Geógrafo pela UFPR.'
@@ -166,21 +166,21 @@ export function configurarCarrosselPalestrantes() {
         },
         {
             name: 'Bruna Nagel',
-            photo: 'https://ui-avatars.com/api/?name=Bruna+Nagel&background=062E51&color=fff&size=128',
+            photo: 'https://i.ibb.co/Z6zD7F00/Whats-App-Image-2025-11-03-at-10-58-52.jpg',
             bio: [
                 'Coordenadora de Projetos da concessionária Arteris litoral Sul.'
             ]
         },
         {
             name: 'Angelo Mazzuchi Ferreira',
-            photo: 'https://ui-avatars.com/api/?name=Angelo+Mazzuchi&background=062E51&color=fff&size=128',
+            photo: 'https://i.ibb.co/V0MsC91Y/Whats-App-Image-2025-10-27-at-17-28-10.jpg',
             bio: [
                 'Promotor de Justiça titular da Promotoria de Justiça de Defesa da Saúde Pública de Curitiba e RM.'
             ]
         },
         {
             name: 'Marco Aurélio Nunes da Rocha',
-            photo: 'https://ui-avatars.com/api/?name=Marco+Aurelio+Rocha&background=062E51&color=fff&size=128',
+            photo: 'https://i.ibb.co/RwLh43X/Whats-App-Image-2025-11-04-at-11-15-26.jpg',
             bio: [
                 'Técnico em Segurança e em Controle Ambiental.',
                 'Graduado em Química e em Segurança, Licenciado em Biologia e em Pedagogia.',
@@ -200,7 +200,7 @@ export function configurarCarrosselPalestrantes() {
         },
         {
             name: 'Marcelo Possamai',
-            photo: 'https://ui-avatars.com/api/?name=Marcelo+Possamai&background=062E51&color=fff&size=128',
+            photo: 'https://i.ibb.co/GvzVxwjg/Whats-App-Image-2025-10-29-at-07-50-12.jpg',
             bio: [
                 'Gerente de Operações.'
             ]
