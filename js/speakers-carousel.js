@@ -21,7 +21,7 @@ export function configurarCarrosselPalestrantes() {
         },
         {
             name: 'Maj QOBM Anderson Gomes das Neves',
-            photo: 'https://i.ibb.co/d0f07cDv/Whats-App-Image-2025-10-23-at-14-37-42.jpg',
+            photo: 'https://i.ibb.co/fz1vFrxD/Whats-App-Image-2025-10-27-at-17-25-56.jpg',
             bio: [
                 'Graduado em Segurança Pública pela Academia Policial Militar do Guatupê (2009).',
                 'Major do Corpo de Bombeiros Militar do Paraná.',
@@ -33,7 +33,7 @@ export function configurarCarrosselPalestrantes() {
         },
         {
             name: 'Rogerio da Silva Felipe',
-            photo: 'https://i.ibb.co/BHKZMYB9/Whats-App-Image-2025-10-27-at-17-24-57.jpg',
+            photo: 'https://i.ibb.co/9kDX0jjM/Whats-App-Image-2025-10-27-at-17-24-57-1.jpg',
             bio: [
                 'Geólogo - Núcleo de Especialistas da CEDEC PR.',
                 'Especialista GTU, Gestão em Técnica Urbana.'
@@ -41,7 +41,7 @@ export function configurarCarrosselPalestrantes() {
         },
         {
             name: 'Luciene Pimentel',
-            photo: 'https://i.ibb.co/SXS6yT1h/Luciene-Pimentel.jpg',
+            photo: 'https://i.ibb.co/p6j773pM/Whats-App-Image-2025-10-27-at-17-25-17-1.jpg',
             bio: [
                 'Ph.D. pela Universidade de Newcastle na Inglaterra (1997).',
                 'Pós-doutora na Pontifícia Universidade Católica do Paraná (PUCPR) em Gestão e Tecnologias Ambientais.',
@@ -85,7 +85,7 @@ export function configurarCarrosselPalestrantes() {
         },
         {
             name: 'Cel QOBM Ivan Ricardo Fernandes',
-            photo: 'https://i.ibb.co/27xyVTCN/Whats-App-Image-2025-10-23-at-13-15-27.jpg',
+            photo: 'https://i.ibb.co/hR4Ft7GL/Whats-App-Image-2025-10-27-at-17-26-33.jpg',
             bio: [
                 'Coordenador Executivo da Defesa Civil Estadual.',
                 'Doutor em Meio Ambiente e Desenvolvimento Urbano.',
@@ -95,7 +95,7 @@ export function configurarCarrosselPalestrantes() {
         },
         {
             name: 'Ana Flávia Fogaça Zilli',
-            photo: 'https://i.ibb.co/XkJbMz0t/Whats-App-Image-2025-10-27-at-17-25-35.jpg',
+            photo: 'https://i.ibb.co/p6j773pM/Whats-App-Image-2025-10-27-at-17-25-17-1.jpg',
             bio: [
                 'Mestranda no Programa de Pós-Graduação em Gestão Urbana da Pontifícia Universidade Católica do Paraná (PUCPR).',
                 'É graduada em Gestão Pública pelo Instituto Federal do Paraná (IFPR) e especialista em Gestão de Cidades Inteligentes pelo Instituto Municipal de Administração Pública de Curitiba (IMAP).',
@@ -105,7 +105,7 @@ export function configurarCarrosselPalestrantes() {
         },
         {
             name: 'Luís Augusto Moraes Tavares',
-            photo: 'https://i.ibb.co/nqS5d3S3/Whats-App-Image-2025-10-27-at-17-25-35-1.jpg',
+            photo: 'https://i.ibb.co/XrWmqzLD/Whats-App-Image-2025-10-27-at-17-25-35-3.jpg',
             bio: [
                 'Designer de produto.',
                 'Bolsista de iniciação científica em Arquitetura e Urbanismo no Grupo de Estudos Cidades Verdes.'
@@ -113,7 +113,7 @@ export function configurarCarrosselPalestrantes() {
         },
         {
             name: 'Edemilson de Barros',
-            photo: 'https://i.ibb.co/4gRBgTPN/Whats-App-Image-2025-10-27-at-17-27-29.jpg',
+            photo: 'https://i.ibb.co/XZPw4S2N/Whats-App-Image-2025-10-27-at-17-27-29-1.jpg',
             bio: [
                 'Coronel do Corpo de Bombeiros do Paraná.',
                 'Atualmente é Subcomandante Geral do CBMPR.',

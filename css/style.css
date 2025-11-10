@@ -1525,12 +1525,10 @@ button[type="submit"].is-loading span {
 /* Garante que a seção de login tenha fundo branco */
 #login-admin {
     background-color: white;
+    overflow-x: hidden;
 }
 
 /* --- Animação da Tela de Login --- */
-#login-admin {
-    overflow-x: hidden;
-}
 .login-pane-left,
 .login-pane-right {
     transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
@@ -1539,6 +1537,16 @@ button[type="submit"].is-loading span {
 .login-pane-right { transform: translateX(100%); }
 .login-pane-left.is-active,
 .login-pane-right.is-active { transform: translateX(0); }
+
+/* Responsividade para a tela de login */
+@media (max-width: 768px) {
+    #login-admin .login-pane-left {
+        display: none; /* Esconde o painel esquerdo em mobile */
+    }
+    #login-admin .login-pane-right {
+        width: 100% !important; /* Painel direito ocupa toda a largura */
+    }
+}
 
 /* Destaques para eventos específicos */
 .program-list li.event-highlight-meta { background-color: #EFF6FF; /* azul-50 */ }

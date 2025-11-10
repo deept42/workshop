@@ -94,6 +94,103 @@
     <!-- Menu Overlay (Mobile) -->
     <div id="mobile-menu-overlay" class="hidden"></div>
 
+    <!-- TELA DE LOGIN DO ADMINISTRADOR -->
+    <div id="login-admin" class="hidden fixed inset-0 z-[200] bg-white">
+        <div class="flex h-full w-full">
+            <!-- Painel Esquerdo - Informações/Branding -->
+            <div class="login-pane-left w-1/2 bg-gradient-to-br from-[#062E51] to-[#1e3a5f] flex flex-col justify-center items-center p-12 text-white">
+                <div class="max-w-md">
+                    <div class="mb-8">
+                        <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo CBMPR" class="h-20 w-auto mb-6">
+                        <h1 class="text-4xl font-bold mb-4">Painel Administrativo</h1>
+                        <p class="text-xl text-gray-300">Acesso exclusivo para administradores do Workshop WMRD-PR</p>
+                    </div>
+                    <div class="space-y-4 text-gray-200">
+                        <div class="flex items-start gap-3">
+                            <span class="material-symbols-outlined text-[#E63946]">security</span>
+                            <div>
+                                <h3 class="font-semibold mb-1">Acesso Seguro</h3>
+                                <p class="text-sm">Autenticação protegida via Supabase Auth</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="material-symbols-outlined text-[#E63946]">dashboard</span>
+                            <div>
+                                <h3 class="font-semibold mb-1">Gestão Completa</h3>
+                                <p class="text-sm">Visualize e gerencie todas as inscrições</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="material-symbols-outlined text-[#E63946]">analytics</span>
+                            <div>
+                                <h3 class="font-semibold mb-1">Relatórios e Análises</h3>
+                                <p class="text-sm">Exporte dados e visualize estatísticas</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Painel Direito - Formulário de Login -->
+            <div class="login-pane-right w-1/2 bg-white flex flex-col justify-center items-center p-12">
+                <div class="w-full max-w-md">
+                    <div class="mb-8 text-center">
+                        <h2 class="text-3xl font-bold text-[#062E51] mb-2">Bem-vindo de volta</h2>
+                        <p class="text-gray-600">Faça login para acessar o painel administrativo</p>
+                    </div>
+
+                    <form id="login-form" class="space-y-6">
+                        <div class="form-group">
+                            <span class="material-symbols-outlined form-icon">mail</span>
+                            <input 
+                                type="email" 
+                                id="login-email" 
+                                name="login-email" 
+                                class="form-input" 
+                                placeholder=" " 
+                                required
+                                autocomplete="email"
+                            >
+                            <label for="login-email" class="form-label">E-mail</label>
+                        </div>
+
+                        <div class="form-group">
+                            <span class="material-symbols-outlined form-icon">lock</span>
+                            <input 
+                                type="password" 
+                                id="login-password" 
+                                name="login-password" 
+                                class="form-input" 
+                                placeholder=" " 
+                                required
+                                autocomplete="current-password"
+                            >
+                            <label for="login-password" class="form-label">Senha</label>
+                        </div>
+
+                        <button 
+                            type="submit" 
+                            class="w-full bg-[#E63946] text-white font-bold py-3 px-6 rounded-lg hover:bg-[#c9323d] transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
+                        >
+                            <span>Entrar</span>
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                    </form>
+
+                    <div class="mt-6 text-center">
+                        <button 
+                            id="back-to-site-btn" 
+                            class="text-[#062E51] hover:text-[#E63946] transition-colors flex items-center justify-center gap-2 mx-auto"
+                        >
+                            <span class="material-symbols-outlined">arrow_back</span>
+                            <span>Voltar ao site</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="wrapper">
       <div class="box">
         <div></div>
@@ -186,16 +283,16 @@
                             <ul class="program-list text-gray-700">
                                 <li class="event-highlight-meta"><strong>08h00:</strong> Credenciamento</li>
                                 <li class="event-highlight-meta"><strong>09h00:</strong> Abertura (cerimonial, vídeo institucional, palavra do Cmt…)</li>
-                                <li><strong>09h30:</strong> Cel Barros - Tema: Águas de Março, eventos de 2011</li>
-                                <li class="event-highlight-break"><strong>10h15:</strong> Coffee Break</li>
-                                <li><strong>10h30:</strong> Prof Sidnei (Campinas) - Cidades Resilientes</li>
-                                <li><strong>11h00:</strong> Maj Gomes (CEGERD) - Tema: Gerenciamento de Desastres</li>
+                                <li><strong>09h30min:</strong> Abertura - Cel Barros - Tema: Águas de Março, eventos de 2011</li>
+                                <li class="event-highlight-break"><strong>10h15:</strong> Coffee break</li>
+                                <li><strong>10h30:</strong> Prof Sidnei (Campinas) - cidades resilientes</li>
+                                <li><strong>11h00:</strong> Maj Gomes (CEGERD) - Tema: TRANSFORMANDO DADOS EM AÇÃO: INTELIGÊNCIA CLIMÁTICA NAS DECISÕES MUNICIPAIS</li>
                                 <li><strong>11h30:</strong> Reinaldo Olmar Kneib (SIMEPAR) - Tema: Monitoramento e previsão de chuva, eventos, e descargas atmosféricas</li>
                                 <li><strong>12h00:</strong> Almoço</li>
                                 <li><strong>13h30:</strong> Rogerio da Silva Felipe (CEDEC Geólogo) - Tema: Águas de Março de 2011 - Desastres Naturais</li>
                                 <li><strong>14h15:</strong> Bruna Nagel e Rodrigo Brych (Arteris) - Tema: PLANO DE CONTINGÊNCIA E OPERAÇÕES - RECURSOS</li>
-                                <li><strong>14h35:</strong> Bruno Rossi (EPR Litoral) - PLANO DE CONTINGÊNCIA E OPERAÇÕES - RECURSOS</li>
-                                <li class="event-highlight-break"><strong>15h00:</strong> Coffee Break</li>
+                                <li><strong>14h35:</strong> Bruno Rossi (EPR LItoral) - PLANO DE CONTINGÊNCIA E OPERAÇÕES - RECURSOS</li>
+                                <li class="event-highlight-break"><strong>15h00:</strong> Coffee break</li>
                                 <li><strong>15h15:</strong> Cap Pedro (GOST) - Tema: Operações do Rio Grande do Sul e Organização das Forças Tarefas CBMPR para enfrentamento a Desastres</li>
                                 <li><strong>16h00:</strong> Prof. Fernanda de Souza Sezerino (LAGEAMB/UFPR e IFPR) - Tema: Plano Municipal de Redução de Riscos de Paranaguá</li>
                                 <li class="event-highlight-meta"><strong>16h45:</strong> Encerramento 1º Dia</li>
@@ -210,8 +307,8 @@
                                     <ul class="program-list text-gray-700">
                                         <li class="event-highlight-meta"><strong>08h00:</strong> Credenciamento</li>
                                         <li><strong>08h30:</strong> Maj Zarpelon - Tema: Silos</li>
-                                        <li><strong>09h30:</strong> João Carlos Hermenegildo - Tema: Implantação e Boas práticas do PAM</li>
-                                        <li class="event-highlight-break"><strong>10h30:</strong> Coffee Break</li>
+                                        <li><strong>09h30:</strong> João Carlos Hermenegildo - Tema: A importância da atuação conjunta empresa/poder público</li>
+                                        <li class="event-highlight-break"><strong>10h30:</strong> Coffee break</li>
                                         <li><strong>10h45:</strong> Felipe Zacharias - Tema: Gerenciamento de Riscos Portos do Paraná</li>
                                         <li><strong>11h25:</strong> Marco Aurélio Nunes da Rocha - Tema: A importância da atuação do Primeiro no Local nas emergências com Produtos Perigosos em Rodovias</li>
                                         <li><strong>12h00:</strong> Almoço</li>
@@ -219,7 +316,7 @@
                                         <li><strong>15h15:</strong> Osvaldo Nogueira (All Briggs) - Tema: Plano de Contingência</li>
                                         <li><strong>16h00:</strong> Cel Emmanuel - Tema: Atendimento a emergências com produtos perigosos: pontos sensíveis</li>
                                         <li class="event-highlight-meta"><strong>16h30:</strong> Encerramento (Cerimonial)</li>
-                                        <li class="event-highlight-break"><strong>17h00:</strong> Coffee Break</li>
+                                        <li class="event-highlight-break"><strong>17h00:</strong> Coffee break</li>
                                     </ul>
                                 </div>
                                 
@@ -230,7 +327,7 @@
                                     <ul class="program-list text-gray-700">
                                         <li class="event-highlight-meta"><strong>08h00:</strong> Credenciamento</li>
                                         <li><strong>08h30:</strong> Cel Schinda, TC Frazatto e Dr Ângelo - Tema: Prevenção de áreas de risco e afogamento</li>
-                                        <li class="event-highlight-break"><strong>10h30:</strong> Coffee Break</li>
+                                        <li class="event-highlight-break"><strong>10h30:</strong> Coffee break</li>
                                         <li><strong>11h00:</strong> Cel Schinda, TC Frazatto e Dr Ângelo - Tema: Prevenção de áreas de risco e afogamento</li>
                                         <li><strong>12h00:</strong> Almoço</li>
                                         <li><strong>13h30:</strong> Cel Ivan (CEDEC) - Tema: Recursos para COMPDECs</li>
@@ -238,9 +335,9 @@
                                         <li><strong>14h35:</strong> Luis Augusto Moraes Tavares - Tema: Mapeamento dos registros de desastres climáticos na Região Hidrográfica do Litoral do Paraná</li>
                                         <li><strong>14h55:</strong> Ana Flávia Fogaça Zilli - Tema: Mitigação e adaptação climática: Construindo Cidades Resilientes sob a luz da NBR ISO 37.123</li>
                                         <li><strong>15h15:</strong> Dr Rangel (UFPR) - Tema: Eventos marítimos</li>
-                                        <li><strong>16h00:</strong> Cap Vidal - Alagamento, inundação e enxurrada</li>
+                                        <li><strong>16h00:</strong> Cap Vidal - alagamento, inundação e enxurrada</li>
                                         <li class="event-highlight-meta"><strong>16h30:</strong> Encerramento no auditório (CERIMONIAL) entrega de mimos patrocinadores e apoiadores</li>
-                                        <li class="event-highlight-break"><strong>17h00:</strong> Coffee Break</li>
+                                        <li class="event-highlight-break"><strong>17h00:</strong> Coffee break</li>
                                     </ul>
                                 </div>
                             </div>
@@ -279,30 +376,6 @@
             </div>
         </section>
 
-        <section id="patrocinadores" class="folder-panel panel-compact section-with-gradient-bg">
-            <div class="panel-content text-center max-w-4xl">
-                <div class="w-16 h-1 bg-[#E63946] mb-4 mx-auto"></div>
-                <h2 class="section-title font-bold text-[#062E51] mb-8">Apoiadores</h2>
-                
-                <div class="logo-carousel">
-                    <div class="logo-track">
-                        <img src="https://www.defesacivil.pr.gov.br/sites/defesa-civil/arquivos_restritos/files/imagem/2019-05/1769_Defesa_Civil__PR.PNG" alt="Logo Defesa Civil Paraná" class="carousel-logo">
-                        <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo Corpo de Bombeiros Militar Paraná" class="carousel-logo">
-                        <img src="https://web.celepar.pr.gov.br/drupal/images/seil/portos/logo_portos_300x86.png" alt="Logo Portos do Paraná" class="carousel-logo">
-                        <img src="https://portal.isulpar.edu.br/wp-content/uploads/2024/10/logo-texto-1024x378.png" alt="Logo ISULPAR" class="carousel-logo">
-                        <img src="https://maximizados.com.br/_next/image?url=%2Fimages%2FLogo.png&w=128&q=75" alt="Logo Maximizados" class="carousel-logo logo-to-black">
-                        <img src="https://talentosbrasil.com.br/img/logotipo/logotipo.png" alt="Logo Talentos Brasil" class="carousel-logo">
-                        <img src="https://www.defesacivil.pr.gov.br/sites/defesa-civil/arquivos_restritos/files/imagem/2019-05/1769_Defesa_Civil__PR.PNG" alt="Logo Defesa Civil Paraná" class="carousel-logo">
-                        <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo Corpo de Bombeiros Militar Paraná" class="carousel-logo">
-                        <img src="https://web.celepar.pr.gov.br/drupal/images/seil/portos/logo_portos_300x86.png" alt="Logo Portos do Paraná" class="carousel-logo">
-                        <img src="https://portal.isulpar.edu.br/wp-content/uploads/2024/10/logo-texto-1024x378.png" alt="Logo ISULPAR" class="carousel-logo">
-                        <img src="https://maximizados.com.br/_next/image?url=%2Fimages%2FLogo.png&w=128&q=75" alt="Logo Maximizados" class="carousel-logo logo-to-black">
-                        <img src="https://talentosbrasil.com.br/img/logotipo/logotipo.png" alt="Logo Talentos Brasil" class="carousel-logo">
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <section id="informacoes" class="folder-panel panel-compact section-with-gradient-bg">
             <div class="panel-content text-center">
                 <div class="w-16 h-1 bg-[#E63946] mb-4 mx-auto"></div>
@@ -325,38 +398,6 @@
                     </div>
                 </div>
                     </div>
-        </section>
-
-        <section id="inscricao" class="folder-panel section-with-gradient-bg">
-            <div class="panel-content text-center max-w-4xl mx-auto">
-                <div class="w-16 h-1 bg-[#E63946] mb-4 mx-auto"></div>
-                <h2 class="section-title font-bold text-[#062E51] mb-10">Inscrição</h2>
-                <!-- Formulário de inscrição será inserido aqui -->
-                    </div>
-        </section>
-
-        <section id="patrocinadores" class="folder-panel panel-compact section-with-gradient-bg">
-            <div class="panel-content text-center max-w-4xl">
-                <div class="w-16 h-1 bg-[#E63946] mb-4 mx-auto"></div>
-                <h2 class="section-title font-bold text-[#062E51] mb-8">Apoiadores</h2>
-                
-                <div class="logo-carousel">
-                    <div class="logo-track">
-                        <img src="https://www.defesacivil.pr.gov.br/sites/defesa-civil/arquivos_restritos/files/imagem/2019-05/1769_Defesa_Civil__PR.PNG" alt="Logo Defesa Civil Paraná" class="carousel-logo">
-                        <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo Corpo de Bombeiros Militar Paraná" class="carousel-logo">
-                        <img src="https://web.celepar.pr.gov.br/drupal/images/seil/portos/logo_portos_300x86.png" alt="Logo Portos do Paraná" class="carousel-logo">
-                        <img src="https://portal.isulpar.edu.br/wp-content/uploads/2024/10/logo-texto-1024x378.png" alt="Logo ISULPAR" class="carousel-logo">
-                        <img src="https://maximizados.com.br/_next/image?url=%2Fimages%2FLogo.png&w=128&q=75" alt="Logo Maximizados" class="carousel-logo logo-to-black">
-                        <img src="https://talentosbrasil.com.br/img/logotipo/logotipo.png" alt="Logo Talentos Brasil" class="carousel-logo">
-                        <img src="https://www.defesacivil.pr.gov.br/sites/defesa-civil/arquivos_restritos/files/imagem/2019-05/1769_Defesa_Civil__PR.PNG" alt="Logo Defesa Civil Paraná" class="carousel-logo">
-                        <img src="https://web.celepar.pr.gov.br/drupal/images/sesp/bombeiros/brasao_bombeiros_90x90.png" alt="Logo Corpo de Bombeiros Militar Paraná" class="carousel-logo">
-                        <img src="https://web.celepar.pr.gov.br/drupal/images/seil/portos/logo_portos_300x86.png" alt="Logo Portos do Paraná" class="carousel-logo">
-                        <img src="https://portal.isulpar.edu.br/wp-content/uploads/2024/10/logo-texto-1024x378.png" alt="Logo ISULPAR" class="carousel-logo">
-                        <img src="https://maximizados.com.br/_next/image?url=%2Fimages%2FLogo.png&w=128&q=75" alt="Logo Maximizados" class="carousel-logo logo-to-black">
-                        <img src="https://talentosbrasil.com.br/img/logotipo/logotipo.png" alt="Logo Talentos Brasil" class="carousel-logo">
-                    </div>
-                </div>
-            </div>
         </section>
 
         <section id="inscricao" class="folder-panel section-with-gradient-bg">
@@ -458,9 +499,9 @@
                             </div>
                         </form>
                     </div>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
         <section id="patrocinadores" class="folder-panel panel-compact section-with-gradient-bg">
             <div class="panel-content text-center max-w-4xl">
@@ -481,7 +522,7 @@
                         <img src="https://portal.isulpar.edu.br/wp-content/uploads/2024/10/logo-texto-1024x378.png" alt="Logo ISULPAR" class="carousel-logo">
                         <img src="https://maximizados.com.br/_next/image?url=%2Fimages%2FLogo.png&w=128&q=75" alt="Logo Maximizados" class="carousel-logo logo-to-black">
                         <img src="https://talentosbrasil.com.br/img/logotipo/logotipo.png" alt="Logo Talentos Brasil" class="carousel-logo">
-                        </div>
+                    </div>
                 </div>
             </div>
         </section>
