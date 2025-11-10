@@ -38,10 +38,15 @@ export function configurarContagemRegressiva() {
             clearInterval(intervalo);
             // Esconde o banner quando o evento começa
             const banner = document.getElementById('inscricao-banner');
+            const bannerWrapper = document.getElementById('inscricao-banner-wrapper');
             if (banner) {
                 banner.classList.add('hidden');
                 window.__inscricaoBannerControls?.stopTicker?.(false);
             }
+            document.body.classList.add('banner-hidden');
+            document.body.classList.remove('banner-collapsed');
+            bannerWrapper?.classList.add('hidden');
+            bannerWrapper?.classList.remove('inscricao-banner-wrapper--collapsed');
         }
     }, 1000);
 }

@@ -20,11 +20,11 @@
 <!-- CONTAINER PARA BOTÕES DE AÇÃO NO CANTO SUPERIOR DIREITO -->
 <div class="fixed top-4 right-6 z-[100] flex items-center gap-2">
     <!-- Botão de Logout (inicialmente escondido) -->
-    <button id="logout-fab-btn" class="login-fab group hidden bg-gray-500 hover:bg-gray-600">
+    <button id="logout-fab-btn" class="login-fab group hidden" type="button">
         <span class="material-symbols-outlined">logout</span>
     </button>
     <!-- Botão de Login/Painel Admin -->
-    <a href="#" id="login-fab-btn" class="login-fab group bg-red-500 hover:bg-red-600">
+    <a href="#" id="login-fab-btn" class="login-fab group">
         <span id="login-fab-icon" class="material-symbols-outlined">login</span>
         <span id="login-fab-text" class="login-fab-text">Área do Admin</span>
     </a>
@@ -76,18 +76,20 @@
 </div>
 
 <!-- BANNER FIXO DE INSCRIÇÃO -->
-<a href="#inscricao" id="inscricao-banner" class="group">
-    <div class="inscricao-banner-content">
-        <span class="banner-title">Evento Imperdível</span>
-        <span class="banner-separator">•</span>
-        <span class="banner-countdown">
-            <span class="banner-label">Começa em:</span>
-            <span id="countdown-timer"></span>
-        </span>
-        <span class="banner-separator">•</span>
-        <span class="banner-action-text">Vagas se esgotando</span>
-    </div>
-</a>
+<div id="inscricao-banner-wrapper">
+    <a href="#inscricao" id="inscricao-banner" class="group">
+        <div class="inscricao-banner-content">
+            <span class="banner-title">Evento Imperdível</span>
+            <span class="banner-separator">•</span>
+            <span class="banner-countdown">
+                <span class="banner-label">Começa em:</span>
+                <span id="countdown-timer"></span>
+            </span>
+            <span class="banner-separator">•</span>
+            <span class="banner-action-text">Vagas se esgotando</span>
+        </div>
+    </a>
+</div>
 
 <div class="inscricao-banner-spacer"></div>
 

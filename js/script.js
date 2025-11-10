@@ -48,9 +48,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const folderContainer = document.getElementById('folder-container');
     const bannerInscricao = document.getElementById('inscricao-banner');
+    const bannerWrapper = document.getElementById('inscricao-banner-wrapper');
     const bannerTitle = bannerInscricao?.querySelector('.banner-title');
     const bannerCountdown = bannerInscricao?.querySelector('.banner-countdown');
     const bannerActionText = bannerInscricao?.querySelector('.banner-action-text');
+    const body = document.body;
 
     if (bannerTitle && !bannerTitle.dataset.baseText) {
         bannerTitle.dataset.baseText = bannerTitle.textContent.trim();
@@ -66,7 +68,9 @@ document.addEventListener('DOMContentLoaded', () => {
         bannerInscricao &&
         bannerInscricao.classList.contains('inscricao-banner-collapsed') &&
         !bannerInscricao.classList.contains('inscricao-banner-confirmado') &&
-        !bannerInscricao.classList.contains('hidden');
+        !bannerInscricao.classList.contains('hidden') &&
+        !(bannerWrapper && bannerWrapper.classList.contains('hidden')) &&
+        !body.classList.contains('banner-hidden');
 
     const getCollapsedStates = () => {
         const baseTitle = bannerTitle?.dataset.baseText || 'Evento Imperdível';
@@ -129,16 +133,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const atualizarEstadoBanner = () => {
         if (!bannerInscricao) return;
+
+        if (bannerInscricao.classList.contains('hidden') || bannerWrapper?.classList.contains('hidden')) {
+            body.classList.add('banner-hidden');
+            body.classList.remove('banner-collapsed');
+            return;
+        } else {
+            body.classList.remove('banner-hidden');
+        }
+
         const deveColapsar = window.scrollY > 160 && !bannerInscricao.classList.contains('inscricao-banner-confirmado');
         if (deveColapsar) {
             if (!bannerInscricao.classList.contains('inscricao-banner-collapsed')) {
                 bannerInscricao.classList.add('inscricao-banner-collapsed');
             }
+            bannerWrapper?.classList.add('inscricao-banner-wrapper--collapsed');
+            body.classList.add('banner-collapsed');
             startCollapsedTicker();
         } else {
             if (bannerInscricao.classList.contains('inscricao-banner-collapsed')) {
                 bannerInscricao.classList.remove('inscricao-banner-collapsed');
             }
+            bannerWrapper?.classList.remove('inscricao-banner-wrapper--collapsed');
+            body.classList.remove('banner-collapsed');
             stopCollapsedTicker();
         }
     };
@@ -182,6 +199,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     bannerInscricao.classList.add('hidden'); // Esconde o banner de inscrição
                     stopCollapsedTicker(false);
                 }
+                if (bannerWrapper) {
+                    bannerWrapper.classList.add('hidden');
+                    bannerWrapper.classList.remove('inscricao-banner-wrapper--collapsed');
+                }
+                body.classList.add('banner-hidden');
+                body.classList.remove('banner-collapsed');
                 if (loginFabBtn) loginFabBtn.classList.add('hidden'); // Esconde o próprio botão de login
                 if (logoutFabBtn) logoutFabBtn.classList.add('hidden'); // Esconde o botão de logout
                 // Adiciona a classe 'is-active' para iniciar a animação de entrada
@@ -201,8 +224,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (headerWrapper) headerWrapper.style.display = ''; // Mostra o header novamente (display: flex é o padrão do browser)
                     if (bannerInscricao) {
                         bannerInscricao.classList.remove('hidden'); // Mostra o banner de inscrição novamente
-                        atualizarEstadoBanner();
                     }
+                    if (bannerWrapper) {
+                        bannerWrapper.classList.remove('hidden');
+                    }
+                    body.classList.remove('banner-hidden');
+                    atualizarEstadoBanner();
                     // A visibilidade dos botões de login/logout é controlada por configurarBotoesAuth
                     configurarBotoesAuth(estaLogado);
                 };
@@ -221,11 +248,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const configurarBotoesAuth = (logado) => {
             if (!loginFabBtn || !logoutFabBtn || !loginFabIcon || !loginFabText) return;
 
+            loginFabBtn.classList.remove('hidden');
+            loginFabBtn.classList.add('login-fab-active');
+
             if (logado) {
                 // Estado LOGADO
                 loginFabIcon.textContent = 'admin_panel_settings';
                 loginFabText.textContent = 'Painel Admin';
                 loginFabBtn.href = 'admin.html'; // Link direto para o painel
+                loginFabBtn.onclick = null;
                 logoutFabBtn.classList.remove('hidden'); // Mostra o botão de logout
 
                 logoutFabBtn.onclick = () => fazerLogout();

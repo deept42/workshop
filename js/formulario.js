@@ -447,12 +447,16 @@ export function configurarValidacaoFormulario() {
 
     function mostrarFeedbackSucessoTopo() {
         const banner = document.getElementById('inscricao-banner');
+        const bannerWrapper = document.getElementById('inscricao-banner-wrapper');
         if (!banner) return;
 
         window.__inscricaoBannerControls?.stopTicker?.(false);
 
         banner.classList.add('inscricao-banner-confirmado');
         banner.classList.remove('inscricao-banner-collapsed');
+        bannerWrapper?.classList.remove('inscricao-banner-wrapper--collapsed');
+        bannerWrapper?.classList.remove('hidden');
+        document.body.classList.remove('banner-collapsed', 'banner-hidden');
 
         const bannerTitle = banner.querySelector('.banner-title');
         const actionText = banner.querySelector('.banner-action-text');

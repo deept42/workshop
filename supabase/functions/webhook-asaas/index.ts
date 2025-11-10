@@ -12,7 +12,7 @@ serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
-
+ c
   try {
     const payload = await req.json();
 
