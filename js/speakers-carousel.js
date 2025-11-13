@@ -76,7 +76,7 @@ export function configurarCarrosselPalestrantes() {
             ]
         },
         {
-            name: 'Rangel Ancelotti',
+            name: 'Rangel Angelotti',
             photo: 'https://i.ibb.co/KxQdDrcN/Whats-App-Image-2025-10-27-at-17-27-58.jpg',
             bio: [
                 'Professor da UFPR.',
@@ -123,6 +123,15 @@ export function configurarCarrosselPalestrantes() {
                 'Atua há mais de 20 anos como instrutor em disciplinas técnicas no Corpo de Bombeiros.',
                 'Foi instrutor da Força Nacional de Segurança Pública e professor convidado em cursos de pós-graduação na PUC/PR e UNIVILLE/SC, na área de emergências ambientais.',
                 'Autor do e-book de atendimento a emergência com produtos perigosos publicado em 2020.'
+            ]
+        },
+        {
+            name: 'Gabriel Fragomeni',
+            photo: 'https://i.ibb.co/ZRWmfLbY/Imagem-do-Whats-App-de-2025-11-12-s-09-49-18-067202dd.jpg',
+            bio: [
+                'Licenciatura Plena em Educação Física – CREF/PR: 030708.',
+                'Pós-graduado em Gestão Esportiva (MBA/USP).',
+                'Bacharel em Marketing.'
             ]
         },
         {

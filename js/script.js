@@ -420,5 +420,5 @@ function configurarAnimacaoTexto() {
 // Garante que a função seja executada após o carregamento do DOM
 document.addEventListener('DOMContentLoaded', () => {
     configurarAnimacaoTexto();
-    configurarEfeitoDesastre();
+    // configurarEfeitoDesastre(); // Removido - easter egg não é mais necessário
 });
