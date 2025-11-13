@@ -94,8 +94,9 @@ function renderizarUICompleta() {
     const inscritosAtivos = estado.inscritos.filter(i => !i.is_deleted);
     const inscritosLixeira = estado.inscritos.filter(i => i.is_deleted);
 
-    // Renderiza a tabela com os dados filtrados e ordenados
-    renderizarTabela(estado.mostrandoLixeira ? inscritosLixeira : inscritosAtivos);
+    // Renderiza a tabela com os dados filtrados e ordenados conforme o estado atual
+    const dadosFiltradosOrdenados = getDadosFiltradosEOrdenados();
+    renderizarTabela(dadosFiltradosOrdenados);
 
     // Renderiza as métricas e gráficos com base nos inscritos ativos
     renderizarMetricas(inscritosAtivos);
