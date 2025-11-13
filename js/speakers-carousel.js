@@ -211,7 +211,7 @@ export function configurarCarrosselPalestrantes() {
         },
         {
             name: 'Sidnei Furtado Fernandes',
-            photo: 'https://ui-avatars.com/api/?name=Sidnei+Furtado&background=062E51&color=fff&size=128',
+            photo: 'https://i.ibb.co/dJMNVHc3/Imagem-do-Whats-App-de-2025-11-12-s-09-49-18-067202dd.jpg',
             bio: [
                 'Professor (Campinas).'
             ]
