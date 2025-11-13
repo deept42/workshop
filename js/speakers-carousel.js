@@ -53,7 +53,7 @@ export function configurarCarrosselPalestrantes() {
         },
         {
             name: 'Cap QOBM Marcos Vidal da Silva Júnior',
-            photo: 'https://ui-avatars.com/api/?name=Marcos+Vidal&background=062E51&color=fff&size=128',
+            photo: 'https://i.ibb.co/k6kjCQTp/Imagem-do-Whats-App-de-2025-11-12-s-09-49-18-067202dd.jpg',
             bio: [
                 'Chefe de Gabinete e Assessor de Comunicação Social da Coordenadoria Estadual da Defesa Civil.',
                 'Graduado em Segurança Pública pela Academia Policial Militar do Guatupê (2010).',
@@ -95,7 +95,7 @@ export function configurarCarrosselPalestrantes() {
         },
         {
             name: 'Ana Flávia Fogaça Zilli',
-            photo: 'https://i.ibb.co/p6j773pM/Whats-App-Image-2025-10-27-at-17-25-17-1.jpg',
+            photo: 'https://i.ibb.co/7qx0gjj/Imagem-do-Whats-App-de-2025-11-12-s-09-49-18-067202dd.jpg',
             bio: [
                 'Mestranda no Programa de Pós-Graduação em Gestão Urbana da Pontifícia Universidade Católica do Paraná (PUCPR).',
                 'É graduada em Gestão Pública pelo Instituto Federal do Paraná (IFPR) e especialista em Gestão de Cidades Inteligentes pelo Instituto Municipal de Administração Pública de Curitiba (IMAP).',
