@@ -319,6 +319,48 @@ function renderizarTabela(inscritos) {
     configurarSelecaoEmMassa();
 }
 
+function obterValorCampoFiltro(inscrito, coluna) {
+    switch (coluna) {
+        case 'nome':
+            return inscrito.nome_completo || inscrito.nome || '';
+        case 'cargo':
+            return inscrito.cargo_funcao || '';
+        case 'empresa':
+            return inscrito.empresa || '';
+        case 'municipio':
+            return inscrito.municipio || '';
+        case 'email':
+            return inscrito.email || '';
+        case 'cpf':
+            return inscrito.cpf || '';
+        case 'cep':
+            return inscrito.cep || '';
+        case 'created_at':
+            return inscrito.created_at
+                ? new Date(inscrito.created_at).toLocaleString('pt-BR')
+                : '';
+        case 'certificado': {
+            if (!inscrito.quer_certificado) {
+                return 'não solicitado';
+            }
+            const status = inscrito.status_pagamento || '';
+            if (status === 'pago') return 'confirmado';
+            if (status === 'pendente') return 'pendente';
+            return status || 'não informado';
+        }
+        case 'dias': {
+            const dia13 = inscrito.participa_dia_13;
+            const dia14 = inscrito.participa_dia_14;
+            if (dia13 && dia14) return '13, 14, ambos, 13 e 14';
+            if (dia13) return '13, dia 13';
+            if (dia14) return '14, dia 14';
+            return 'nenhum, nenhum dia';
+        }
+        default:
+            return inscrito[coluna] ?? '';
+    }
+}
+
 function getDadosFiltradosEOrdenados() {
     const {
         inscritos, mostrandoLixeira, filtroColuna, filtroTermo,
@@ -335,11 +377,26 @@ function getDadosFiltradosEOrdenados() {
         const termo = filtroTermo.toLowerCase();
 
         if (filtroColuna === 'all') {
-            return Object.values(inscrito).some(val =>
-                String(val).toLowerCase().includes(termo)
+            const valoresExtras = [
+                obterValorCampoFiltro(inscrito, 'nome'),
+                obterValorCampoFiltro(inscrito, 'cargo'),
+                obterValorCampoFiltro(inscrito, 'empresa'),
+                obterValorCampoFiltro(inscrito, 'municipio'),
+                obterValorCampoFiltro(inscrito, 'dias'),
+                obterValorCampoFiltro(inscrito, 'certificado'),
+                obterValorCampoFiltro(inscrito, 'created_at')
+            ];
+
+            const valoresParaProcurar = [
+                ...Object.values(inscrito),
+                ...valoresExtras
+            ];
+
+            return valoresParaProcurar.some(val =>
+                String(val ?? '').toLowerCase().includes(termo)
             );
         } else {
-            const valorCampo = inscrito[filtroColuna];
+            const valorCampo = obterValorCampoFiltro(inscrito, filtroColuna);
             return String(valorCampo).toLowerCase().includes(termo);
         }
     });
