@@ -188,6 +188,15 @@ export function configurarCarrosselPalestrantes() {
             ]
         },
         {
+            name: 'Claudenir Celestino de Jesus',
+            photo: 'https://i.ibb.co/d4QyLnqy/Imagem-do-Whats-App-de-2025-11-12-s-09-49-18-067202dd.jpg',
+            bio: [
+                'Bacharel em Direito.',
+                'Tecnólogo de Polícia Ostensiva e Preservação da Ordem Pública.',
+                'Técnico em Segurança do Trabalho.'
+            ]
+        },
+        {
             name: 'Marco Aurélio Nunes da Rocha',
             photo: 'https://i.ibb.co/RwLh43X/Whats-App-Image-2025-11-04-at-11-15-26.jpg',
             bio: [
