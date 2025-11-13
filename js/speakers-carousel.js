@@ -145,7 +145,7 @@ export function configurarCarrosselPalestrantes() {
         },
         {
             name: 'Rodrigo Brych',
-            photo: 'https://i.ibb.co/8hLTsv0/Whats-App-Image-2025-10-29-at-10-00-17.jpg',
+            photo: 'https://i.ibb.co/9ksqL9p4/Imagem-do-Whats-App-de-2025-11-12-s-09-49-18-067202dd.jpg',
             bio: [
                 'Coordenador de Obras da concessionária Arteris Litoral Sul.'
             ]
@@ -160,7 +160,7 @@ export function configurarCarrosselPalestrantes() {
         },
         {
             name: 'Maj QOBM Luis Eduardo Zarpellon',
-            photo: 'https://ui-avatars.com/api/?name=Luis+Zarpellon&background=062E51&color=fff&size=128',
+            photo: 'https://i.ibb.co/6JY4hVFs/Imagem-do-Whats-App-de-2025-11-12-s-09-49-18-067202dd.jpg',
             bio: [
                 'Sub Cmt da Escola Superior de Bombeiros.'
             ]
