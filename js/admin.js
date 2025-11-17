@@ -211,6 +211,14 @@ function gerarHtmlLinha(inscrito) {
            </button>
            <button class="btn-duplicar text-gray-500 hover:text-amber-600 transition-colors" data-id="${inscrito.id}" title="Duplicar inscrito">
                 <span class="material-symbols-outlined">content_copy</span>
+           </button>
+           <button class="btn-certificado-individual ${inscrito.status_pagamento === 'pago' && inscrito.quer_certificado ? 'text-gray-500 hover:text-emerald-600 cursor-pointer' : 'text-gray-300 opacity-50 cursor-not-allowed pointer-events-none'} transition-colors" 
+                   data-id="${inscrito.id}" 
+                   data-nome="${inscrito.nome_completo}"
+                   data-status="${inscrito.status_pagamento}"
+                   data-quer-certificado="${inscrito.quer_certificado}"
+                   title="${inscrito.status_pagamento === 'pago' && inscrito.quer_certificado ? 'Gerar Certificado' : 'Certificado não confirmado'}">
+                <span class="material-symbols-outlined">workspace_premium</span>
            </button>`;
 
     // Lógica para formatar o nome com a tag "Cópia"
@@ -687,11 +695,51 @@ function configurarAcoesTabela() {
     if (!corpoTabela) return;
 
     corpoTabela.addEventListener('click', async (e) => {
-        const targetButton = e.target.closest('.btn-mover-lixeira, .btn-restaurar, .btn-deletar-permanente, .btn-editar, .btn-duplicar');
+        // Verifica se o clique foi no botão ou no ícone dentro dele
+        let targetButton = e.target.closest('.btn-mover-lixeira, .btn-restaurar, .btn-deletar-permanente, .btn-editar, .btn-duplicar, .btn-certificado-individual');
+        
+        // Se não encontrou e clicou em um ícone, tenta encontrar o botão pai
+        if (!targetButton) {
+            // Verifica se clicou no ícone (span) dentro do botão de certificado
+            if (e.target.tagName === 'SPAN' && e.target.closest('.btn-certificado-individual')) {
+                targetButton = e.target.closest('.btn-certificado-individual');
+            }
+            // Ou se o parent é o botão
+            else if (e.target.parentElement?.classList.contains('btn-certificado-individual')) {
+                targetButton = e.target.parentElement;
+            }
+            // Ou se está dentro de um botão de certificado em qualquer nível
+            else if (e.target.closest('.btn-certificado-individual')) {
+                targetButton = e.target.closest('.btn-certificado-individual');
+            }
+        }
+        
         if (!targetButton) return;
 
-        const inscritoId = targetButton.dataset.id;
-        const inscritoNome = targetButton.dataset.nome; // Captura o nome para usar nos modais
+        // Tenta pegar o ID do botão ou da linha da tabela
+        let inscritoId = targetButton.dataset.id;
+        let inscritoNome = targetButton.dataset.nome;
+        
+        // Se não encontrou o ID no botão, tenta pegar da linha da tabela
+        if (!inscritoId) {
+            const linha = targetButton.closest('tr');
+            if (linha) {
+                inscritoId = linha.dataset.id;
+            }
+        }
+        
+        // Verifica se o ID foi capturado corretamente
+        if (!inscritoId) {
+            console.error('ID do inscrito não encontrado!', {
+                targetButton,
+                dataset: targetButton.dataset,
+                classes: targetButton.className,
+                elementoClicado: e.target,
+                linha: targetButton.closest('tr')
+            });
+            mostrarNotificacao('Erro: ID do inscrito não encontrado.', 'erro');
+            return;
+        }
         
         if (targetButton.classList.contains('btn-mover-lixeira')) {
             // Abre o modal de confirmação para mover para a lixeira
@@ -727,6 +775,66 @@ function configurarAcoesTabela() {
             }
         } else if (targetButton.classList.contains('btn-duplicar')) {
             await iniciarDuplicacao(inscritoId);
+        } else if (targetButton.classList.contains('btn-certificado-individual')) {
+            console.log('Botão de certificado clicado!', {
+                inscritoId,
+                status: targetButton.dataset.status,
+                querCertificado: targetButton.dataset.querCertificado,
+                classes: targetButton.className
+            });
+            
+            // Verifica se o botão está visualmente desabilitado (tem pointer-events-none)
+            if (targetButton.classList.contains('pointer-events-none')) {
+                console.log('Botão desabilitado visualmente, não pode gerar certificado');
+                mostrarNotificacao('Apenas inscritos com certificado confirmado podem gerar o PDF.', 'erro');
+                return;
+            }
+            
+            const status = targetButton.dataset.status;
+            const querCertificado = targetButton.dataset.querCertificado === 'true';
+            
+            console.log('Status do certificado:', { status, querCertificado });
+            
+            if (status === 'pago' && querCertificado) {
+                console.log('Buscando inscrito no estado...', {
+                    inscritoId,
+                    tipoInscritoId: typeof inscritoId,
+                    totalInscritos: estado.inscritos.length,
+                    primeirosIds: estado.inscritos.slice(0, 3).map(i => ({ id: i.id, tipo: typeof i.id }))
+                });
+                
+                // Tenta encontrar o inscrito comparando como string e como número
+                const inscrito = estado.inscritos.find(i => {
+                    const matchString = String(i.id) === String(inscritoId);
+                    const matchNumber = Number(i.id) === Number(inscritoId);
+                    return matchString || matchNumber;
+                });
+                
+                console.log('Resultado da busca:', {
+                    encontrado: !!inscrito,
+                    inscrito: inscrito ? { id: inscrito.id, nome: inscrito.nome_completo } : null
+                });
+                
+                if (inscrito) {
+                    try {
+                        console.log('Iniciando geração do certificado...');
+                        await gerarCertificadoIndividual(inscrito);
+                        console.log('Certificado gerado com sucesso!');
+                    } catch (error) {
+                        console.error('Erro ao gerar certificado:', error);
+                        mostrarNotificacao(`Erro ao gerar certificado: ${error.message}`, 'erro');
+                    }
+                } else {
+                    console.error('Inscrito não encontrado no estado', {
+                        buscado: inscritoId,
+                        idsDisponiveis: estado.inscritos.map(i => i.id).slice(0, 10)
+                    });
+                    mostrarNotificacao('Inscrito não encontrado. Tente recarregar a página.', 'erro');
+                }
+            } else {
+                console.log('Status não permite gerar certificado:', { status, querCertificado });
+                mostrarNotificacao('Apenas inscritos com certificado confirmado podem gerar o PDF.', 'erro');
+            }
         }
     });
 
@@ -755,6 +863,7 @@ function configurarAcoesTabela() {
             const sucesso = await atualizarStatusCertificado(id, novoStatus);
             if (sucesso) {
                 document.body.dispatchEvent(new CustomEvent('dadosAlterados'));
+                renderizarUICompleta(); // Re-renderiza para atualizar o botão de certificado
             }
             menu.classList.add('hidden'); // Fecha o menu após a ação
         }
@@ -1302,6 +1411,7 @@ function configurarExportacoes() {
     const exportBtn = document.getElementById('export-csv-btn');
     const exportPdfBtn = document.getElementById('export-pdf-btn');
     const exportChecklistBtn = document.getElementById('export-checklist-btn');
+    const gerarCertificadosBtn = document.getElementById('gerar-certificados-btn');
     const bulkCsvBtn = document.getElementById('bulk-export-csv-btn');
     const bulkPdfBtn = document.getElementById('bulk-export-pdf-btn');
     const bulkChecklistBtn = document.getElementById('bulk-export-checklist-btn');
@@ -1317,6 +1427,7 @@ function configurarExportacoes() {
     exportBtn?.addEventListener('click', () => gerarCSV(getDadosFiltradosEOrdenados()));
     exportPdfBtn?.addEventListener('click', () => gerarPDF(getDadosFiltradosEOrdenados()));
     exportChecklistBtn?.addEventListener('click', () => gerarChecklist(getDadosFiltradosEOrdenados()));
+    gerarCertificadosBtn?.addEventListener('click', () => gerarCertificados());
 
     bulkCsvBtn?.addEventListener('click', () => gerarCSV(getDadosParaExportar()));
     bulkPdfBtn?.addEventListener('click', () => gerarPDF(getDadosParaExportar()));
@@ -1485,6 +1596,361 @@ function gerarChecklist(dados) {
         });
 
         doc.save(`lista_chamada_WORKSHOP_${new Date().toISOString().slice(0, 10)}.pdf`);
+}
+
+/**
+ * Função auxiliar para gerar um certificado individual
+ * @param {Object} inscrito - Objeto do inscrito
+ */
+async function gerarCertificadoIndividual(inscrito) {
+    try {
+        mostrarNotificacao(`Gerando certificado para ${inscrito.nome_completo}...`, 'sucesso');
+        await gerarCertificadoPDF(inscrito);
+        mostrarNotificacao(`Certificado gerado com sucesso!`, 'sucesso');
+    } catch (error) {
+        console.error('Erro ao gerar certificado individual:', error);
+        mostrarNotificacao(`Erro ao gerar certificado: ${error.message}`, 'erro');
+        throw error;
+    }
+}
+
+/**
+ * Função auxiliar para gerar o PDF do certificado
+ * @param {Object} inscrito - Objeto do inscrito
+ */
+async function gerarCertificadoPDF(inscrito) {
+    console.log('Iniciando geração do PDF do certificado...');
+    
+    if (!window.jspdf) {
+        console.error('jsPDF não está disponível!');
+        throw new Error('jsPDF não está carregado. Verifique se a biblioteca está incluída.');
+    }
+    
+    console.log('jsPDF encontrado, criando documento...');
+    const { jsPDF } = window.jspdf;
+    
+    // URL da imagem do certificado
+    const certificadoTemplateUrl = 'https://i.ibb.co/qYRSjfXh/Certificado-Workshop-Palestrantes.png';
+
+    // Carrega a imagem com timeout e melhor tratamento de erro
+    const img = await new Promise((resolve, reject) => {
+        const image = new Image();
+        image.crossOrigin = 'anonymous';
+        
+        const timeout = setTimeout(() => {
+            reject(new Error('Timeout ao carregar a imagem do certificado. Verifique sua conexão.'));
+        }, 10000); // 10 segundos de timeout
+        
+        image.onload = () => {
+            clearTimeout(timeout);
+            resolve(image);
+        };
+        
+        image.onerror = (error) => {
+            clearTimeout(timeout);
+            console.error('Erro ao carregar imagem:', error);
+            reject(new Error('Erro ao carregar a imagem do certificado. Pode ser um problema de CORS ou a imagem não está disponível.'));
+        };
+        
+        image.src = certificadoTemplateUrl;
+    });
+
+    // Dimensões do PDF (em mm) - A4 landscape
+    const pdfWidth = 297;
+    const pdfHeight = 210;
+    
+    // Calcula escala para ajustar a imagem ao PDF mantendo proporção
+    // Converte pixels para mm: 1 pixel ≈ 0.264583 mm (a 96 DPI)
+    const pxToMm = 0.264583;
+    const imgWidthMm = img.width * pxToMm;
+    const imgHeightMm = img.height * pxToMm;
+    
+    const imgAspectRatio = imgWidthMm / imgHeightMm;
+    const pdfAspectRatio = pdfWidth / pdfHeight;
+    
+    let finalWidth, finalHeight, offsetX, offsetY;
+    
+    if (imgAspectRatio > pdfAspectRatio) {
+        // Imagem é mais larga - ajusta pela largura
+        finalWidth = pdfWidth;
+        finalHeight = pdfWidth / imgAspectRatio;
+        offsetX = 0;
+        offsetY = (pdfHeight - finalHeight) / 2;
+    } else {
+        // Imagem é mais alta - ajusta pela altura
+        finalHeight = pdfHeight;
+        finalWidth = pdfHeight * imgAspectRatio;
+        offsetX = (pdfWidth - finalWidth) / 2;
+        offsetY = 0;
+    }
+
+    // Aguarda o carregamento de todas as fontes
+    await document.fonts.ready;
+    
+    // Tenta verificar se a fonte Charm está disponível de várias formas
+    let fonteCarregada = false;
+    
+    // Verifica com diferentes tamanhos e estilos
+    const verificacoes = [
+        document.fonts.check('14px Charm'),
+        document.fonts.check('16px Charm'),
+        document.fonts.check('24px Charm'),
+        document.fonts.check('bold 14px Charm'),
+        document.fonts.check('bold 24px Charm')
+    ];
+    
+    fonteCarregada = verificacoes.some(check => check === true);
+    
+    // Se ainda não encontrou, aguarda mais um pouco e tenta novamente
+    if (!fonteCarregada) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        fonteCarregada = document.fonts.check('14px Charm') || 
+                        document.fonts.check('16px Charm') || 
+                        document.fonts.check('24px Charm');
+    }
+    
+    if (!fonteCarregada) {
+        console.warn('Fonte Charm não está disponível, usando serif padrão');
+    } else {
+        console.log('Fonte Charm verificada e disponível');
+    }
+
+    // Função para renderizar texto com fonte Charm em canvas
+    async function renderizarTextoComFonte(texto, fontSize, isBold = false, maxWidth = null) {
+        if (!texto || texto.trim() === '') {
+            console.warn('Texto vazio passado para renderizarTextoComFonte');
+            texto = ' '; // Espaço para evitar erro
+        }
+        
+        const canvas = document.createElement('canvas');
+        // Adiciona willReadFrequently para melhor performance
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        
+        const dpr = 3; // Alta resolução para melhor qualidade
+        
+        // Tenta usar Charm, se não estiver disponível usa serif padrão
+        // Verifica com diferentes variações da fonte
+        const fonteDisponivel = document.fonts.check(`${fontSize}px Charm`) || 
+                               document.fonts.check(`${isBold ? 'bold' : 'normal'} ${fontSize}px Charm`) ||
+                               document.fonts.check('14px Charm') || 
+                               document.fonts.check('16px Charm') || 
+                               document.fonts.check('24px Charm');
+        const fonteUsar = fonteDisponivel ? 'Charm' : 'serif';
+        
+        if (fonteUsar === 'Charm') {
+            console.log(`Usando fonte Charm para: "${texto.substring(0, 30)}..."`);
+        } else {
+            console.log(`Usando fonte serif padrão para: "${texto.substring(0, 30)}..."`);
+        }
+        
+        // Calcula dimensões do canvas primeiro (usa fonte temporária para medir)
+        let canvasWidth, canvasHeight;
+        
+        // Configura a fonte primeiro para medir o texto
+        ctx.font = `${isBold ? 'bold' : 'normal'} ${fontSize * dpr}px '${fonteUsar}', serif`;
+        ctx.fillStyle = '#000000';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'top';
+        
+        if (maxWidth) {
+            canvasWidth = maxWidth * dpr;
+            canvasHeight = 1000 * dpr; // Altura generosa para múltiplas linhas
+        } else {
+            // Para texto sem maxWidth, calcula o tamanho necessário
+            // Cria um canvas temporário para medir
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCtx.font = `${isBold ? 'bold' : 'normal'} ${fontSize}px '${fonteUsar}', serif`;
+            const medida = tempCtx.measureText(texto);
+            canvasWidth = Math.ceil(medida.width * dpr * 1.5); // 50% de margem
+            canvasHeight = Math.ceil(fontSize * 3 * dpr); // Altura generosa
+        }
+        
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        
+        // Reconfigura o contexto após definir as dimensões do canvas
+        ctx.font = `${isBold ? 'bold' : 'normal'} ${fontSize * dpr}px '${fonteUsar}', serif`;
+        ctx.fillStyle = '#000000';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'top';
+        
+        // Configura o fundo transparente
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+        
+        console.log(`Renderizando com fonte: ${fonteUsar}, tamanho: ${fontSize}px, texto: "${texto.substring(0, 30)}..."`);
+        
+        if (maxWidth) {
+            const palavras = texto.split(' ');
+            const linhas = [];
+            let linhaAtual = '';
+            
+            // Converte maxWidth de mm para pixels na escala do canvas
+            const maxWidthPx = maxWidth * dpr * 3.779527559; // 1mm = 3.779527559 pixels (a 96 DPI)
+            
+            palavras.forEach(palavra => {
+                const teste = linhaAtual ? `${linhaAtual} ${palavra}` : palavra;
+                const medida = ctx.measureText(teste);
+                
+                if (medida.width > maxWidthPx && linhaAtual) {
+                    linhas.push(linhaAtual);
+                    linhaAtual = palavra;
+                } else {
+                    linhaAtual = teste;
+                }
+            });
+            
+            if (linhaAtual) linhas.push(linhaAtual);
+            
+            const lineHeight = fontSize * dpr * 1.6;
+            linhas.forEach((linha, index) => {
+                ctx.fillText(linha, 0, index * lineHeight);
+            });
+            
+            const alturaTotal = (linhas.length * fontSize * 1.6);
+            return { canvas, linhas: linhas.length, altura: alturaTotal, largura: maxWidth };
+        } else {
+            // Renderiza o texto na escala alta
+            // Primeiro mede o texto para calcular dimensões
+            const medida = ctx.measureText(texto);
+            
+            // Altura calculada em pixels normais (não na escala alta)
+            const alturaCalculada = fontSize * 1.5;
+            
+            // Calcula a posição X para centralizar horizontalmente no canvas
+            const xOffset = (canvasWidth / dpr - medida.width / dpr) / 2;
+            
+            // Calcula a posição Y para centralizar verticalmente no canvas
+            const yOffset = (canvasHeight / dpr - alturaCalculada) / 2;
+            
+            // Desenha o texto centralizado no canvas
+            ctx.fillText(texto, xOffset * dpr, yOffset * dpr);
+            
+            // Aguarda um frame para garantir renderização
+            await new Promise(resolve => requestAnimationFrame(resolve));
+            
+            // Retorna dimensões em pixels normais (dividido por dpr)
+            // Isso será convertido para mm depois
+            const larguraNormal = medida.width / dpr;
+            return { canvas, linhas: 1, altura: alturaCalculada, largura: larguraNormal };
+        }
+    }
+
+    // Cria o documento PDF
+    const doc = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: 'a4'
+    });
+
+    // Adiciona a imagem de fundo
+    doc.addImage(
+        certificadoTemplateUrl,
+        'PNG',
+        offsetX,
+        offsetY,
+        finalWidth,
+        finalHeight
+    );
+
+    // Obtém a data atual formatada
+    const hoje = new Date();
+    const dia = hoje.getDate();
+    const mes = hoje.toLocaleDateString('pt-BR', { month: 'long' });
+    const ano = hoje.getFullYear();
+    const dataFormatada = `${dia} de ${mes} de ${ano}`;
+
+    // Renderiza os textos com fonte Charm
+    // Conversão de pixels para mm: 1px ≈ 0.264583mm (a 96 DPI)
+    // O texto já está em pixels normais (dividido por dpr na função renderizarTextoComFonte)
+    const pxToMmText = (px) => px * 0.264583;
+
+    // Limpa o nome do participante (remove tags HTML e formatação)
+    const nomeLimpo = inscrito.nome_completo
+        .replace(/<[^>]*>/g, '') // Remove tags HTML
+        .replace(/Cópia \d+ - /i, '') // Remove prefixo "Cópia X - "
+        .trim();
+    
+    console.log('Nome do participante:', { original: inscrito.nome_completo, limpo: nomeLimpo });
+
+    // Ajusta as posições baseadas no layout do certificado
+    // Usa posições fixas em mm baseadas no layout do certificado
+    // A imagem do certificado tem aproximadamente 362x257 pixels (proporção ~1.41)
+    // Para A4 landscape (297x210mm), ajustamos proporcionalmente
+    
+    // Nome do participante - em negrito/maior, centralizado
+    // Tamanho da fonte: 36px + 10% = 39.6px (arredondado para 40px)
+    console.log('Renderizando nome:', nomeLimpo);
+    const textoNome = await renderizarTextoComFonte(nomeLimpo, 40, true); // 10% maior que 36
+    
+    // Usa as dimensões do canvas em mm (canvas está em alta resolução dpr=3)
+    const canvasNomeWidthMm = pxToMmText(textoNome.canvas.width / 3); // dpr = 3
+    const canvasNomeHeightMm = pxToMmText(textoNome.canvas.height / 3);
+    
+    // Centraliza horizontalmente - centraliza o canvas inteiro (o texto já está centralizado dentro do canvas)
+    const xPos = pdfWidth / 2 - canvasNomeWidthMm / 2;
+    
+    // Centraliza verticalmente - calcula a posição Y para centralizar no meio do PDF
+    const yNome = (pdfHeight / 2) - (canvasNomeHeightMm / 2);
+    
+    console.log('Posicionamento do nome (centralizado):', {
+        xPos: xPos,
+        yPos: yNome,
+        larguraTextoMm: pxToMmText(textoNome.largura),
+        canvasWidthMm: canvasNomeWidthMm,
+        canvasHeightMm: canvasNomeHeightMm,
+        pdfWidth: pdfWidth,
+        pdfHeight: pdfHeight,
+        centroX: pdfWidth / 2,
+        centroY: pdfHeight / 2
+    });
+    
+    // Adiciona o nome ao PDF, sempre centralizado horizontalmente e verticalmente
+    // O texto já está centralizado dentro do canvas, então centralizamos o canvas inteiro
+    doc.addImage(textoNome.canvas.toDataURL('image/png'), 'PNG', 
+        xPos, yNome, canvasNomeWidthMm, canvasNomeHeightMm);
+
+    // Salva o PDF
+    try {
+        const nomeArquivo = `Certificado_${inscrito.nome_completo.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+        doc.save(nomeArquivo);
+        console.log('PDF gerado com sucesso:', nomeArquivo);
+    } catch (error) {
+        console.error('Erro ao salvar PDF:', error);
+        throw new Error('Erro ao salvar o arquivo PDF. Verifique se o navegador permite downloads.');
+    }
+}
+
+/**
+ * Gera certificados em PDF para todos os inscritos com status CONFIRMADO (pago).
+ * Usa a imagem do certificado como template e adiciona o texto personalizado com fonte Charm.
+ */
+async function gerarCertificados() {
+    // Filtra apenas inscritos com certificado confirmado (status_pagamento = 'pago')
+    const inscritosConfirmados = estado.inscritos.filter(
+        inscrito => inscrito.status_pagamento === 'pago' && inscrito.quer_certificado
+    );
+
+    if (inscritosConfirmados.length === 0) {
+        mostrarNotificacao('Nenhum inscrito com certificado confirmado encontrado.', 'erro');
+        return;
+    }
+
+    // Mostra notificação de progresso
+    mostrarNotificacao(`Gerando ${inscritosConfirmados.length} certificado(s)...`, 'sucesso');
+
+    // Gera um certificado para cada inscrito
+    for (let i = 0; i < inscritosConfirmados.length; i++) {
+        const inscrito = inscritosConfirmados[i];
+        await gerarCertificadoPDF(inscrito);
+        
+        // Pequeno delay para evitar sobrecarga do navegador
+        if (i < inscritosConfirmados.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+        }
+    }
+
+    mostrarNotificacao(`${inscritosConfirmados.length} certificado(s) gerado(s) com sucesso!`, 'sucesso');
 }
 
 /**
