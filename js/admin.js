@@ -18,8 +18,12 @@ const estado = {
     filtroTermo: '',
     colunaOrdenacao: 'created_at',
     direcaoOrdenacao: 'desc',
+    paginaAtual: 1,
+    itensPorPagina: 10,
     setInscritos(novosInscritos) {
         this.inscritos = novosInscritos;
+        // Reseta para a primeira página quando os dados mudam
+        this.paginaAtual = 1;
     }
 };
 /**
@@ -115,6 +119,124 @@ function renderizarUICompleta() {
     if (bulkActionsBar) bulkActionsBar.classList.add('hidden');
 }
 
+/**
+ * Renderiza os controles de paginação abaixo da tabela
+ */
+function renderizarControlesPaginacao(totalItens, totalPaginas) {
+    // Remove controles de paginação existentes
+    const paginacaoExistente = document.getElementById('paginacao-controles');
+    if (paginacaoExistente) {
+        paginacaoExistente.remove();
+    }
+    
+    // Se não há itens, não mostra paginação
+    if (totalItens === 0) {
+        return;
+    }
+    
+    // Encontra o container da tabela
+    const tabelaContainer = document.querySelector('.overflow-x-auto');
+    if (!tabelaContainer || !tabelaContainer.parentElement) return;
+    
+    // Cria o container de paginação
+    const paginacaoContainer = document.createElement('div');
+    paginacaoContainer.id = 'paginacao-controles';
+    paginacaoContainer.className = 'flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 px-4 py-3 bg-gray-50 rounded-lg border border-gray-200';
+    
+    // Informações da paginação
+    const inicio = (estado.paginaAtual - 1) * estado.itensPorPagina + 1;
+    const fim = Math.min(estado.paginaAtual * estado.itensPorPagina, totalItens);
+    const infoPagina = document.createElement('div');
+    infoPagina.className = 'text-sm text-gray-600';
+    infoPagina.innerHTML = `Mostrando <span class="font-semibold">${inicio}</span> a <span class="font-semibold">${fim}</span> de <span class="font-semibold">${totalItens}</span> inscrito(s)`;
+    
+    // Controles de navegação
+    const controlesNav = document.createElement('div');
+    controlesNav.className = 'flex items-center gap-2';
+    
+    // Botão Primeira Página
+    const btnPrimeira = criarBotaoPaginacao('first_page', 'Primeira página', estado.paginaAtual === 1);
+    btnPrimeira.addEventListener('click', () => {
+        estado.paginaAtual = 1;
+        renderizarUICompleta();
+    });
+    
+    // Botão Página Anterior
+    const btnAnterior = criarBotaoPaginacao('chevron_left', 'Página anterior', estado.paginaAtual === 1);
+    btnAnterior.addEventListener('click', () => {
+        if (estado.paginaAtual > 1) {
+            estado.paginaAtual--;
+            renderizarUICompleta();
+        }
+    });
+    
+    // Indicador de página atual
+    const indicadorPagina = document.createElement('div');
+    indicadorPagina.className = 'flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-300';
+    indicadorPagina.innerHTML = `
+        <span class="text-sm text-gray-700">Página</span>
+        <input type="number" id="pagina-input" min="1" max="${totalPaginas}" value="${estado.paginaAtual}" 
+               class="w-16 px-2 py-1 text-center border border-gray-300 rounded focus:ring-2 focus:ring-[#062E51] focus:outline-none">
+        <span class="text-sm text-gray-700">de ${totalPaginas}</span>
+    `;
+    
+    // Event listener para o input de página
+    const paginaInput = indicadorPagina.querySelector('#pagina-input');
+    paginaInput.addEventListener('change', (e) => {
+        const novaPagina = parseInt(e.target.value);
+        if (novaPagina >= 1 && novaPagina <= totalPaginas) {
+            estado.paginaAtual = novaPagina;
+            renderizarUICompleta();
+        } else {
+            e.target.value = estado.paginaAtual;
+        }
+    });
+    
+    // Botão Próxima Página
+    const btnProxima = criarBotaoPaginacao('chevron_right', 'Próxima página', estado.paginaAtual === totalPaginas);
+    btnProxima.addEventListener('click', () => {
+        if (estado.paginaAtual < totalPaginas) {
+            estado.paginaAtual++;
+            renderizarUICompleta();
+        }
+    });
+    
+    // Botão Última Página
+    const btnUltima = criarBotaoPaginacao('last_page', 'Última página', estado.paginaAtual === totalPaginas);
+    btnUltima.addEventListener('click', () => {
+        estado.paginaAtual = totalPaginas;
+        renderizarUICompleta();
+    });
+    
+    controlesNav.appendChild(btnPrimeira);
+    controlesNav.appendChild(btnAnterior);
+    controlesNav.appendChild(indicadorPagina);
+    controlesNav.appendChild(btnProxima);
+    controlesNav.appendChild(btnUltima);
+    
+    paginacaoContainer.appendChild(infoPagina);
+    paginacaoContainer.appendChild(controlesNav);
+    
+    // Insere após a tabela
+    tabelaContainer.parentElement.insertBefore(paginacaoContainer, tabelaContainer.nextSibling);
+}
+
+/**
+ * Cria um botão de paginação
+ */
+function criarBotaoPaginacao(icone, titulo, desabilitado) {
+    const btn = document.createElement('button');
+    btn.className = `p-2 rounded-lg transition-colors ${
+        desabilitado 
+            ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+            : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300 hover:border-[#062E51]'
+    }`;
+    btn.title = titulo;
+    btn.disabled = desabilitado;
+    btn.innerHTML = `<span class="material-symbols-outlined text-xl">${icone}</span>`;
+    return btn;
+}
+
 function configurarToggleLixeira() {
     const toggleSwitch = document.getElementById('view-toggle-switch');
     const labelAtivos = document.getElementById('toggle-label-ativos');
@@ -124,6 +246,7 @@ function configurarToggleLixeira() {
 
     const alternarVisualizacao = () => {
         estado.mostrandoLixeira = !estado.mostrandoLixeira;
+        estado.paginaAtual = 1; // Reseta para a primeira página ao alternar visualização
 
         const thumb = document.getElementById('toggle-thumb');
         toggleSwitch.classList.toggle('bg-red-600', estado.mostrandoLixeira);
@@ -319,9 +442,29 @@ function renderizarTabela(inscritos) {
             ? 'Lixeira vazia. Missão cumprida! ✅' 
             : 'Nenhum inscrito encontrado. Parece que estamos sozinhos por aqui. 🦗';
         corpoTabela.innerHTML = `<tr><td colspan="14" class="px-6 py-4 text-center text-gray-500">${mensagemVazio}</td></tr>`;
+        renderizarControlesPaginacao(0, 0);
         return;
     }
-    corpoTabela.innerHTML = inscritos.map(i => gerarHtmlLinha(i)).join('');
+    
+    // Calcula a paginação
+    const totalItens = inscritos.length;
+    const totalPaginas = Math.ceil(totalItens / estado.itensPorPagina);
+    
+    // Garante que a página atual não exceda o total de páginas
+    if (estado.paginaAtual > totalPaginas && totalPaginas > 0) {
+        estado.paginaAtual = totalPaginas;
+    }
+    
+    // Calcula os índices para a página atual
+    const inicio = (estado.paginaAtual - 1) * estado.itensPorPagina;
+    const fim = inicio + estado.itensPorPagina;
+    const inscritosPagina = inscritos.slice(inicio, fim);
+    
+    // Renderiza apenas os itens da página atual
+    corpoTabela.innerHTML = inscritosPagina.map(i => gerarHtmlLinha(i)).join('');
+
+    // Renderiza os controles de paginação
+    renderizarControlesPaginacao(totalItens, totalPaginas);
 
     // Após renderizar, reconfigura a seleção para garantir que os listeners estejam nos novos elementos
     configurarSelecaoEmMassa();
@@ -443,6 +586,7 @@ function configurarFiltroDeBusca() {
     const executarFiltro = () => {
         estado.filtroColuna = seletorColuna.value;
         estado.filtroTermo = filtroInput.value;
+        estado.paginaAtual = 1; // Reseta para a primeira página ao filtrar
         renderizarUICompleta();
     };
 
@@ -468,6 +612,8 @@ function configurarOrdenacaoTabela() {
                 estado.colunaOrdenacao = colunaSelecionada;
                 estado.direcaoOrdenacao = 'asc';
             }
+            
+            estado.paginaAtual = 1; // Reseta para a primeira página ao ordenar
 
             renderizarUICompleta();
 
