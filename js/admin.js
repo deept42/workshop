@@ -436,6 +436,11 @@ function renderizarTabela(inscritos) {
     const corpoTabela = document.getElementById('lista-inscritos');
     if (!corpoTabela) return;
     
+    // Salva a posição de scroll antes de renderizar
+    const tabelaContainer = document.querySelector('.overflow-x-auto');
+    const scrollLeft = tabelaContainer ? tabelaContainer.scrollLeft : 0;
+    const scrollTop = tabelaContainer ? tabelaContainer.scrollTop : 0;
+    
     // Usa diretamente os dados filtrados e ordenados que são passados para a função.
     if (inscritos.length === 0) {
         const mensagemVazio = estado.mostrandoLixeira
@@ -468,6 +473,17 @@ function renderizarTabela(inscritos) {
 
     // Após renderizar, reconfigura a seleção para garantir que os listeners estejam nos novos elementos
     configurarSelecaoEmMassa();
+    
+    // Restaura a posição de scroll após renderizar
+    if (tabelaContainer) {
+        // Usa requestAnimationFrame duplo para garantir que o DOM foi completamente atualizado
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                tabelaContainer.scrollLeft = scrollLeft;
+                tabelaContainer.scrollTop = scrollTop;
+            });
+        });
+    }
 }
 
 function obterValorCampoFiltro(inscrito, coluna) {
@@ -2469,14 +2485,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /**
  * Formata uma string para o formato "Título", tratando preposições comuns em português.
- * Ex: "JOÃO DA SILVA" -> "João da Silva".
+ * Corrige letras maiúsculas no meio das palavras e formata corretamente.
+ * Ex: "JOÃO DA SILVA" -> "João da Silva", "Marcio Matozo GuimarãEs" -> "Marcio Matozo Guimarães"
  * @param {string} str A string para formatar.
  * @returns {string} A string formatada.
  */
 function formatarParaTitulo(str) {
     if (!str) return '';
-    // Capitaliza a primeira letra de TODAS as palavras.
-    return str.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+    
+    // Remove espaços extras e normaliza
+    let formatado = str.trim().replace(/\s+/g, ' ');
+    
+    // Corrige erros comuns de digitação ANTES de normalizar
+    const correcoes = {
+        'cscavel': 'cascavel',
+        'Cscavel': 'Cascavel',
+        'CSCAVEL': 'Cascavel'
+    };
+    
+    Object.keys(correcoes).forEach(erro => {
+        const regex = new RegExp(`\\b${erro.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+        formatado = formatado.replace(regex, correcoes[erro]);
+    });
+    
+    // Primeiro, corrige letras maiúsculas no meio das palavras
+    // Converte tudo para minúsculo primeiro, depois capitaliza corretamente
+    formatado = formatado.toLowerCase();
+    
+    // Lista de preposições e artigos em português que devem ficar minúsculos
+    const preposicoes = ['de', 'da', 'do', 'das', 'dos', 'e', 'em', 'na', 'no', 'nas', 'nos', 'para', 'por', 'com', 'sem', 'sob', 'sobre', 'entre', 'até', 'a', 'o', 'as', 'os'];
+    
+    // Divide em palavras e formata cada uma
+    const palavras = formatado.split(/\s+/);
+    const palavrasFormatadas = palavras.map((palavra, index) => {
+        // Ignora palavras vazias
+        if (!palavra) return palavra;
+        
+        // Se for a primeira palavra, sempre capitaliza
+        if (index === 0) {
+            return palavra.charAt(0).toUpperCase() + palavra.slice(1);
+        }
+        
+        // Se for uma preposição, mantém minúscula
+        if (preposicoes.includes(palavra.toLowerCase())) {
+            return palavra.toLowerCase();
+        }
+        
+        // Para outras palavras, capitaliza a primeira letra (funciona com acentos)
+        return palavra.charAt(0).toUpperCase() + palavra.slice(1);
+    });
+    
+    return palavrasFormatadas.join(' ');
 }
 
 /**
